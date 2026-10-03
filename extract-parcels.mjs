@@ -41,6 +41,11 @@
  *   --precision <n>   Coordinate decimal places (default: 6, ~11cm)
  *   --batch <n>       Features per request (default: server maxRecordCount)
  *   --token <t>       Append a token if the service requires one
+ *
+ * With no arguments (the Railway start command), the same values are read from
+ * the environment: PARCEL_LAYER_URL, PARCEL_COMMAND (discover|pull, default
+ * pull), PARCEL_OUT, PARCEL_FIELDS, PARCEL_WHERE, PARCEL_PRECISION,
+ * PARCEL_BATCH, PARCEL_TOKEN.
  */
 
 const UA = 'ketchikan-parcel-extract/1.0';
@@ -80,6 +85,42 @@ function parseArgs(argv) {
     }
   }
   return { command, url, opts };
+}
+
+function fromEnv() {
+  const url = process.env.PARCEL_LAYER_URL || '';
+  const fields = process.env.PARCEL_FIELDS;
+  const precision = process.env.PARCEL_PRECISION;
+  const batch = process.env.PARCEL_BATCH;
+  return {
+    command: process.env.PARCEL_COMMAND || (url ? 'pull' : ''),
+    url,
+    opts: {
+      out: process.env.PARCEL_OUT || 'parcels.geojson',
+      fields: fields ? fields.split(',').map((f) => f.trim()).filter(Boolean) : null,
+      where: process.env.PARCEL_WHERE || '1=1',
+      precision: precision === undefined || precision === '' ? 6 : Number(precision),
+      batch: batch === undefined || batch === '' ? null : Number(batch),
+      token: process.env.PARCEL_TOKEN || null,
+    },
+  };
+}
+
+function assertOpts(opts) {
+  if (!Number.isInteger(opts.precision) || opts.precision < 0) {
+    throw new Error('--precision / PARCEL_PRECISION must be a non-negative integer');
+  }
+  if (opts.batch !== null && (!Number.isInteger(opts.batch) || opts.batch < 1)) {
+    throw new Error('--batch / PARCEL_BATCH must be a positive integer');
+  }
+}
+
+function printUsage() {
+  console.error('Usage:');
+  console.error('  node extract-parcels.mjs discover <serviceOrLayerUrl>');
+  console.error('  node extract-parcels.mjs pull <layerUrl> [--out f.geojson] [--fields A,B] [--where "1=1"]');
+  console.error('');
+  console.error('With no arguments, npm start reads PARCEL_LAYER_URL and the PARCEL_* flags.');
 }
 
 // ---------------------------------------------------------------------------
@@ -359,12 +400,12 @@ async function pull(url, opts) {
 // ---------------------------------------------------------------------------
 
 async function main() {
-  const { command, url, opts } = parseArgs(process.argv.slice(2));
+  const argv = process.argv.slice(2);
+  const { command, url, opts } = argv.length > 0 ? parseArgs(argv) : fromEnv();
+  assertOpts(opts);
 
-  if (!command || !url || command === '--help') {
-    console.error('Usage:');
-    console.error('  node extract-parcels.mjs discover <serviceOrLayerUrl>');
-    console.error('  node extract-parcels.mjs pull <layerUrl> [--out f.geojson] [--fields A,B] [--where "1=1"]');
+  if (!command || !url || command === '--help' || command === 'help') {
+    printUsage();
     process.exit(1);
   }
 

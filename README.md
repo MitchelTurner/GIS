@@ -52,6 +52,37 @@ node extract-parcels.mjs pull <url> --fields APN,OWNER_NAME,MAIL_ADDR,ZONING
 
 Features with no geometry are skipped. Consecutive duplicate vertices created by rounding are removed, but a ring is never collapsed below the four positions GeoJSON requires.
 
+`npm start` runs the script with no arguments. In that mode the layer URL and flags come from the environment:
+
+| Variable | Maps to |
+| --- | --- |
+| `PARCEL_LAYER_URL` | layer or service URL (required) |
+| `PARCEL_COMMAND` | `discover` or `pull` (default `pull`) |
+| `PARCEL_OUT` | `--out` |
+| `PARCEL_FIELDS` | `--fields` |
+| `PARCEL_WHERE` | `--where` |
+| `PARCEL_PRECISION` | `--precision` |
+| `PARCEL_BATCH` | `--batch` |
+| `PARCEL_TOKEN` | `--token` |
+
+## Deploying on Railway
+
+This is a one-time (or occasional) command, not a web server. It starts, writes a GeoJSON file, and exits. Railpack only recognizes the repo as a Node project when `package.json` is present, which is why a deploy of the script alone fails before it builds.
+
+`railway.json` tells Railpack to build it and sets the start command to `npm start`. The restart policy is `NEVER`, so a finished pull is not started again immediately.
+
+Set `PARCEL_LAYER_URL` in the service variables before you deploy. Add the other `PARCEL_*` variables when you want to limit fields or change the output path. The container disk is ephemeral, so the GeoJSON disappears when the run ends unless you mount a volume and point `PARCEL_OUT` at that mount (for example `/data/parcels.geojson`).
+
+To run it on a schedule instead of on every deploy, set a cron expression in the service settings or in `railway.json`:
+
+```json
+"deploy": {
+  "cronSchedule": "0 6 * * 1"
+}
+```
+
+That example runs at 06:00 UTC every Monday. Leave the process exiting when the pull finishes. A cron run that stays alive causes Railway to skip the next one.
+
 ## Output
 
 `parcels.geojson` is a standard `FeatureCollection`. Load it in QGIS, [geojson.io](https://geojson.io), or any library that reads GeoJSON.

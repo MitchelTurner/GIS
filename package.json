@@ -1,0 +1,14 @@
+{
+  "name": "gis-parcel-extractor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pull an ArcGIS parcel layer into trimmed GeoJSON for offline use.",
+  "type": "module",
+  "main": "extract-parcels.mjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node extract-parcels.mjs"
+  }
+}
