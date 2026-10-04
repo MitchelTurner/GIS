@@ -40,20 +40,36 @@ export async function getJson(baseUrl, params, token) {
   const url = new URL(baseUrl);
   url.search = '';
   url.hash = '';
-  for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
-  if (token) url.searchParams.set('token', token);
+  const form = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null) form.set(key, String(value));
+  }
+  if (token) form.set('token', token);
 
+  // ArcGIS Online answers HTTP 404 once a GET /query URL passes about 2,000
+  // characters. A few hundred object ids is enough. POST keeps the ids in the body.
+  const isQuery = /\/query$/i.test(url.pathname);
   const headers = {};
   if (typeof navigator === 'undefined') headers['User-Agent'] = USER_AGENT;
+  const init = { headers };
+  if (isQuery) {
+    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    init.method = 'POST';
+    init.body = form.toString();
+  } else {
+    for (const [key, value] of form) url.searchParams.set(key, value);
+  }
 
   let lastError;
+  let attempts = 0;
   for (let attempt = 0; attempt < MAX_RETRIES; attempt += 1) {
+    attempts += 1;
     if (attempt > 0) {
       const waitMs = 500 * 2 ** attempt;
       await new Promise((resolve) => setTimeout(resolve, waitMs));
     }
     try {
-      const res = await fetch(url, { headers });
+      const res = await fetch(url, init);
       if (!res.ok) {
         const error = new Error(`HTTP ${res.status} ${res.statusText}`);
         error.permanent = res.status >= 400 && res.status < 500;
@@ -71,7 +87,8 @@ export async function getJson(baseUrl, params, token) {
       if (err.permanent) break;
     }
   }
-  throw new Error(`Request failed after ${MAX_RETRIES} attempts: ${url.pathname} — ${lastError.message}`);
+  const times = attempts === 1 ? '1 attempt' : `${attempts} attempts`;
+  throw new Error(`Request failed after ${times}: ${url.pathname} — ${lastError.message}`);
 }
 
 function ringIsClockwise(ring) {

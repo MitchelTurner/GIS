@@ -72,8 +72,12 @@ test('recommended fields skip ids and sparse columns', () => {
 
 test('pullFeatures falls back to Esri JSON and keeps both batches', async () => {
   const original = globalThis.fetch;
-  globalThis.fetch = async (input) => {
+  globalThis.fetch = async (input, init) => {
     const url = new URL(input);
+    const params = new URLSearchParams(url.search);
+    if (init?.body) {
+      for (const [key, value] of new URLSearchParams(init.body)) params.set(key, value);
+    }
     const json = (body, status = 200) => new Response(JSON.stringify(body), {
       status,
       headers: { 'Content-Type': 'application/json' },
@@ -81,11 +85,13 @@ test('pullFeatures falls back to Esri JSON and keeps both batches', async () => 
     if (!url.pathname.endsWith('/query')) {
       return json({ name: 'Tax Parcels', objectIdField: 'OBJECTID', maxRecordCount: 1000, fields: [] });
     }
-    if (url.searchParams.get('returnIdsOnly') === 'true') return json({ objectIds: [10, 11] });
-    if (url.searchParams.get('f') === 'geojson') {
+    assert.equal(init?.method, 'POST');
+    assert.equal(url.search, '');
+    if (params.get('returnIdsOnly') === 'true') return json({ objectIds: [10, 11] });
+    if (params.get('f') === 'geojson') {
       return json({ error: { code: 400, message: 'Invalid output format' } });
     }
-    const id = url.searchParams.get('objectIds');
+    const id = params.get('objectIds');
     return json({
       features: [{
         attributes: { APN: id },
