@@ -223,6 +223,22 @@ test('AI comparison uses the ranked comps and stays quiet without a key', async 
   assert.equal(JSON.stringify(asked).includes('secret'), false);
 });
 
+test('a pasted key is trimmed and a rejected key says what to fix', async () => {
+  let auth = '';
+  const rejected = await explainComps({ parcelno: '1' }, [], {
+    apiKey: ' "sk-test-key"\n',
+    fetchImpl: async (_url, init) => {
+      auth = init.headers.Authorization;
+      return { ok: false, status: 401, json: async () => ({}) };
+    },
+  });
+  assert.equal(auth, 'Bearer sk-test-key');
+  assert.equal(rejected.status, 401);
+  assert.match(rejected.text, /api\.openai\.com turned down the API key \(HTTP 401\)/);
+  assert.match(rejected.text, /AI_API_KEY/);
+  assert.doesNotMatch(rejected.text, /sk-test-key/);
+});
+
 function feature(parcelno, owner, acres, value, zoning, geometry) {
   return {
     geometry,
