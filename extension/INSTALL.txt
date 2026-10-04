@@ -1,0 +1,22 @@
+Ketchikan Parcel Extract
+========================
+
+Chrome or Edge
+1. Unzip this folder if it is still a zip file.
+2. Open chrome://extensions or edge://extensions.
+3. Turn on Developer mode.
+4. Click "Load unpacked" and choose this folder
+   (the folder that contains manifest.json).
+5. Open the borough GIS viewer and pan the map:
+   https://www.kgbak.us/432/GIS-Viewer
+6. Click the Parcel Extract icon. Pick the parcel layer,
+   leave the filled-in fields checked, and download the GeoJSON.
+
+Firefox
+1. Open about:debugging#/runtime/this-firefox.
+2. Click "Load Temporary Add-on..." and choose manifest.json
+   in this folder.
+   Firefox removes temporary add-ons when it quits.
+
+The parcel file is saved from your browser. The install page
+does not receive the map data.

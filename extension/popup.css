@@ -1,0 +1,103 @@
+:root {
+  color-scheme: light;
+  --ink: #1c1915;
+  --muted: #5e584e;
+  --spruce: #1e3a32;
+  --foam: #f6f1e6;
+  --paper: #fffaf3;
+  --line: #e3d8c6;
+  --copper: #b8613a;
+}
+
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  width: 340px;
+  padding: 14px;
+  background: var(--foam);
+  color: var(--ink);
+  font: 14px/1.4 "Avenir Next", "Segoe UI", sans-serif;
+}
+
+header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+header img { border-radius: 8px; }
+
+header strong { display: block; font-size: 15px; }
+
+header p, .hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+h2 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+section { margin-bottom: 12px; }
+
+.choice {
+  display: block;
+  width: 100%;
+  margin: 0 0 6px;
+  padding: 8px 10px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  color: inherit;
+  cursor: pointer;
+}
+
+.choice strong { display: block; font-size: 13px; }
+
+.choice span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  word-break: break-all;
+}
+
+form { display: grid; gap: 6px; }
+
+label { font-size: 12px; color: var(--muted); }
+
+input[type="url"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+}
+
+button, .choice { font: inherit; }
+
+form button, .primary {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: var(--copper);
+  color: #fffaf4;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 2px;
+}

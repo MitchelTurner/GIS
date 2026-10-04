@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Ketchikan Parcel Extract",
+  "version": "1.0.0",
+  "description": "Save the parcel layer from a borough GIS map as GeoJSON.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Extract parcels",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["activeTab", "scripting", "downloads", "storage"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "parcel-extract@ketchikan.local",
+      "strict_min_version": "115.0"
+    }
+  }
+}

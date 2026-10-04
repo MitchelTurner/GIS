@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parcel Extract</title>
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="extract.css">
+</head>
+<body>
+  <header>
+    <img src="icons/icon48.png" width="48" height="48" alt="">
+    <div>
+      <p class="eyebrow">Ketchikan Parcel Extract</p>
+      <h1 id="title">Map service</h1>
+      <p id="subtitle" class="url"></p>
+    </div>
+  </header>
+
+  <p id="banner" class="banner" hidden></p>
+
+  <section id="connect" hidden>
+    <p>Continue reads the map service shown above. The GeoJSON file stays on this computer. The install site never receives it.</p>
+    <button id="allow" type="button">Continue</button>
+  </section>
+
+  <form id="paste" hidden>
+    <label for="paste-url">MapServer or FeatureServer URL</label>
+    <input id="paste-url" type="url" placeholder="https://host/…/MapServer/0" required>
+    <button type="submit">Continue</button>
+  </form>
+
+  <section id="layers" hidden>
+    <div class="section-head">
+      <h2>Which layer?</h2>
+    </div>
+    <div id="layer-list" class="stack"></div>
+  </section>
+
+  <section id="fields" hidden>
+    <div class="section-head">
+      <h2>Fields to keep</h2>
+      <p id="layer-count"></p>
+    </div>
+    <div class="toolbar">
+      <input id="filter" type="search" placeholder="Find a field" aria-label="Find a field">
+      <button id="use-recommended" type="button">Recommended</button>
+      <button id="use-all" type="button">All</button>
+      <button id="use-none" type="button">None</button>
+    </div>
+    <div id="field-list"></div>
+    <details>
+      <summary>Filter and token</summary>
+      <label>
+        Server filter
+        <input id="where" value="1=1" spellcheck="false" autocomplete="off">
+      </label>
+      <p class="hint">Leave this as <code>1=1</code> to download every feature. A token is only needed when the service asks for one.</p>
+      <label>
+        Token
+        <input id="token" type="password" autocomplete="off">
+      </label>
+    </details>
+    <div class="actions">
+      <button id="back" type="button" class="ghost" hidden>All layers</button>
+      <button id="download" type="button">Download GeoJSON</button>
+    </div>
+  </section>
+
+  <section id="result" hidden>
+    <div class="section-head">
+      <h2 id="result-title">Download ready</h2>
+      <p id="result-copy"></p>
+    </div>
+    <div id="map" hidden></div>
+    <div class="actions">
+      <button id="again" type="button">Download GeoJSON again</button>
+      <button id="report" type="button" class="ghost">Download field report</button>
+      <button id="change-fields" type="button" class="ghost">Change fields</button>
+      <button id="back-result" type="button" class="ghost" hidden>All layers</button>
+    </div>
+  </section>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script type="module" src="extract.js"></script>
+</body>
+</html>

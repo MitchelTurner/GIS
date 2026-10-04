@@ -1,0 +1,57 @@
+import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import test from 'node:test';
+import { promisify } from 'node:util';
+import { createApp } from '../server.mjs';
+
+const execFileAsync = promisify(execFile);
+
+test('install page serves the extension zip', async () => {
+  const server = await createApp();
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const { port } = server.address();
+  try {
+    const health = await fetch(`http://127.0.0.1:${port}/health`);
+    assert.equal(health.status, 200);
+    assert.equal(await health.text(), 'ok\n');
+
+    const page = await fetch(`http://127.0.0.1:${port}/`);
+    assert.equal(page.status, 200);
+    const html = await page.text();
+    assert.match(html, /Download the extension/);
+    assert.match(html, /href="\/extension\.zip"/);
+
+    const missing = await fetch(`http://127.0.0.1:${port}/../package.json`);
+    assert.equal(missing.status, 404);
+
+    const zip = await fetch(`http://127.0.0.1:${port}/extension.zip`);
+    assert.equal(zip.status, 200);
+    assert.match(zip.headers.get('content-type'), /zip/);
+    assert.match(zip.headers.get('content-disposition'), /ketchikan-parcel-extract\.zip/);
+    const bytes = Buffer.from(await zip.arrayBuffer());
+    const dir = await mkdtemp(path.join(tmpdir(), 'parcel-zip-'));
+    const zipPath = path.join(dir, 'extension.zip');
+    await writeFile(zipPath, bytes);
+    const listed = await execFileAsync('unzip', ['-t', zipPath]);
+    assert.match(listed.stdout, /ketchikan-parcel-extract\/manifest\.json/);
+    assert.match(listed.stdout, /ketchikan-parcel-extract\/lib\/arcgis\.js/);
+    assert.match(listed.stdout, /ketchikan-parcel-extract\/vendor\/leaflet\/leaflet\.js/);
+    await rm(dir, { recursive: true, force: true });
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+test('command line prints usage without a url', async () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const result = await execFileAsync(process.execPath, ['extract-parcels.mjs'], { cwd: root }).then(
+    () => ({ code: 0, stderr: '' }),
+    (err) => err,
+  );
+  assert.equal(result.code, 1);
+  assert.match(result.stderr, /PARCEL_LAYER_URL/);
+});

@@ -1,27 +1,37 @@
 # Ketchikan parcel extract
 
-`extract-parcels.mjs` pulls a parcel layer from an ArcGIS REST service and writes a trimmed GeoJSON file you can use offline. It has no dependencies and needs Node 18 or newer (it uses the built-in `fetch`).
+A browser extension saves a borough parcel layer as GeoJSON. Railway hosts the page where people download that extension. The same pull is available as `extract-parcels.mjs` for a terminal or a scheduled job.
 
-The script is aimed at the Ketchikan Gateway Borough tax parcel layer, but any MapServer or FeatureServer layer that returns polygons or points will work.
+It is aimed at the Ketchikan Gateway Borough tax parcels. Any ArcGIS MapServer or FeatureServer layer of polygons, lines, or points will work. Node 18 or newer is enough to run the install page and the command-line pull. There are no packages to install.
 
-## What it does
+## Browser extension
 
-1. **`discover`** lists the layers on a service, or the fields, geometry type, object-id field, and feature count on a single layer.
-2. **`pull`** downloads every feature, reprojects coordinates to WGS 84 (EPSG:4326), and writes GeoJSON.
+`npm start` serves the install page. On Railway that page is the public site. The download is `/extension.zip`.
 
-Paging uses object IDs rather than `resultOffset`, which is missing or unreliable on older ArcGIS Server installs. If the server rejects `f=geojson`, the script falls back to Esri JSON and converts rings itself: a clockwise ring is an outer boundary, and a counter-clockwise ring is a hole on the previous outer ring.
+After installing:
 
-After the pull it also writes a field-population report (`parcels.fields.json` by default). That report shows what share of features actually have a value in each attribute, so you can see which owner, address, and APN columns are safe to build a UI on.
+1. Open the [borough GIS viewer](https://www.kgbak.us/432/GIS-Viewer) and pan the map.
+2. Click the Parcel Extract icon. It lists MapServer and FeatureServer addresses the page already requested.
+3. Pick the parcel layer. Recommended fields are the ones filled on at least 90% of a sample, with object id and shape columns left off.
+4. Download the GeoJSON. A map of the file opens in the extension, and a field report is a second download.
 
-## Finding the layer URL
+The long download runs in an extension tab so the browser does not cancel it. The extension asks permission for the map host you choose. Parcel data is written to the Downloads folder and is not sent to the install site.
+
+Chrome and Edge: unzip, open `chrome://extensions` or `edge://extensions`, turn on Developer mode, and choose **Load unpacked** on the unzipped folder. Firefox can load `manifest.json` as a temporary add-on from `about:debugging`. Those steps are repeated on the install page and in `extension/INSTALL.txt`.
+
+## Command line
+
+`discover` lists the layers on a service, or the fields and feature count on one layer. `pull` downloads every feature, reprojects to WGS 84 (EPSG:4326), and writes GeoJSON plus a field-population report.
+
+Paging uses object IDs rather than `resultOffset`. If the server rejects GeoJSON, the pull falls back to Esri JSON. A clockwise ring is an outer boundary, and a counter-clockwise ring is a hole on the previous outer ring.
+
+### Finding the layer URL
 
 You need a URL that ends in `/FeatureServer/<n>` or `/MapServer/<n>`.
 
-- **Alaska Geoportal.** Open the "Ketchikan AK Tax Parcels" item, follow it to the underlying service, and copy the REST URL.
-- **Borough viewer.** Open the GIS viewer, watch DevTools → Network for `rest/services`, pan the map, and copy the parcel layer request URL.
+- **The extension.** Open the GIS viewer, pan the map, and use the address it found.
+- **Alaska Geoportal.** Open the "Ketchikan AK Tax Parcels" item and copy the REST URL of the underlying service.
 - **Public Works.** Call (907) 228-6649 and ask for the map service endpoint. That is the sanctioned route; they publish these on request.
-
-Once you have a service root, run `discover` to list its layers and fields.
 
 ## Usage
 
@@ -52,7 +62,7 @@ node extract-parcels.mjs pull <url> --fields APN,OWNER_NAME,MAIL_ADDR,ZONING
 
 Features with no geometry are skipped. Consecutive duplicate vertices created by rounding are removed, but a ring is never collapsed below the four positions GeoJSON requires.
 
-`npm start` runs the script with no arguments. In that mode the layer URL and flags come from the environment:
+With no arguments, `node extract-parcels.mjs` reads the layer URL and flags from the environment:
 
 | Variable | Maps to |
 | --- | --- |
@@ -65,23 +75,11 @@ Features with no geometry are skipped. Consecutive duplicate vertices created by
 | `PARCEL_BATCH` | `--batch` |
 | `PARCEL_TOKEN` | `--token` |
 
-## Deploying on Railway
+## Install page on Railway
 
-This is a one-time (or occasional) command, not a web server. It starts, writes a GeoJSON file, and exits. Railpack only recognizes the repo as a Node project when `package.json` is present, which is why a deploy of the script alone fails before it builds.
+`npm start` runs a small web server. Railway should keep that process up. `railway.json` sets the start command, a health check at `/health`, and a restart policy of `ON_FAILURE`.
 
-`railway.json` tells Railpack to build it and sets the start command to `npm start`. The restart policy is `NEVER`, so a finished pull is not started again immediately.
-
-Set `PARCEL_LAYER_URL` in the service variables before you deploy. Add the other `PARCEL_*` variables when you want to limit fields or change the output path. The container disk is ephemeral, so the GeoJSON disappears when the run ends unless you mount a volume and point `PARCEL_OUT` at that mount (for example `/data/parcels.geojson`).
-
-To run it on a schedule instead of on every deploy, set a cron expression in the service settings or in `railway.json`:
-
-```json
-"deploy": {
-  "cronSchedule": "0 6 * * 1"
-}
-```
-
-That example runs at 06:00 UTC every Monday. Leave the process exiting when the pull finishes. A cron run that stays alive causes Railway to skip the next one.
+The site has two jobs: explain how to load the extension, and serve `/extension.zip`. It does not call the map service and it does not store parcels.
 
 ## Output
 

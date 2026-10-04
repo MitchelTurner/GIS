@@ -5,6 +5,10 @@
  *
  * Zero dependencies. Requires Node 18+ (uses global fetch).
  *
+ * The browser extension is the everyday way to do this. This script is the
+ * same pull, for a terminal or a scheduled job. `npm start` serves the
+ * extension's install page instead of running a pull.
+ *
  * ---------------------------------------------------------------------------
  * FINDING YOUR LAYER URL
  * ---------------------------------------------------------------------------
@@ -42,18 +46,12 @@
  *   --batch <n>       Features per request (default: server maxRecordCount)
  *   --token <t>       Append a token if the service requires one
  *
- * With no arguments (the Railway start command), the same values are read from
- * the environment: PARCEL_LAYER_URL, PARCEL_COMMAND (discover|pull, default
- * pull), PARCEL_OUT, PARCEL_FIELDS, PARCEL_WHERE, PARCEL_PRECISION,
- * PARCEL_BATCH, PARCEL_TOKEN.
+ * With no arguments, the same values are read from the environment:
+ * PARCEL_LAYER_URL, PARCEL_COMMAND (discover|pull, default pull), PARCEL_OUT,
+ * PARCEL_FIELDS, PARCEL_WHERE, PARCEL_PRECISION, PARCEL_BATCH, PARCEL_TOKEN.
  */
 
-const UA = 'ketchikan-parcel-extract/1.0';
-const MAX_RETRIES = 4;
-
-// ---------------------------------------------------------------------------
-// arg parsing
-// ---------------------------------------------------------------------------
+import { readEndpoint, pullFeatures } from './extension/lib/arcgis.js';
 
 function parseArgs(argv) {
   const [command, url, ...rest] = argv;
@@ -78,7 +76,7 @@ function parseArgs(argv) {
       case 'out': opts.out = value; break;
       case 'where': opts.where = value; break;
       case 'token': opts.token = value; break;
-      case 'fields': opts.fields = value.split(',').map((f) => f.trim()).filter(Boolean); break;
+      case 'fields': opts.fields = value.split(',').map((field) => field.trim()).filter(Boolean); break;
       case 'precision': opts.precision = Number(value); break;
       case 'batch': opts.batch = Number(value); break;
       default: throw new Error(`Unknown flag --${key}`);
@@ -97,7 +95,7 @@ function fromEnv() {
     url,
     opts: {
       out: process.env.PARCEL_OUT || 'parcels.geojson',
-      fields: fields ? fields.split(',').map((f) => f.trim()).filter(Boolean) : null,
+      fields: fields ? fields.split(',').map((field) => field.trim()).filter(Boolean) : null,
       where: process.env.PARCEL_WHERE || '1=1',
       precision: precision === undefined || precision === '' ? 6 : Number(precision),
       batch: batch === undefined || batch === '' ? null : Number(batch),
@@ -120,284 +118,63 @@ function printUsage() {
   console.error('  node extract-parcels.mjs discover <serviceOrLayerUrl>');
   console.error('  node extract-parcels.mjs pull <layerUrl> [--out f.geojson] [--fields A,B] [--where "1=1"]');
   console.error('');
-  console.error('With no arguments, npm start reads PARCEL_LAYER_URL and the PARCEL_* flags.');
+  console.error('With no arguments, the script reads PARCEL_LAYER_URL and the PARCEL_* flags.');
+  console.error('npm start serves the browser-extension install page.');
 }
-
-// ---------------------------------------------------------------------------
-// http
-// ---------------------------------------------------------------------------
-
-async function getJson(baseUrl, params, token) {
-  const url = new URL(baseUrl);
-  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-  if (token) url.searchParams.set('token', token);
-
-  let lastError;
-  for (let attempt = 0; attempt < MAX_RETRIES; attempt += 1) {
-    if (attempt > 0) {
-      const waitMs = 500 * 2 ** attempt;
-      await new Promise((r) => setTimeout(r, waitMs));
-    }
-    try {
-      const res = await fetch(url, { headers: { 'User-Agent': UA } });
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-      const body = await res.json();
-      // ArcGIS returns HTTP 200 with an error envelope. Surface it properly.
-      if (body && body.error) {
-        throw new Error(`ArcGIS error ${body.error.code}: ${body.error.message}`);
-      }
-      return body;
-    } catch (err) {
-      lastError = err;
-    }
-  }
-  throw new Error(`Request failed after ${MAX_RETRIES} attempts: ${url.pathname} — ${lastError.message}`);
-}
-
-// ---------------------------------------------------------------------------
-// esri JSON -> GeoJSON
-//
-// Older ArcGIS Server installs (10.x MapServer) do not support f=geojson, so we
-// convert ourselves. Esri encodes polygons as a flat list of rings where a
-// clockwise ring is an outer boundary and a counter-clockwise ring is a hole
-// belonging to the most recent outer ring.
-// ---------------------------------------------------------------------------
-
-function ringIsClockwise(ring) {
-  let area = 0;
-  for (let i = 0; i < ring.length - 1; i += 1) {
-    const [x1, y1] = ring[i];
-    const [x2, y2] = ring[i + 1];
-    area += (x2 - x1) * (y2 + y1);
-  }
-  return area > 0;
-}
-
-function closeRing(ring) {
-  if (ring.length === 0) return ring;
-  const [fx, fy] = ring[0];
-  const [lx, ly] = ring[ring.length - 1];
-  return fx === lx && fy === ly ? ring : [...ring, [fx, fy]];
-}
-
-function esriPolygonToGeoJson(rings) {
-  const polygons = [];
-  let current = null;
-
-  for (const raw of rings) {
-    // Drop any Z/M values; we only want [x, y].
-    const ring = closeRing(raw.map(([x, y]) => [x, y]));
-    if (ring.length < 4) continue;
-
-    if (ringIsClockwise(ring)) {
-      if (current) polygons.push(current);
-      current = [ring];
-    } else if (current) {
-      current.push(ring);
-    } else {
-      // Hole with no preceding outer ring — treat it as an outer ring rather
-      // than silently dropping geometry.
-      current = [ring];
-    }
-  }
-  if (current) polygons.push(current);
-
-  if (polygons.length === 0) return null;
-  if (polygons.length === 1) return { type: 'Polygon', coordinates: polygons[0] };
-  return { type: 'MultiPolygon', coordinates: polygons };
-}
-
-function esriFeatureToGeoJson(feature) {
-  const geom = feature.geometry;
-  let geometry = null;
-  if (geom && Array.isArray(geom.rings)) {
-    geometry = esriPolygonToGeoJson(geom.rings);
-  } else if (geom && typeof geom.x === 'number' && typeof geom.y === 'number') {
-    geometry = { type: 'Point', coordinates: [geom.x, geom.y] };
-  }
-  return { type: 'Feature', geometry, properties: feature.attributes || {} };
-}
-
-// ---------------------------------------------------------------------------
-// geometry post-processing
-// ---------------------------------------------------------------------------
-
-function roundCoords(coords, precision) {
-  if (typeof coords[0] === 'number') {
-    const f = 10 ** precision;
-    return [Math.round(coords[0] * f) / f, Math.round(coords[1] * f) / f];
-  }
-  return coords.map((c) => roundCoords(c, precision));
-}
-
-function dedupeConsecutive(coords) {
-  if (typeof coords[0] === 'number') return coords;
-  if (typeof coords[0][0] === 'number') {
-    const out = [coords[0]];
-    for (let i = 1; i < coords.length; i += 1) {
-      const [px, py] = out[out.length - 1];
-      const [x, y] = coords[i];
-      if (x !== px || y !== py) out.push(coords[i]);
-    }
-    // Never collapse a ring below the 4 points GeoJSON requires.
-    return out.length >= 4 ? out : coords;
-  }
-  return coords.map(dedupeConsecutive);
-}
-
-// ---------------------------------------------------------------------------
-// commands
-// ---------------------------------------------------------------------------
 
 async function discover(url, opts) {
-  const meta = await getJson(url, { f: 'json' }, opts.token);
-
-  if (Array.isArray(meta.layers) && meta.layers.length && meta.id === undefined) {
-    console.log(`Service: ${meta.serviceDescription || meta.mapName || '(unnamed)'}`);
-    console.log(`ArcGIS version: ${meta.currentVersion}\n`);
+  const info = await readEndpoint(url, opts);
+  if (info.kind === 'service') {
+    console.log(`Service: ${info.name}`);
+    console.log(`ArcGIS version: ${info.version}\n`);
     console.log('Layers:');
-    for (const layer of meta.layers) {
+    for (const layer of info.layers) {
       console.log(`  [${layer.id}] ${layer.name}${layer.geometryType ? ` (${layer.geometryType})` : ''}`);
     }
     console.log('\nRe-run discover against a specific layer URL to see its fields:');
-    console.log(`  node extract-parcels.mjs discover ${url.replace(/\/$/, '')}/0`);
+    const example = info.layers[0]?.url || `${url.replace(/\/$/, '')}/0`;
+    console.log(`  node extract-parcels.mjs discover ${example}`);
     return;
   }
 
-  console.log(`Layer: ${meta.name}`);
-  console.log(`Geometry: ${meta.geometryType}`);
-  console.log(`Object ID field: ${meta.objectIdField || '(unreported)'}`);
-  console.log(`maxRecordCount: ${meta.maxRecordCount}`);
-  console.log(`Spatial ref (wkid): ${meta.extent?.spatialReference?.latestWkid || meta.extent?.spatialReference?.wkid}`);
-
-  const count = await getJson(`${url.replace(/\/$/, '')}/query`,
-    { where: opts.where, returnCountOnly: 'true', f: 'json' }, opts.token);
-  console.log(`Feature count (where ${opts.where}): ${count.count}\n`);
-
+  console.log(`Layer: ${info.name}`);
+  console.log(`Geometry: ${info.geometryType}`);
+  console.log(`Object ID field: ${info.objectIdField}`);
+  console.log(`maxRecordCount: ${info.maxRecordCount}`);
+  console.log(`Spatial ref (wkid): ${info.wkid}`);
+  console.log(`Feature count (where ${opts.where}): ${info.count}\n`);
   console.log('Fields:');
-  for (const field of meta.fields || []) {
-    const alias = field.alias && field.alias !== field.name ? `  — ${field.alias}` : '';
-    console.log(`  ${field.name.padEnd(28)} ${String(field.type).replace('esriFieldType', '').padEnd(10)}${alias}`);
+  for (const field of info.fields) {
+    const alias = field.alias !== field.name ? `  — ${field.alias}` : '';
+    console.log(`  ${field.name.padEnd(28)} ${field.type.padEnd(10)}${alias}`);
   }
   console.log('\nPick your owner/address/APN fields from that list, then:');
   console.log(`  node extract-parcels.mjs pull ${url} --fields FIELD1,FIELD2,...`);
 }
 
 async function pull(url, opts) {
-  const layerUrl = url.replace(/\/$/, '');
-  const queryUrl = `${layerUrl}/query`;
-
-  const meta = await getJson(layerUrl, { f: 'json' }, opts.token);
-  const oidField = meta.objectIdField
-    || (meta.fields || []).find((f) => f.type === 'esriFieldTypeOID')?.name
-    || 'OBJECTID';
-  const batchSize = opts.batch || Math.min(meta.maxRecordCount || 1000, 1000);
-
-  console.error(`Layer: ${meta.name}`);
-  console.error(`Paging by ${oidField} in batches of ${batchSize}\n`);
-
-  // Ask for IDs first. This is more reliable than resultOffset paging, which
-  // is unsupported or subtly broken on a lot of older ArcGIS Server builds.
-  const idResponse = await getJson(queryUrl,
-    { where: opts.where, returnIdsOnly: 'true', f: 'json' }, opts.token);
-  const objectIds = idResponse.objectIds || [];
-  if (objectIds.length === 0) {
-    throw new Error('Query returned zero object IDs. Check your --where clause.');
-  }
-  console.error(`${objectIds.length} features to fetch`);
-
-  const outFields = opts.fields ? opts.fields.join(',') : '*';
-  const features = [];
-  let geojsonSupported = true;
-
-  for (let i = 0; i < objectIds.length; i += batchSize) {
-    const batch = objectIds.slice(i, i + batchSize);
-    const params = {
-      objectIds: batch.join(','),
-      outFields,
-      outSR: '4326',
-      returnGeometry: 'true',
-      f: geojsonSupported ? 'geojson' : 'json',
-    };
-
-    let body;
-    try {
-      body = await getJson(queryUrl, params, opts.token);
-    } catch (err) {
-      if (geojsonSupported && /geojson|format/i.test(err.message)) {
-        console.error('Server rejected f=geojson — falling back to esri JSON.');
-        geojsonSupported = false;
-        params.f = 'json';
-        body = await getJson(queryUrl, params, opts.token);
-      } else {
-        throw err;
-      }
-    }
-
-    if (geojsonSupported && Array.isArray(body.features)) {
-      features.push(...body.features);
-    } else {
-      features.push(...(body.features || []).map(esriFeatureToGeoJson));
-    }
-
-    const done = Math.min(i + batchSize, objectIds.length);
-    process.stderr.write(`\r  fetched ${done}/${objectIds.length}`);
-  }
+  const result = await pullFeatures(url, {
+    ...opts,
+    onStatus: (message) => console.error(message),
+  }, (progress) => {
+    process.stderr.write(`\r  fetched ${progress.done}/${progress.total}`);
+  });
   process.stderr.write('\n');
 
-  // Trim geometry and drop features that came back without any.
-  let dropped = 0;
-  const cleaned = [];
-  for (const feature of features) {
-    if (!feature.geometry || !feature.geometry.coordinates) {
-      dropped += 1;
-      continue;
-    }
-    const coords = dedupeConsecutive(roundCoords(feature.geometry.coordinates, opts.precision));
-    cleaned.push({
-      type: 'Feature',
-      geometry: { type: feature.geometry.type, coordinates: coords },
-      properties: feature.properties || {},
-    });
-  }
-
-  const collection = { type: 'FeatureCollection', features: cleaned };
-  const json = JSON.stringify(collection);
+  const json = JSON.stringify(result.collection);
   const { writeFile } = await import('node:fs/promises');
   await writeFile(opts.out, json, 'utf8');
+  const reportPath = opts.out.replace(/\.geojson$/, '') + '.fields.json';
+  await writeFile(reportPath, JSON.stringify(result.report, null, 2), 'utf8');
 
-  // Field population report — tells you which owner fields are actually usable
-  // before you design a UI around them.
-  const counts = new Map();
-  for (const feature of cleaned) {
-    for (const [key, value] of Object.entries(feature.properties)) {
-      if (!counts.has(key)) counts.set(key, 0);
-      if (value !== null && value !== undefined && String(value).trim() !== '') {
-        counts.set(key, counts.get(key) + 1);
-      }
-    }
-  }
-
-  const report = [...counts.entries()]
-    .map(([field, filled]) => ({ field, filled, pct: Math.round((filled / cleaned.length) * 1000) / 10 }))
-    .sort((a, b) => b.filled - a.filled);
-
-  await writeFile(
-    opts.out.replace(/\.geojson$/, '') + '.fields.json',
-    JSON.stringify(report, null, 2),
-    'utf8',
-  );
-
-  console.error(`\nWrote ${opts.out} — ${cleaned.length} features, ${(json.length / 1e6).toFixed(1)} MB`);
-  if (dropped) console.error(`Skipped ${dropped} feature(s) with no geometry.`);
+  console.error(`\nWrote ${opts.out} — ${result.features.length} features, ${(json.length / 1e6).toFixed(1)} MB`);
+  if (result.dropped) console.error(`Skipped ${result.dropped} feature(s) with no geometry.`);
   console.error('\nField population:');
-  for (const row of report.slice(0, 25)) {
+  for (const row of result.report.slice(0, 25)) {
     console.error(`  ${row.field.padEnd(28)} ${String(row.pct).padStart(5)}%  (${row.filled})`);
   }
   console.error('\nAnything under ~90% is a field you cannot rely on in the sidebar.');
 }
-
-// ---------------------------------------------------------------------------
 
 async function main() {
   const argv = process.argv.slice(2);
