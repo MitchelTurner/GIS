@@ -171,6 +171,28 @@ function showToast(text) {
   }, 12000);
 }
 
+const peekNode = document.querySelector('#peek');
+let detailInView = false;
+
+// On phones the details sit below the map; this bar jumps to them.
+function showPeek(title, sub) {
+  document.querySelector('#peek-title').textContent = title || '';
+  document.querySelector('#peek-sub').textContent = sub || '';
+  peekNode.hidden = !title;
+  peekNode.classList.toggle('away', detailInView);
+}
+
+peekNode.addEventListener('click', () => {
+  document.querySelector('#detail-panel').scrollIntoView({ block: 'start', behavior: 'smooth' });
+});
+
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver((entries) => {
+    detailInView = entries.some((entry) => entry.isIntersecting);
+    peekNode.classList.toggle('away', detailInView);
+  }, { threshold: 0.15 }).observe(document.querySelector('#detail-panel'));
+}
+
 function statStrip(rows) {
   const list = document.createElement('dl');
   list.className = 'stats';
@@ -197,8 +219,9 @@ function showExplain(on) {
 
 function markOwner(key) {
   openOwnerKey = key || '';
-  for (const row of ownersNode.querySelectorAll('tr[data-owner]')) {
+  for (const row of ownersNode.querySelectorAll('[data-owner]')) {
     row.classList.toggle('is-on', row.dataset.owner === openOwnerKey);
+    row.setAttribute('aria-current', row.dataset.owner === openOwnerKey ? 'true' : 'false');
   }
 }
 
@@ -312,7 +335,7 @@ function renderOwners() {
   fillZoning();
   const narrowed = boxActive();
   const source = narrowed ? matchedLibrary() : library;
-  const report = source.ownerReport({ privateOnly: false, limit: 40 });
+  const report = source.ownerReport({ privateOnly: false, limit: 100 });
   const fileReport = library.ownerReport({ privateOnly: false, limit: 1 });
   const missingValue = !library.parcels.some((parcel) => Number(parcel.total_value) > 0);
   const stats = statStrip([
@@ -327,51 +350,53 @@ function renderOwners() {
   const listNote = report.owners > shown ? `Showing the ${shown} largest. ` : '';
   caption.textContent = narrowed
     ? `${listNote}Share is of the acres that match the buy box.`
-    : `${listNote}Acres is that owner's share of the file. Click a name for the mailing address.`;
-  const table = document.createElement('table');
-  const head = document.createElement('tr');
+    : `${listNote}Share is of the acres in the file. Tap an owner for the mailing address.`;
+  const list = document.createElement('div');
+  list.className = 'owner-list';
+  list.setAttribute('role', 'list');
+  const head = document.createElement('div');
+  head.className = 'owner-head';
   for (const label of ['Owner', 'Acres', 'Assessed']) {
-    const cell = document.createElement('th');
+    const cell = document.createElement('span');
     cell.textContent = label;
-    if (label !== 'Owner') cell.className = 'num';
     head.append(cell);
   }
-  table.append(head);
+  list.append(head);
   for (const owner of report.shown) {
-    const row = document.createElement('tr');
-    row.className = 'clickable';
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'owner-row';
+    row.setAttribute('role', 'listitem');
     row.dataset.owner = owner.ownerKey;
-    const name = document.createElement('td');
     const swatch = document.createElement('span');
     swatch.className = 'swatch';
     swatch.style.background = ownerColorMap.get(owner.ownerKey) || '#8d8478';
+    const name = document.createElement('span');
+    name.className = 'owner-name';
     const strong = document.createElement('strong');
     strong.textContent = owner.publicOwner ? `${owner.name} (public)` : owner.name;
-    const meta = document.createElement('span');
-    meta.className = 'fine';
+    const meta = document.createElement('small');
     const bits = [`${owner.parcelCount} ${owner.parcelCount === 1 ? 'parcel' : 'parcels'}`];
     if (outreach[owner.ownerKey]?.status) bits.push(CONTACT_STATUS[outreach[owner.ownerKey].status]);
     meta.textContent = bits.join(' · ');
-    name.append(swatch, strong, meta);
-    const land = document.createElement('td');
-    land.className = 'num';
+    name.append(strong, meta);
+    const land = document.createElement('span');
+    land.className = 'num owner-acres';
     land.textContent = acres(owner.acres);
-    const share = document.createElement('span');
-    share.className = 'fine';
-    share.textContent = narrowed ? `${pct(owner.acreShare)} of this list` : `${pct(owner.acreShare)} of the file`;
+    const share = document.createElement('small');
+    share.textContent = pct(owner.acreShare);
     land.append(share);
-    const value = document.createElement('td');
+    const value = document.createElement('span');
     value.className = 'num';
     value.textContent = money(owner.value);
-    const per = document.createElement('span');
-    per.className = 'fine';
+    const per = document.createElement('small');
     per.textContent = rateLabel(owner.value, owner.acres);
     value.append(per);
-    row.append(name, land, value);
+    row.append(swatch, name, land, value);
     row.addEventListener('click', () => showOwner(owner.ownerKey));
-    table.append(row);
+    list.append(row);
   }
-  const nodes = [stats, caption, table];
+  const nodes = [stats, caption, list];
   if (missingValue) {
     const note = document.createElement('p');
     note.className = 'fine';
@@ -383,14 +408,36 @@ function renderOwners() {
   markOwner(openOwnerKey);
 }
 
+function placeOf(parcelno) {
+  const parcel = library.parcels.find((item) => item.parcelno === parcelno);
+  const street = String(parcel?.location || '').trim();
+  const town = String(parcel?.loc_city || '').trim();
+  const owner = String(parcel?.owner_name || '').trim();
+  if (street) return { title: street, sub: [town, owner].filter(Boolean).join(' · ') || `Parcel ${parcelno}` };
+  if (owner) return { title: owner, sub: [town, `Parcel ${parcelno}`].filter(Boolean).join(' · ') };
+  return { title: `Parcel ${parcelno}`, sub: town };
+}
+
 function renderSearches() {
   document.querySelector('#recent-title').hidden = searches.length === 0;
   searchesNode.replaceChildren();
   for (const search of searches) {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'ghost';
-    button.textContent = search.query;
+    button.className = 'recent';
+    const title = document.createElement('strong');
+    const sub = document.createElement('small');
+    if (search.kind === 'comps') {
+      const place = placeOf(search.query);
+      title.textContent = place.title;
+      sub.textContent = place.sub;
+      button.title = `Parcel ${search.query}`;
+    } else {
+      title.textContent = search.query;
+      sub.textContent = 'Search';
+      button.classList.add('is-search');
+    }
+    button.append(title, sub);
     button.addEventListener('click', () => {
       if (search.kind === 'comps') showParcel(search.query);
       else searchParcels(search.query);
@@ -750,8 +797,14 @@ async function showParcel(parcelno, { fromMap = false } = {}) {
   current = found;
   markOwner('');
   const subject = found.subject;
-  document.querySelector('#detail-title').textContent = subject.parcelno;
+  const place = placeOf(subject.parcelno);
+  document.querySelector('#detail-title').textContent = subject.location || place.title;
   detailNode.replaceChildren();
+  const idLine = document.createElement('p');
+  idLine.className = 'fine parcel-id';
+  idLine.textContent = [`Parcel ${subject.parcelno}`, subject.locCity].filter(Boolean).join(' · ');
+  detailNode.append(idLine);
+  showPeek(subject.location || place.title, subject.ownerName || `Parcel ${subject.parcelno}`);
   const who = document.createElement('p');
   who.className = 'who';
   who.textContent = subject.parties.length
@@ -854,10 +907,10 @@ function compTable(comps) {
     score.textContent = comp.comp.score.toFixed(0);
     const name = document.createElement('td');
     const strong = document.createElement('strong');
-    strong.textContent = comp.parcelno;
+    strong.textContent = comp.location || comp.parcelno;
     const who = document.createElement('span');
     who.className = 'fine';
-    who.textContent = comp.ownerName || '';
+    who.textContent = [comp.ownerName, comp.location ? comp.parcelno : ''].filter(Boolean).join(' · ');
     const why = document.createElement('span');
     why.className = 'fine';
     const reasons = (comp.comp.reasons || []).filter((reason) => reason !== 'within 1 km' && reason !== 'nearby');
@@ -888,6 +941,7 @@ async function showOwner(ownerKey) {
   current = null;
   markOwner(owner.ownerKey);
   document.querySelector('#detail-title').textContent = owner.publicOwner ? `${owner.name} (public)` : owner.name;
+  showPeek(owner.name, `${owner.parcelCount} ${owner.parcelCount === 1 ? 'parcel' : 'parcels'} · ${acres(owner.acres)}`);
   detailNode.replaceChildren();
   compsNode.replaceChildren();
   showExplain(false);
@@ -1417,6 +1471,7 @@ document.querySelector('#clear').addEventListener('click', async () => {
   document.querySelector('#results-title').hidden = true;
   searchesNode.replaceChildren();
   detailNode.textContent = 'Click a parcel on the map, or an owner in the list.';
+  peekNode.hidden = true;
   renderChanges();
   compsNode.replaceChildren();
   mapNode.hidden = true;

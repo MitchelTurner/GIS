@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f7f5">
   <title>Ketchikan parcels</title>
   <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
   <link rel="icon" href="/icon128.png" type="image/png">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=12">
+  <link rel="stylesheet" href="/styles.css?v=13">
 </head>
 <body>
   <header class="top">
@@ -38,25 +39,33 @@
     <p id="toast" class="toast" role="status" hidden></p>
 
     <section id="workspace" hidden>
-      <form id="search-form">
-        <input id="q" type="search" placeholder="Owner, town, parcel, or street" aria-label="Search parcels">
-        <button type="submit">Search</button>
-        <label class="private"><input id="private" type="checkbox"> Private owners only</label>
-        <label class="private"><input id="absentee" type="checkbox"> Mail goes somewhere else</label>
-        <label class="private"><input id="condos" type="checkbox"> Skip condos</label>
-        <label class="private"><input id="below" type="checkbox"> Below neighbors</label>
-        <label class="private"><input id="waterfront" type="checkbox"> Waterfront</label>
-        <label class="filter">Zoning
-          <select id="zoning" aria-label="Zoning"><option value="">All zoning</option></select>
-        </label>
-        <label class="filter">Min acres
-          <input id="min-acres" inputmode="decimal" placeholder="Any" aria-label="Minimum acres">
-        </label>
-        <label class="filter">Max $/acre
-          <input id="max-acre" inputmode="decimal" placeholder="Any" aria-label="Maximum dollars per acre">
-        </label>
-        <button id="draw" class="ghost" type="button">Draw an area</button>
-        <button id="labels" class="ghost" type="button" hidden>Export labels</button>
+      <form id="search-form" class="search-bar">
+        <div class="search-row">
+          <input id="q" type="search" enterkeyhint="search" placeholder="Owner, town, parcel, or street" aria-label="Search parcels">
+          <button type="submit">Search</button>
+        </div>
+        <div class="chips" role="group" aria-label="Buy box">
+          <label class="private"><input id="private" type="checkbox"> Private owners</label>
+          <label class="private"><input id="absentee" type="checkbox"> Mail elsewhere</label>
+          <label class="private"><input id="condos" type="checkbox"> Skip condos</label>
+          <label class="private"><input id="below" type="checkbox"> Below neighbors</label>
+          <label class="private"><input id="waterfront" type="checkbox"> Waterfront</label>
+        </div>
+        <div class="filter-row">
+          <label class="filter">Zoning
+            <select id="zoning" aria-label="Zoning"><option value="">All zoning</option></select>
+          </label>
+          <label class="filter">Min acres
+            <input id="min-acres" inputmode="decimal" placeholder="Any" aria-label="Minimum acres">
+          </label>
+          <label class="filter">Max $/acre
+            <input id="max-acre" inputmode="decimal" placeholder="Any" aria-label="Maximum dollars per acre">
+          </label>
+          <div class="filter-actions">
+            <button id="draw" class="ghost" type="button">Draw an area</button>
+            <button id="labels" class="ghost" type="button" hidden>Export labels</button>
+          </div>
+        </div>
       </form>
       <section id="ask-all" class="ask-all" hidden>
         <label class="ask">
@@ -74,7 +83,7 @@
         <ul id="change-list"></ul>
       </section>
       <div class="grid">
-        <section>
+        <section class="panel owners-panel">
           <div class="section-head">
             <h2>Largest owners</h2>
             <button id="export" class="ghost" type="button" hidden>Export contacts</button>
@@ -85,7 +94,7 @@
           <h2 id="recent-title" class="next" hidden>Recent</h2>
           <div id="searches" class="searches"></div>
         </section>
-        <section>
+        <section id="detail-panel" class="panel detail-panel">
           <h2 id="detail-title">Parcel</h2>
           <div id="detail" class="fine">Click a parcel on the map, or an owner in the list.</div>
           <div id="comps"></div>
@@ -99,8 +108,12 @@
       </div>
     </section>
   </main>
+  <button id="peek" class="peek" type="button" hidden>
+    <span class="peek-text"><strong id="peek-title"></strong><small id="peek-sub"></small></span>
+    <span class="peek-go">Details</span>
+  </button>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=12"></script>
+  <script type="module" src="/app.js?v=13"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));
