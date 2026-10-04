@@ -75,6 +75,23 @@ test('server import keeps parcels, flags owner changes and missing parcels', { s
   const foreign = await upload('parcels.geojson', { Origin: 'https://elsewhere.example' });
   assert.equal(foreign.status, 403);
 
+  // Settings saved from one device come back to any other.
+  await app.get(PrismaService).$executeRawUnsafe('TRUNCATE shared_state');
+  const put = (key, value, headers = {}) => fetch(`${base}/api/state/${key}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...headers },
+    body: JSON.stringify({ value }),
+  });
+  assert.deepEqual(await (await fetch(`${base}/api/state`)).json(), { importId: two.importId, values: {} });
+  assert.equal((await put('outreach', { 'ADA LOVELACE': { status: 'called', note: 'Call back in May' } })).status, 200);
+  assert.equal((await put('edits', { '900000000100': { sale_price: 75000, sale_year: 2025, shares: null } })).status, 200);
+  assert.equal((await put('outreach', { 'ADA LOVELACE': { status: 'pass', note: '' } })).status, 200);
+  const state = await (await fetch(`${base}/api/state`)).json();
+  assert.equal(state.values.outreach['ADA LOVELACE'].status, 'pass');
+  assert.equal(state.values.edits['900000000100'].sale_price, 75000);
+  assert.equal((await put('passwords', 'x')).status, 400);
+  assert.equal((await put('links', {}, { Origin: 'https://elsewhere.example' })).status, 403);
+
   // A stand-in for Claude: asks for owner changes, then repeats what the database returned.
   const seen = [];
   const fakeClaude = createHttpServer(async (req, res) => {

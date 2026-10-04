@@ -9,9 +9,10 @@ import { AiToolService } from './ai-tools.js';
 import { SameOriginGuard, ServerController } from './guard.js';
 import { ImportController, ParcelController, ParcelService } from './parcels.js';
 import { PrismaService } from './prisma.service.js';
+import { StateController } from './state.js';
 
 @Module({
-  controllers: [ServerController, ImportController, ParcelController, AiController],
+  controllers: [ServerController, ImportController, ParcelController, AiController, StateController],
   providers: [PrismaService, ParcelService, AiToolService, { provide: APP_GUARD, useClass: SameOriginGuard }],
 })
 class AppModule {}
@@ -19,7 +20,7 @@ class AppModule {}
 export async function createServer() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { logger: ['error', 'warn'] });
   app.set('trust proxy', 1);
-  app.useBodyParser('json', { limit: '1mb' });
+  app.useBodyParser('json', { limit: '5mb' });
   const site = await createHandler();
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.path === '/api' || req.path.startsWith('/api/')) {

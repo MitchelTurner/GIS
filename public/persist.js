@@ -26,7 +26,44 @@ export async function loadKey(key) {
   }
 }
 
+// Keys every device shares once the server has a database.
+export const SHARED_KEYS = ['outreach', 'links', 'buybox', 'searches', 'changes', 'edits'];
+let shared = false;
+let onSyncError = () => {};
+
+export function shareWithServer(on, { onError } = {}) {
+  shared = Boolean(on);
+  if (onError) onSyncError = onError;
+}
+
+export async function fetchShared() {
+  const res = await fetch('/api/state', { credentials: 'same-origin', cache: 'no-store' });
+  if (!res.ok) throw new Error('The server did not send the shared settings.');
+  return res.json();
+}
+
+export async function pushShared(key, value) {
+  const res = await fetch(`/api/state/${encodeURIComponent(key)}`, {
+    method: 'PUT',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ value: value ?? null }),
+  });
+  if (!res.ok) throw new Error(`The server did not save ${key}.`);
+}
+
 export async function saveKey(key, value) {
+  await saveLocal(key, value);
+  if (shared && SHARED_KEYS.includes(key)) {
+    try {
+      await pushShared(key, value);
+    } catch (error) {
+      onSyncError(error);
+    }
+  }
+}
+
+export async function saveLocal(key, value) {
   const db = await openDb();
   try {
     const tx = db.transaction('kv', 'readwrite');

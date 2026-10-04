@@ -589,6 +589,23 @@ table.comps { margin-top: 4px; }
 
 #status:empty { display: none; }
 
+.sync-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #fbefd9;
+  color: #6b4708;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sync-note::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+.sync-note.is-shared { background: var(--tint); color: var(--brand-2); }
+
 /* Empty state */
 
 #empty { padding: 36px 0 12px; }

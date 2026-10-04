@@ -1,6 +1,6 @@
 import { createLibrary, recordsFromText } from '/lib/library.js';
 import { OWNER_COLORS, isCondo, neighborBenchmarks, parties, perAcre, placesDiffer } from '/lib/ownership.js';
-import { loadKey, saveKey } from './persist.js';
+import { fetchShared, loadKey, pushShared, saveKey, saveLocal, shareWithServer } from './persist.js';
 
 const emptyNode = document.querySelector('#empty');
 const workspaceNode = document.querySelector('#workspace');
@@ -50,6 +50,11 @@ let savedZoning = '';
 // in: the server's database holds the parcels; off: only this browser does.
 let serverMode = 'off';
 let aiReady = false;
+// Sale prices and ownership splits typed on any device, by parcel number.
+let edits = {};
+let editsShared = false;
+let knownImportId = null;
+let syncing = false;
 let toastTimer = null;
 const askAllNode = document.querySelector('#ask-all');
 const askAllInput = document.querySelector('#ask-all-input');
@@ -78,6 +83,7 @@ function showWorkspace(hasParcels) {
   document.querySelector('#export').hidden = !hasParcels;
   document.querySelector('#labels').hidden = !hasParcels;
   askAllNode.hidden = !hasParcels || serverMode !== 'in' || !aiReady;
+  showSyncNote();
 }
 
 // Parcel numbers in an AI answer become links to that parcel.
@@ -1153,6 +1159,7 @@ function saleForm(subject) {
     const sale = raw === '' || Number(raw) === 0 ? null : Number(raw);
     library.update(subject.parcelno, { sale_price: sale, sale_year: sale == null ? null : year });
     await saveKey('parcels', library.parcels);
+    await saveEdits();
     renderOwners();
     await showParcel(subject.parcelno);
   });
@@ -1201,6 +1208,7 @@ function shareForm(subject) {
     }
     library.update(subject.parcelno, { shares });
     await saveKey('parcels', library.parcels);
+    await saveEdits();
     paintColors();
     indexFeatures();
     drawVisible();
@@ -1208,6 +1216,33 @@ function shareForm(subject) {
     await showParcel(subject.parcelno);
   });
   return form;
+}
+
+function collectEdits() {
+  const out = {};
+  for (const parcel of library.parcels) {
+    if (parcel.sale_price == null && !parcel.shares) continue;
+    out[parcel.parcelno] = { sale_price: parcel.sale_price ?? null, sale_year: parcel.sale_year ?? null, shares: parcel.shares || null };
+  }
+  return out;
+}
+
+async function saveEdits() {
+  edits = collectEdits();
+  await saveKey('edits', edits);
+}
+
+// The shared copy wins, so a sale cleared on one device clears everywhere.
+function applyEdits() {
+  if (!editsShared) return;
+  for (const parcel of library.parcels) {
+    const edit = edits[parcel.parcelno];
+    library.update(parcel.parcelno, {
+      sale_price: edit?.sale_price ?? null,
+      sale_year: edit?.sale_year ?? null,
+      shares: edit?.shares || undefined,
+    });
+  }
 }
 
 function applyRecords(records, { asImport = false } = {}) {
@@ -1249,7 +1284,8 @@ async function loadFromServer() {
       return;
     }
     applyRecords(records);
-    await saveKey('parcels', library.parcels);
+    applyEdits();
+    await saveLocal('parcels', library.parcels);
     showLoaded();
     statusNode.textContent = '';
   } catch (error) {
@@ -1298,7 +1334,9 @@ async function useFile(file) {
       const saved = await fetchServerRecords();
       if (!saved) return;
       applyRecords(saved, { asImport: true });
-      showToast(summary.message || 'Saved to the server.');
+      applyEdits();
+      if (summary.importId != null) knownImportId = summary.importId;
+      showToast(summary.message || 'Saved to the server. Every device now sees this file.');
     } else {
       applyRecords(records, { asImport: true });
     }
@@ -1576,37 +1614,151 @@ function downloadCsv(filename, lines) {
   URL.revokeObjectURL(link.href);
 }
 
-const savedParcels = await loadKey('parcels');
-searches = (await loadKey('searches')) || [];
-changes = (await loadKey('changes')) || { gained: [], lost: [] };
-outreach = (await loadKey('outreach')) || {};
-links = (await loadKey('links')) || {};
-const buybox = (await loadKey('buybox')) || {};
-document.querySelector('#private').checked = Boolean(buybox.privateOnly);
-document.querySelector('#absentee').checked = Boolean(buybox.absentee);
-document.querySelector('#condos').checked = Boolean(buybox.skipCondos);
-document.querySelector('#below').checked = Boolean(buybox.below);
-document.querySelector('#waterfront').checked = Boolean(buybox.waterfront);
-document.querySelector('#min-acres').value = buybox.minAcres || '';
-document.querySelector('#max-acre').value = buybox.maxAcre || '';
-savedZoning = buybox.zoning || '';
-if (buybox.area && [buybox.area.south, buybox.area.west, buybox.area.north, buybox.area.east].every((value) => Number.isFinite(Number(value)))) {
-  area = {
-    south: Number(buybox.area.south),
-    west: Number(buybox.area.west),
-    north: Number(buybox.area.north),
-    east: Number(buybox.area.east),
-  };
+function setBuyBox(buybox = {}) {
+  document.querySelector('#private').checked = Boolean(buybox.privateOnly);
+  document.querySelector('#absentee').checked = Boolean(buybox.absentee);
+  document.querySelector('#condos').checked = Boolean(buybox.skipCondos);
+  document.querySelector('#below').checked = Boolean(buybox.below);
+  document.querySelector('#waterfront').checked = Boolean(buybox.waterfront);
+  document.querySelector('#min-acres').value = buybox.minAcres || '';
+  document.querySelector('#max-acre').value = buybox.maxAcre || '';
+  savedZoning = buybox.zoning || '';
+  const box = buybox.area;
+  area = box && [box.south, box.west, box.north, box.east].every((value) => Number.isFinite(Number(value)))
+    ? { south: Number(box.south), west: Number(box.west), north: Number(box.north), east: Number(box.east) }
+    : null;
+  syncDrawButton();
 }
-syncDrawButton();
+
+function hasContent(value) {
+  if (value == null) return false;
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === 'object') return Object.keys(value).length > 0;
+  return true;
+}
+
+function showSyncNote() {
+  const note = document.querySelector('#sync-note');
+  note.hidden = workspaceNode.hidden;
+  note.classList.toggle('is-shared', serverMode === 'in');
+  note.textContent = serverMode === 'in'
+    ? 'Synced. Every device that opens this site sees these parcels, contacts, notes, and sales.'
+    : 'These parcels are only in this browser. Add a PostgreSQL database to the Railway service and every device will see them.';
+}
+
+// Another device may have imported a file or saved a note; pull both in.
+async function syncFromServer() {
+  if (serverMode !== 'in' || syncing || document.hidden) return;
+  syncing = true;
+  try {
+    const next = await fetchShared();
+    const values = next.values || {};
+    const same = (key, current) => JSON.stringify(values[key] ?? null) === JSON.stringify(current ?? null);
+    let redraw = false;
+    if (Object.hasOwn(values, 'outreach') && !same('outreach', outreach)) {
+      outreach = values.outreach || {};
+      redraw = true;
+    }
+    if (Object.hasOwn(values, 'links') && !same('links', links)) {
+      links = values.links || {};
+      library.setLinks(links);
+      redraw = true;
+    }
+    if (Object.hasOwn(values, 'buybox') && document.activeElement?.closest?.('#search-form') == null) {
+      const current = await loadKey('buybox');
+      if (!same('buybox', current)) {
+        setBuyBox(values.buybox || {});
+        showArea();
+        redraw = true;
+      }
+    }
+    if (Object.hasOwn(values, 'searches') && !same('searches', searches)) {
+      searches = values.searches || [];
+      renderSearches();
+    }
+    if (Object.hasOwn(values, 'changes') && !same('changes', changes)) {
+      changes = values.changes || { gained: [], lost: [] };
+      renderChanges();
+    }
+    if (Object.hasOwn(values, 'edits') && !same('edits', edits)) {
+      edits = values.edits || {};
+      editsShared = true;
+      applyEdits();
+      redraw = true;
+    }
+    for (const key of Object.keys(values)) await saveLocal(key, values[key]);
+    if (next.importId !== knownImportId) {
+      knownImportId = next.importId;
+      await loadFromServer();
+    } else if (redraw && library.parcels.length) {
+      paintColors();
+      renderOwners();
+      indexFeatures();
+      if (map) drawVisible();
+    }
+  } catch {
+    // Offline for now; the next check tries again.
+  } finally {
+    syncing = false;
+  }
+}
+
 serverMode = await checkServer();
+let remote = null;
+if (serverMode === 'in') {
+  try {
+    remote = await fetchShared();
+  } catch {
+    remote = null;
+  }
+  shareWithServer(Boolean(remote), {
+    onError: () => showToast('This change is saved in this browser. The server did not take it, so other devices will see it after the next change.'),
+  });
+}
+
+async function startKey(key) {
+  const local = await loadKey(key);
+  if (!remote) return local;
+  if (Object.hasOwn(remote.values || {}, key)) {
+    await saveLocal(key, remote.values[key]);
+    return remote.values[key];
+  }
+  // The first device to connect shares what it already saved.
+  if (hasContent(local)) await pushShared(key, local).catch(() => {});
+  return local;
+}
+
+const savedParcels = await loadKey('parcels');
+searches = (await startKey('searches')) || [];
+changes = (await startKey('changes')) || { gained: [], lost: [] };
+outreach = (await startKey('outreach')) || {};
+links = (await startKey('links')) || {};
+setBuyBox((await startKey('buybox')) || {});
+if (remote && Object.hasOwn(remote.values || {}, 'edits')) {
+  edits = remote.values.edits || {};
+  editsShared = true;
+}
+knownImportId = remote?.importId ?? null;
 aiReady = serverMode === 'in' && await checkAi();
 showEmptyText();
 if (Array.isArray(savedParcels) && savedParcels.length) {
   library = createLibrary(savedParcels);
   library.setLinks(links);
+  applyEdits();
   showLoaded();
 } else {
   showWorkspace(false);
 }
 if (serverMode === 'in') await loadFromServer();
+if (remote && !editsShared) {
+  editsShared = true;
+  edits = collectEdits();
+  if (hasContent(edits)) await pushShared('edits', edits).catch(() => {});
+}
+showSyncNote();
+if (serverMode === 'in') {
+  setInterval(syncFromServer, 60000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) syncFromServer();
+  });
+}

@@ -23,6 +23,15 @@ model Import {
   @@map("imports")
 }
 
+/// Page settings every device shares: contacts, links, sales, buy box, recent searches.
+model SharedState {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("shared_state")
+}
+
 /// Money is in cents. Field sources are in docs/FIELD_MAP.md; a field with no source stays null.
 model Parcel {
   id                    Int       @id @default(autoincrement())

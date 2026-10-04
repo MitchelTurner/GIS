@@ -8,7 +8,7 @@
   <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
   <link rel="icon" href="/icon128.png" type="image/png">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=13">
+  <link rel="stylesheet" href="/styles.css?v=14">
 </head>
 <body>
   <header class="top">
@@ -37,6 +37,7 @@
     </section>
     <p id="status" class="fine"></p>
     <p id="toast" class="toast" role="status" hidden></p>
+    <p id="sync-note" class="sync-note" hidden></p>
 
     <section id="workspace" hidden>
       <form id="search-form" class="search-bar">
@@ -113,7 +114,7 @@
     <span class="peek-go">Details</span>
   </button>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=13"></script>
+  <script type="module" src="/app.js?v=14"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));
