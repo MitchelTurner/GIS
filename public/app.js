@@ -1,4 +1,4 @@
-import { createLibrary, recordsFromText } from '/lib/library.js';
+import { createLibrary, featuresFromParcels, recordsFromText } from '/lib/library.js';
 import { OWNER_COLORS, isCondo, neighborBenchmarks, parties, perAcre, placesDiffer } from '/lib/ownership.js';
 import { fetchShared, loadKey, pushShared, saveKey, saveLocal, shareWithServer } from './persist.js';
 
@@ -54,6 +54,7 @@ let aiReady = false;
 let edits = {};
 let editsShared = false;
 let knownImportId = null;
+let serverParcels = 0;
 let syncing = false;
 let toastTimer = null;
 const askAllNode = document.querySelector('#ask-all');
@@ -1272,14 +1273,33 @@ async function fetchServerRecords() {
   return recordsFromText(await res.text(), 'server.geojson');
 }
 
+// A browser that loaded parcels before the server had a database sends its copy up.
+async function uploadSavedParcels() {
+  statusNode.textContent = `Sending the ${library.parcels.length.toLocaleString()} parcels saved in this browser to the server…`;
+  const blob = new Blob([JSON.stringify(featuresFromParcels(library.parcels))], { type: 'application/geo+json' });
+  const form = new FormData();
+  form.append('file', blob, 'saved-in-browser.geojson');
+  const res = await fetch('/api/imports', { method: 'POST', body: form, credentials: 'same-origin' });
+  const summary = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(summary.message || 'The server did not take the saved parcels.');
+  if (summary.importId != null) knownImportId = summary.importId;
+  await saveEdits();
+  return summary;
+}
+
 async function loadFromServer() {
   statusNode.textContent = 'Loading parcels from the server…';
   try {
-    const records = await fetchServerRecords();
+    let records = await fetchServerRecords();
+    if (!records.length && library.parcels.length) {
+      const summary = await uploadSavedParcels();
+      records = await fetchServerRecords();
+      showToast(`${summary.message || 'Saved to the server.'} Every device now sees them.`);
+    }
+    serverParcels = records.length;
     if (!records.length) {
-      statusNode.textContent = library.parcels.length
-        ? 'The server has no parcels yet. Drop the .geojson again to save it for every browser.'
-        : '';
+      statusNode.textContent = '';
+      showEmptyText();
       showLoaded();
       return;
     }
@@ -1291,6 +1311,7 @@ async function loadFromServer() {
   } catch (error) {
     statusNode.textContent = `${error.message} The copy saved in this browser is still here.`;
   }
+  showSyncNote();
 }
 
 async function checkServer() {
@@ -1335,6 +1356,7 @@ async function useFile(file) {
       if (!saved) return;
       applyRecords(saved, { asImport: true });
       applyEdits();
+      serverParcels = saved.length;
       if (summary.importId != null) knownImportId = summary.importId;
       showToast(summary.message || 'Saved to the server. Every device now sees this file.');
     } else {
@@ -1370,8 +1392,8 @@ async function useFile(file) {
 
 function showEmptyText() {
   document.querySelector('#empty-lede').innerHTML = serverMode === 'in'
-    ? 'Drop the <strong>.geojson</strong> from the extension. The server keeps it, so every browser sees the same parcels, and a newer file marks owner changes.'
-    : 'Drop the <strong>.geojson</strong> from the extension. The map draws every parcel, and this browser keeps the file for the next search. The spreadsheet has the same owners and no outlines.';
+    ? 'The server has no parcels yet. Drop the <strong>.geojson</strong> from the extension here, or open this site on the computer that already shows them. The server keeps them, so every device sees the same parcels.'
+    : 'Drop the <strong>.geojson</strong> from the extension. This site has no database yet, so only this browser keeps the file and other devices start empty. Add a PostgreSQL database to the Railway service so every device shares it.';
 }
 
 document.querySelector('#drop').addEventListener('click', () => fileInput.click());
@@ -1639,11 +1661,16 @@ function hasContent(value) {
 
 function showSyncNote() {
   const note = document.querySelector('#sync-note');
+  const synced = serverMode === 'in' && serverParcels > 0;
   note.hidden = workspaceNode.hidden;
-  note.classList.toggle('is-shared', serverMode === 'in');
-  note.textContent = serverMode === 'in'
-    ? 'Synced. Every device that opens this site sees these parcels, contacts, notes, and sales.'
-    : 'These parcels are only in this browser. Add a PostgreSQL database to the Railway service and every device will see them.';
+  note.classList.toggle('is-shared', synced);
+  if (synced) {
+    note.textContent = `Synced. Every device that opens this site sees these ${serverParcels.toLocaleString()} parcels, contacts, notes, and sales.`;
+  } else if (serverMode === 'in') {
+    note.textContent = 'These parcels have not reached the server yet. Drop the .geojson again on this device and every device will see them.';
+  } else {
+    note.textContent = 'These parcels are only in this browser. This site has no database, so other devices start empty. Add a PostgreSQL database to the Railway service and redeploy.';
+  }
 }
 
 // Another device may have imported a file or saved a note; pull both in.
