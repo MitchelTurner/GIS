@@ -1,5 +1,5 @@
 import { createLibrary, recordsFromText } from '/lib/library.js';
-import { OWNER_COLORS, parties, perAcre } from '/lib/ownership.js';
+import { OWNER_COLORS, isCondo, neighborBenchmarks, parties, perAcre, placesDiffer } from '/lib/ownership.js';
 import { loadKey, saveKey } from './persist.js';
 
 const emptyNode = document.querySelector('#empty');
@@ -38,6 +38,13 @@ const ownerColorMap = new Map();
 let importToken = 0;
 let pendingFileKey = '';
 let openOwnerKey = '';
+let neighborMap = new Map();
+let area = null;
+let areaLayer = null;
+let draftLayer = null;
+let drawMode = false;
+let dragStart = null;
+let savedZoning = '';
 
 function pct(value) {
   return `${(Number(value) * 100).toFixed(1)}%`;
@@ -58,6 +65,7 @@ function showWorkspace(hasParcels) {
   replaceNode.hidden = !hasParcels;
   document.querySelector('#clear').hidden = !hasParcels;
   document.querySelector('#export').hidden = !hasParcels;
+  document.querySelector('#labels').hidden = !hasParcels;
 }
 
 function rateLabel(value, size) {
@@ -140,21 +148,76 @@ function primaryOwnerKey(parcel) {
   return party ? library.resolve(party.key) : '';
 }
 
+function refreshNeighbors() {
+  neighborMap = neighborBenchmarks(library.parcels);
+}
+
+function boxActive() {
+  return document.querySelector('#private').checked
+    || document.querySelector('#absentee').checked
+    || document.querySelector('#condos').checked
+    || document.querySelector('#below').checked
+    || document.querySelector('#waterfront').checked
+    || document.querySelector('#zoning').value
+    || Number(String(document.querySelector('#min-acres').value || '').replace(/[$,]/g, '')) > 0
+    || Number(String(document.querySelector('#max-acre').value || '').replace(/[$,]/g, '')) > 0
+    || area;
+}
+
 function parcelPasses(parcel) {
   if (document.querySelector('#private').checked && primaryParty(parcel)?.publicOwner) return false;
+  if (document.querySelector('#absentee').checked && !placesDiffer(parcel.mailing_city, parcel.loc_city)) return false;
+  if (document.querySelector('#condos').checked && isCondo(parcel)) return false;
+  if (document.querySelector('#waterfront').checked && !(Number(parcel.waterfront) > 0)) return false;
+  if (document.querySelector('#below').checked && !neighborMap.get(parcel.parcelno)?.below) return false;
   const zoning = document.querySelector('#zoning').value;
   if (zoning && String(parcel.zoning || '') !== zoning) return false;
+  const minAcres = Number(String(document.querySelector('#min-acres').value || '').replace(/[$,]/g, ''));
+  if (Number.isFinite(minAcres) && minAcres > 0 && !(Number(parcel.acres) >= minAcres)) return false;
   const max = Number(String(document.querySelector('#max-acre').value || '').replace(/[$,]/g, ''));
   if (Number.isFinite(max) && max > 0) {
     const rate = perAcre(parcel.total_value, parcel.acres);
     if (rate == null || rate > max) return false;
   }
+  if (area) {
+    const box = bboxOf(parcel.geometry);
+    const bounds = L.latLngBounds([area.south, area.west], [area.north, area.east]);
+    if (!box || !intersects(box, bounds)) return false;
+  }
   return true;
+}
+
+function matchedLibrary() {
+  const rows = library.parcels.filter(parcelPasses);
+  const view = rows.length ? createLibrary(rows) : createLibrary();
+  view.setLinks(links);
+  return view;
+}
+
+async function saveBuyBox() {
+  await saveKey('buybox', {
+    privateOnly: document.querySelector('#private').checked,
+    absentee: document.querySelector('#absentee').checked,
+    skipCondos: document.querySelector('#condos').checked,
+    below: document.querySelector('#below').checked,
+    waterfront: document.querySelector('#waterfront').checked,
+    zoning: document.querySelector('#zoning').value,
+    minAcres: document.querySelector('#min-acres').value,
+    maxAcre: document.querySelector('#max-acre').value,
+    area,
+  });
+}
+
+function applyBuyBox() {
+  saveBuyBox();
+  renderOwners();
+  if (map) drawVisible();
 }
 
 function fillZoning() {
   const select = document.querySelector('#zoning');
-  const current = select.value;
+  const current = savedZoning || select.value;
+  savedZoning = '';
   const zones = [...new Set(library.parcels.map((parcel) => parcel.zoning).filter(Boolean))]
     .sort((a, b) => String(a).localeCompare(String(b)));
   select.replaceChildren(new Option('All zoning', ''));
@@ -165,20 +228,24 @@ function fillZoning() {
 function renderOwners() {
   paintColors();
   fillZoning();
-  const everyone = library.ownerReport({ privateOnly: false, limit: 1 });
-  const report = library.ownerReport({ privateOnly: document.querySelector('#private').checked, limit: 40 });
+  const narrowed = boxActive();
+  const source = narrowed ? matchedLibrary() : library;
+  const report = source.ownerReport({ privateOnly: false, limit: 40 });
+  const fileReport = library.ownerReport({ privateOnly: false, limit: 1 });
   const missingValue = !library.parcels.some((parcel) => Number(parcel.total_value) > 0);
   const stats = statStrip([
-    ['Parcels', everyone.parcels.toLocaleString()],
-    ['Acres', everyone.acres.toFixed(1)],
-    ['Owners', everyone.owners.toLocaleString()],
-    ['Assessed', everyone.value ? money(everyone.value) : '—'],
+    ['Parcels', (narrowed ? report.parcels : fileReport.parcels).toLocaleString()],
+    ['Acres', (narrowed ? report.acres : fileReport.acres).toFixed(1)],
+    ['Owners', (narrowed ? report.owners : fileReport.owners).toLocaleString()],
+    ['Assessed', (narrowed ? report.value : fileReport.value) ? money(narrowed ? report.value : fileReport.value) : '—'],
   ]);
   const caption = document.createElement('p');
   caption.className = 'fine';
   const shown = report.shown.length;
   const listNote = report.owners > shown ? `Showing the ${shown} largest. ` : '';
-  caption.textContent = `${listNote}Acres is that owner's share of the file. Click a name for the mailing address.`;
+  caption.textContent = narrowed
+    ? `${listNote}Share is of the acres that match the buy box.`
+    : `${listNote}Acres is that owner's share of the file. Click a name for the mailing address.`;
   const table = document.createElement('table');
   const head = document.createElement('tr');
   for (const label of ['Owner', 'Acres', 'Assessed']) {
@@ -209,7 +276,7 @@ function renderOwners() {
     land.textContent = acres(owner.acres);
     const share = document.createElement('span');
     share.className = 'fine';
-    share.textContent = `${pct(owner.acreShare)} of the file`;
+    share.textContent = narrowed ? `${pct(owner.acreShare)} of this list` : `${pct(owner.acreShare)} of the file`;
     land.append(share);
     const value = document.createElement('td');
     value.className = 'num';
@@ -292,6 +359,13 @@ async function searchParcels(query) {
   refreshStyles();
   zoomTo(focusIds);
   await remember('search', query);
+}
+
+function neighborLine(parcelno) {
+  const bench = neighborMap.get(parcelno);
+  if (!bench) return '';
+  const comparison = `${money(bench.rate)}/ac, nearby median ${money(bench.median)}/ac`;
+  return bench.below ? `${comparison}, below neighbors` : comparison;
 }
 
 function styleFor(feature) {
@@ -407,7 +481,7 @@ function drawVisible() {
   const legend = document.querySelector('#map-legend');
   if (!mapNode.hidden) {
     legend.hidden = false;
-    legend.textContent = `${visible.length.toLocaleString()} parcels in this view. Each color is one of the largest owners. Zoning and max $/acre filter the map. Private owners hides public land in the list too.`;
+    legend.textContent = `${visible.length.toLocaleString()} parcels in this view. Each color is one of the largest owners. The buy box filters this map and the owner list.`;
   }
   const note = document.querySelector('#map-note');
   const anyGeometry = indexedFeatures.length > 0;
@@ -434,6 +508,8 @@ function showMap({ fit = true } = {}) {
       map.remove();
       map = null;
       parcelLayer = null;
+      areaLayer = null;
+      draftLayer = null;
     }
     return;
   }
@@ -450,6 +526,28 @@ function showMap({ fit = true } = {}) {
       clearTimeout(moveTimer);
       moveTimer = setTimeout(drawVisible, 120);
     });
+    map.on('mousedown', (event) => {
+      if (!drawMode) return;
+      L.DomEvent.stop(event.originalEvent);
+      dragStart = event.latlng;
+      if (draftLayer) map.removeLayer(draftLayer);
+      draftLayer = L.rectangle(L.latLngBounds(event.latlng, event.latlng), {
+        color: '#b8613a',
+        weight: 2,
+        dashArray: '4 4',
+        fillOpacity: 0.08,
+        interactive: false,
+      }).addTo(map);
+    });
+    map.on('mousemove', (event) => {
+      if (!drawMode || !dragStart || !draftLayer) return;
+      draftLayer.setBounds(L.latLngBounds(dragStart, event.latlng));
+    });
+    map.on('mouseup', (event) => {
+      if (!drawMode || !dragStart) return;
+      L.DomEvent.stop(event.originalEvent);
+      finishDraw(event.latlng);
+    });
   }
   const place = () => {
     map.invalidateSize();
@@ -460,10 +558,85 @@ function showMap({ fit = true } = {}) {
       }
       if (bounds.isValid()) map.fitBounds(bounds, { padding: [16, 16] });
     }
+    showArea();
     drawVisible();
   };
   requestAnimationFrame(place);
   setTimeout(place, 250);
+}
+
+function syncDrawButton() {
+  const button = document.querySelector('#draw');
+  button.textContent = area ? 'Clear area' : 'Draw an area';
+  mapNode.classList.toggle('drawing', drawMode);
+}
+
+function showArea() {
+  if (!map) return;
+  if (areaLayer) {
+    map.removeLayer(areaLayer);
+    areaLayer = null;
+  }
+  if (!area) return;
+  areaLayer = L.rectangle([[area.south, area.west], [area.north, area.east]], {
+    color: '#b8613a',
+    weight: 2,
+    fillColor: '#b8613a',
+    fillOpacity: 0.12,
+    interactive: false,
+  }).addTo(map);
+}
+
+function finishDraw(end) {
+  const south = Math.min(dragStart.lat, end.lat);
+  const north = Math.max(dragStart.lat, end.lat);
+  const west = Math.min(dragStart.lng, end.lng);
+  const east = Math.max(dragStart.lng, end.lng);
+  dragStart = null;
+  if (draftLayer && map) {
+    map.removeLayer(draftLayer);
+    draftLayer = null;
+  }
+  drawMode = false;
+  if (map) map.dragging.enable();
+  if ((north - south) < 0.0001 && (east - west) < 0.0001) {
+    syncDrawButton();
+    statusNode.textContent = 'Drag a larger area.';
+    return;
+  }
+  area = { south, west, north, east };
+  showArea();
+  syncDrawButton();
+  statusNode.textContent = '';
+  applyBuyBox();
+}
+
+function beginDraw() {
+  if (!map) {
+    statusNode.textContent = 'Drop the .geojson to draw an area on the map.';
+    return;
+  }
+  drawMode = true;
+  dragStart = null;
+  map.dragging.disable();
+  syncDrawButton();
+  statusNode.textContent = 'Drag a rectangle on the map.';
+}
+
+function clearDrawnArea() {
+  area = null;
+  drawMode = false;
+  dragStart = null;
+  if (draftLayer && map) {
+    map.removeLayer(draftLayer);
+    draftLayer = null;
+  }
+  if (areaLayer && map) {
+    map.removeLayer(areaLayer);
+    areaLayer = null;
+  }
+  if (map) map.dragging.enable();
+  syncDrawButton();
 }
 
 async function showParcel(parcelno) {
@@ -500,15 +673,26 @@ async function showParcel(parcelno) {
     ['Zoning', subject.zoning],
     ['Use', subject.propUse],
     ['Built', subject.yearBuilt || ''],
+    ['Waterfront', Number(subject.waterfront) > 0 ? 'Yes' : ''],
+    ['Deed', subject.deedDate || ''],
   ]);
   const saleText = subject.salePrice != null
     ? `${money(subject.salePrice)}${subject.saleYear ? ` in ${subject.saleYear}` : ''}${rateLabel(subject.salePrice, subject.acres) ? ` · ${rateLabel(subject.salePrice, subject.acres)}` : ''}`
     : '';
+  const historyText = (subject.valueHistory || []).map((row) => `${row.year} ${money(row.amount)}`).join(' · ');
+  const appraised = subject.appraisedValue > 0
+    ? money(subject.appraisedValue)
+    : (subject.appraisedValue == null && subject.totalValue > 0 ? money(subject.totalValue) : '');
   addFacts(detailNode, 'Value', [
-    ['Assessed', subject.totalValue > 0 ? money(subject.totalValue) : ''],
+    ['Appraised', appraised],
+    ['Taxable', subject.taxableValue == null ? '' : money(subject.taxableValue)],
+    ['Exemption', subject.exemption || ''],
+    ['Exempt amount', subject.exemptionValue > 0 ? money(subject.exemptionValue) : ''],
     ['Per acre', rateLabel(subject.totalValue, subject.acres)],
+    ['Nearby', neighborLine(subject.parcelno)],
     ['Land', subject.landValue > 0 ? money(subject.landValue) : ''],
     ['Improvements', subject.improvementValue > 0 ? money(subject.improvementValue) : ''],
+    ['History', historyText],
     ['Sale', saleText],
   ]);
   addLabel(detailNode, 'Record a sale');
@@ -596,6 +780,28 @@ async function showOwner(ownerKey) {
     mail.className = 'mail';
     mail.textContent = owner.mailingLine;
     detailNode.append(mail);
+    const copy = document.createElement('button');
+    copy.type = 'button';
+    copy.className = 'ghost';
+    copy.textContent = 'Copy address';
+    copy.addEventListener('click', async () => {
+      const text = [owner.name, owner.mailingLine].filter(Boolean).join('\n');
+      try {
+        await navigator.clipboard.writeText(text);
+        statusNode.textContent = 'Address copied.';
+      } catch {
+        statusNode.textContent = text;
+      }
+    });
+    detailNode.append(copy);
+  }
+  if (owner.absentee && owner.mailingCity) {
+    const away = document.createElement('p');
+    away.className = 'fine';
+    away.textContent = owner.propertyTown
+      ? `Mail goes to ${owner.mailingCity}. The land is in ${owner.propertyTown}.`
+      : `Mail goes to ${owner.mailingCity}.`;
+    detailNode.append(away);
   }
   addFacts(detailNode, 'Holdings', [
     ['Parcels', owner.parcelCount.toLocaleString()],
@@ -690,7 +896,7 @@ async function showOwner(ownerKey) {
   wrap.className = 'sheet-scroll';
   const table = document.createElement('table');
   const head = document.createElement('tr');
-  for (const label of ['Parcel', 'Where', 'Acres', 'Assessed']) {
+  for (const label of ['Parcel', 'Where', 'Acres', 'Assessed', 'Water']) {
     const cell = document.createElement('th');
     cell.textContent = label;
     if (label === 'Acres' || label === 'Assessed') cell.className = 'num';
@@ -705,10 +911,11 @@ async function showOwner(ownerKey) {
       [parcel.location, parcel.locCity].filter(Boolean).join(', '),
       acres(parcel.acres),
       money(parcel.totalValue),
+      Number(parcel.waterfront) > 0 ? 'Yes' : '',
     ];
     cells.forEach((value, index) => {
       const cell = document.createElement('td');
-      if (index >= 2) cell.className = 'num';
+      if (index === 2 || index === 3) cell.className = 'num';
       cell.textContent = value;
       row.append(cell);
     });
@@ -854,10 +1061,12 @@ async function useFile(file) {
     explanationNode.textContent = '';
     resultsNode.textContent = '';
     document.querySelector('#results-title').hidden = true;
+    refreshNeighbors();
     showWorkspace(true);
     showMap();
     renderOwners();
     renderChanges();
+    await saveBuyBox();
     statusNode.textContent = '';
     fileInput.value = '';
   } catch (error) {
@@ -892,15 +1101,57 @@ document.querySelector('#search-form').addEventListener('submit', (event) => {
   event.preventDefault();
   searchParcels(document.querySelector('#q').value);
 });
-document.querySelector('#private').addEventListener('change', () => {
-  renderOwners();
-  if (map) drawVisible();
+for (const id of ['private', 'absentee', 'condos', 'below', 'waterfront', 'zoning', 'min-acres', 'max-acre']) {
+  document.querySelector(`#${id}`).addEventListener('change', applyBuyBox);
+}
+document.querySelector('#draw').addEventListener('click', () => {
+  if (area) {
+    clearDrawnArea();
+    statusNode.textContent = '';
+    applyBuyBox();
+    return;
+  }
+  if (drawMode) {
+    drawMode = false;
+    dragStart = null;
+    if (draftLayer && map) {
+      map.removeLayer(draftLayer);
+      draftLayer = null;
+    }
+    if (map) map.dragging.enable();
+    syncDrawButton();
+    statusNode.textContent = '';
+    return;
+  }
+  beginDraw();
 });
-document.querySelector('#zoning').addEventListener('change', () => {
-  if (map) drawVisible();
-});
-document.querySelector('#max-acre').addEventListener('change', () => {
-  if (map) drawVisible();
+document.querySelector('#labels').addEventListener('click', () => {
+  const source = boxActive() ? matchedLibrary() : library;
+  const owners = source.ownerReport({ privateOnly: false, limit: 10000 }).shown;
+  if (!owners.length) {
+    statusNode.textContent = 'No owners match the buy box.';
+    return;
+  }
+  const lines = [[
+    'Name', 'Street', 'City', 'State', 'Zip', 'Parcels', 'Acres', 'Assessed', 'Waterfront', 'Absentee',
+  ].join(',')];
+  for (const owner of owners) {
+    const detail = source.ownerDetail(owner.ownerKey);
+    lines.push([
+      owner.name,
+      detail?.mailingStreet || '',
+      detail?.mailingCity || '',
+      detail?.mailingState || '',
+      detail?.mailingZip || '',
+      owner.parcelCount,
+      owner.acres == null ? '' : Number(owner.acres).toFixed(2),
+      owner.value == null ? '' : Math.round(owner.value),
+      detail?.parcelList.some((parcel) => Number(parcel.waterfront) > 0) ? 'Yes' : '',
+      detail?.absentee ? 'Yes' : '',
+    ].map(csvCell).join(','));
+  }
+  downloadCsv('ketchikan-labels.csv', lines);
+  statusNode.textContent = '';
 });
 document.querySelector('#export').addEventListener('click', () => {
   const rows = library.ownerReport({ limit: 10000 }).shown
@@ -911,12 +1162,16 @@ document.querySelector('#export').addEventListener('click', () => {
     return;
   }
   const lines = [[
-    'Name', 'Mailing', 'Status', 'Note', 'Parcels', 'Acres', 'Assessed',
+    'Name', 'Street', 'City', 'State', 'Zip', 'Mailing', 'Status', 'Note', 'Parcels', 'Acres', 'Assessed',
   ].join(',')];
   for (const row of rows) {
     const detail = library.ownerDetail(row.owner.ownerKey);
     lines.push([
       row.owner.name,
+      detail?.mailingStreet || '',
+      detail?.mailingCity || '',
+      detail?.mailingState || '',
+      detail?.mailingZip || '',
       detail?.mailingLine || '',
       CONTACT_STATUS[row.contact.status] || '',
       row.contact.note || '',
@@ -925,12 +1180,7 @@ document.querySelector('#export').addEventListener('click', () => {
       row.owner.value == null ? '' : Math.round(row.owner.value),
     ].map(csvCell).join(','));
   }
-  const blob = new Blob([`${lines.join('\n')}\n`], { type: 'text/csv' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'ketchikan-contacts.csv';
-  link.click();
-  URL.revokeObjectURL(link.href);
+  downloadCsv('ketchikan-contacts.csv', lines);
   statusNode.textContent = '';
 });
 document.querySelector('#clear').addEventListener('click', async () => {
@@ -947,11 +1197,30 @@ document.querySelector('#clear').addEventListener('click', async () => {
   await saveKey('changes', changes);
   await saveKey('outreach', outreach);
   await saveKey('links', links);
+  neighborMap = new Map();
+  clearDrawnArea();
+  savedZoning = '';
   document.querySelector('#detail-title').textContent = 'Parcel';
   document.querySelector('#map-legend').hidden = true;
   document.querySelector('#zoning').replaceChildren(new Option('All zoning', ''));
   document.querySelector('#max-acre').value = '';
+  document.querySelector('#min-acres').value = '';
   document.querySelector('#private').checked = false;
+  document.querySelector('#absentee').checked = false;
+  document.querySelector('#condos').checked = false;
+  document.querySelector('#below').checked = false;
+  document.querySelector('#waterfront').checked = false;
+  await saveKey('buybox', {
+    privateOnly: false,
+    absentee: false,
+    skipCondos: false,
+    below: false,
+    waterfront: false,
+    zoning: '',
+    minAcres: '',
+    maxAcre: '',
+    area: null,
+  });
   ownersNode.replaceChildren();
   resultsNode.replaceChildren();
   document.querySelector('#results-title').hidden = true;
@@ -996,14 +1265,44 @@ function csvCell(value) {
   return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
+function downloadCsv(filename, lines) {
+  const blob = new Blob([`${lines.join('\n')}\n`], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+}
+
 const savedParcels = await loadKey('parcels');
 searches = (await loadKey('searches')) || [];
 changes = (await loadKey('changes')) || { gained: [], lost: [] };
 outreach = (await loadKey('outreach')) || {};
 links = (await loadKey('links')) || {};
+const buybox = (await loadKey('buybox')) || {};
+document.querySelector('#private').checked = Boolean(buybox.privateOnly);
+document.querySelector('#absentee').checked = Boolean(buybox.absentee);
+document.querySelector('#condos').checked = Boolean(buybox.skipCondos);
+document.querySelector('#below').checked = Boolean(buybox.below);
+document.querySelector('#waterfront').checked = Boolean(buybox.waterfront);
+document.querySelector('#min-acres').value = buybox.minAcres || '';
+document.querySelector('#max-acre').value = buybox.maxAcre || '';
+savedZoning = buybox.zoning || '';
+if (buybox.area && [buybox.area.south, buybox.area.west, buybox.area.north, buybox.area.east].every((value) => Number.isFinite(Number(value)))) {
+  area = {
+    south: Number(buybox.area.south),
+    west: Number(buybox.area.west),
+    north: Number(buybox.area.north),
+    east: Number(buybox.area.east),
+  };
+}
+syncDrawButton();
 if (Array.isArray(savedParcels) && savedParcels.length) {
   library = createLibrary(savedParcels);
   library.setLinks(links);
+  refreshNeighbors();
   showWorkspace(true);
   showMap();
   renderOwners();

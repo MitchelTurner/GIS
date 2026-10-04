@@ -7,7 +7,7 @@
   <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
   <link rel="icon" href="/icon128.png" type="image/png">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=6">
+  <link rel="stylesheet" href="/styles.css?v=7">
 </head>
 <body>
   <header class="top">
@@ -41,12 +41,21 @@
         <input id="q" type="search" placeholder="Owner, town, parcel, or street" aria-label="Search parcels">
         <button type="submit">Search</button>
         <label class="private"><input id="private" type="checkbox"> Private owners only</label>
+        <label class="private"><input id="absentee" type="checkbox"> Mail goes somewhere else</label>
+        <label class="private"><input id="condos" type="checkbox"> Skip condos</label>
+        <label class="private"><input id="below" type="checkbox"> Below neighbors</label>
+        <label class="private"><input id="waterfront" type="checkbox"> Waterfront</label>
         <label class="filter">Zoning
           <select id="zoning" aria-label="Zoning"><option value="">All zoning</option></select>
+        </label>
+        <label class="filter">Min acres
+          <input id="min-acres" inputmode="decimal" placeholder="Any" aria-label="Minimum acres">
         </label>
         <label class="filter">Max $/acre
           <input id="max-acre" inputmode="decimal" placeholder="Any" aria-label="Maximum dollars per acre">
         </label>
+        <button id="draw" class="ghost" type="button">Draw an area</button>
+        <button id="labels" class="ghost" type="button" hidden>Export labels</button>
       </form>
       <div id="map" hidden></div>
       <p id="map-legend" class="fine" hidden></p>
@@ -78,12 +87,12 @@
     </section>
   </main>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=6"></script>
+  <script type="module" src="/app.js?v=7"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));
       if (!bytes) return;
-      document.getElementById('size').textContent = `Version 1.3.4 · ${(bytes / 1e6).toFixed(1)} MB`;
+      document.getElementById('size').textContent = `Version 1.3.5 · ${(bytes / 1e6).toFixed(1)} MB`;
     }).catch(() => {});
   </script>
 </body>

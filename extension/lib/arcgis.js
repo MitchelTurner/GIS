@@ -228,7 +228,9 @@ const CONTACT_ORDER = [
   'owner_name', 'owner', 'ownernme1', 'owner_2', 'ownernme2',
   'address', 'city', 'state', 'zip', 'zipcode', 'address_full', 'mail_addr',
   'location', 'loc_city', 'subname',
-  'land_acres', 'land_sq_ft', 'total_appr', 'total_asse', 'apr_land_v', 'asd_land_v', 'apr_imps', 'asd_imp_va', 'zoning_typ', 'year_built', 'propuse',
+  'land_acres', 'land_sq_ft', 'total_appr', 'total_asse', 'total_exem', 'exempt_1', 'exempt_2', 'exempt_3', 'apr_land_v', 'asd_land_v', 'apr_imps', 'asd_imp_va',
+  'water_fron', 'd_ref_date', 'zoning_typ', 'year_built', 'propuse',
+  'asse_year1', 'total_apr1', 'asse_year2', 'total_apr2', 'asse_year3', 'total_apr3', 'asse_year4', 'total_apr4', 'asse_year5', 'total_apr5',
 ];
 
 const CONTACT_EXACT = new Set(CONTACT_ORDER);

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { explainComps } from '../lib/comps-ai.js';
-import { geometryAcres, isPublicOwner, ownerKey, ownershipChanges, parties, rankComps, summarizeOwners } from '../lib/ownership.js';
+import { geometryAcres, isCondo, isPublicOwner, neighborBenchmarks, ownerKey, ownershipChanges, parties, placesDiffer, rankComps, summarizeOwners } from '../lib/ownership.js';
 import { compsFor, getParcel, importRecords, listSearches, openDatabase, ownerReport, searchParcels, updateParcel } from '../lib/parcels-db.js';
 
 test('two names on a parcel split the land equally', () => {
@@ -25,6 +25,38 @@ test('two names on a parcel split the land equally', () => {
   assert.equal(ada.acres, 15);
   assert.equal(ada.acreShare, 0.75);
   assert.equal(ben.acreShare, 0.25);
+});
+
+test('mail in another city, a condo, and a rate under the nearby median', () => {
+  assert.equal(placesDiffer('Ketchikan', 'Seattle'), true);
+  assert.equal(placesDiffer('Ketchikan', 'ketchikan'), false);
+  assert.equal(placesDiffer('Ketchikan', 'Ketchikan Gateway'), false);
+  assert.equal(placesDiffer('', 'Seattle'), false);
+  assert.equal(isCondo({ prop_use: 'CONDO' }), true);
+  assert.equal(isCondo({ prop_use: 'RES' }), false);
+  const parcels = [];
+  for (let index = 0; index < 5; index += 1) {
+    parcels.push({
+      parcelno: `e${index}`,
+      zoning: 'R',
+      total_value: 100000,
+      acres: 1,
+      lat: 55.34,
+      lon: -131.65,
+    });
+  }
+  parcels.push({
+    parcelno: 'cheap',
+    zoning: 'R',
+    total_value: 10000,
+    acres: 1,
+    lat: 55.341,
+    lon: -131.651,
+  });
+  const bench = neighborBenchmarks(parcels);
+  assert.equal(bench.get('cheap').below, true);
+  assert.equal(bench.get('e0').below, false);
+  assert.ok(bench.get('cheap').median > bench.get('cheap').rate);
 });
 
 test('a polygon has acres and a larger one has more', () => {

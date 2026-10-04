@@ -87,6 +87,12 @@ test('contact fields are the owner, town, mailing address, size, and value', () 
   assert.equal(contactField(field('Apr_Land_V')), true);
   assert.equal(contactField(field('Asd_Land_V')), true);
   assert.equal(contactField(field('Asd_Imp_Va')), true);
+  assert.equal(contactField(field('Water_Fron')), true);
+  assert.equal(contactField(field('D_Ref_Date')), true);
+  assert.equal(contactField(field('Total_Exem')), true);
+  assert.equal(contactField(field('Exempt_2')), true);
+  assert.equal(contactField(field('Asse_Year1')), true);
+  assert.equal(contactField(field('Total_Apr1')), true);
   assert.equal(contactField(field('Zoning_Typ')), true);
   assert.equal(contactField(field('Owner_1_1')), false);
   assert.equal(contactField(field('OBJECTID')), false);

@@ -133,6 +133,52 @@ test('a zero appraised column does not hide the assessed amount', () => {
   assert.equal(unknown.ownerReport().shown[0].value, null);
 });
 
+test('appraised, taxable, exemption, waterfront, and assessment history stay distinct', () => {
+  const library = createLibrary([
+    feature('1', 'Ada Lovelace', 2, 111100, 'R', null, 'Ward Cove', {
+      Total_Asse: 0,
+      Total_Exem: 111100,
+      Exempt_1: 'SENIOR',
+      Exempt_2: 'NONE',
+      Water_Fron: 155,
+      D_Ref_Date: '24-AUG-84',
+      Asse_Year1: 2026,
+      Total_Apr1: 111100,
+      Asse_Year2: 2025,
+      Total_Apr2: 100000,
+      Address_full: '1 Pine St',
+      CITY: 'Seattle',
+      State: 'WA',
+      ZIP: '98101',
+      Loc_City: 'Ketchikan',
+    }),
+  ]);
+  const parcel = library.parcels[0];
+  assert.equal(parcel.appraised_value, 111100);
+  assert.equal(parcel.taxable_value, 0);
+  assert.equal(parcel.exemption, 'SENIOR');
+  assert.equal(parcel.exemption_value, 111100);
+  assert.equal(parcel.total_value, 111100);
+  assert.equal(parcel.waterfront, 155);
+  assert.equal(parcel.deed_date, '24-AUG-84');
+  assert.deepEqual(parcel.value_history, [
+    { year: 2025, amount: 100000 },
+    { year: 2026, amount: 111100 },
+  ]);
+  const owner = library.ownerDetail(library.ownerReport().shown[0].ownerKey);
+  assert.equal(owner.absentee, true);
+  assert.equal(owner.mailingStreet, '1 Pine St');
+  assert.equal(owner.mailingCity, 'Seattle');
+  assert.equal(owner.mailingState, 'WA');
+  assert.equal(owner.mailingZip, '98101');
+  assert.equal(owner.propertyTown, 'Ketchikan');
+  const view = library.comps('1').subject;
+  assert.equal(view.appraisedValue, 111100);
+  assert.equal(view.taxableValue, 0);
+  assert.equal(view.deedDate, '24-AUG-84');
+  assert.equal(view.valueHistory.length, 2);
+});
+
 function feature(parcelno, owner, acres, value, zoning, geometry, location, extra = {}) {
   return {
     geometry,

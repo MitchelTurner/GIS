@@ -108,7 +108,7 @@ label.filter {
 
 label.filter select, label.filter input { color: var(--ink); font-size: 15px; font-weight: 500; }
 
-.edit select, .edit textarea, #zoning, #max-acre {
+.edit select, .edit textarea, #zoning, #max-acre, #min-acres {
   padding: 8px 10px;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -118,7 +118,7 @@ label.filter select, label.filter input { color: var(--ink); font-size: 15px; fo
 
 .edit textarea { width: 100%; min-height: 4.5rem; }
 
-#max-acre { width: 8rem; }
+#max-acre, #min-acres { width: 8rem; }
 
 .section-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 
@@ -212,6 +212,8 @@ tr.is-on { background: #efe4d4; }
 #explanation:not(:empty) { margin-top: 10px; white-space: pre-wrap; }
 
 #map { height: 480px; margin: 0 0 18px; border-radius: 16px; border: 1px solid var(--line); }
+
+#map.drawing, #map.drawing .leaflet-container { cursor: crosshair; }
 
 #explain { margin-top: 10px; }
 
