@@ -76,6 +76,8 @@ test('the database keeps owners, searches, and closer comps', () => {
   const matches = searchParcels(db, 'Ward Cove');
   assert.equal(matches.length, 1);
   assert.equal(matches[0].parcelno, '1');
+  db.prepare('UPDATE parcels SET loc_city = ? WHERE parcelno = ?').run('Saxman', '3');
+  assert.equal(searchParcels(db, 'Saxman', { save: false })[0].parcelno, '3');
   assert.equal(listSearches(db)[0].query, 'Ward Cove');
 
   const comps = compsFor(db, '1', 2);
@@ -92,7 +94,7 @@ test('AI comparison uses the ranked comps and stays quiet without a key', async 
   assert.equal(quiet.available, false);
   let sent = null;
   const explained = await explainComps(
-    { parcelno: '1', ownerName: 'Ada', acres: 1, totalValue: 100, zoning: 'R', location: 'Dock' },
+    { parcelno: '1', ownerName: 'Ada', acres: 1, totalValue: 100, zoning: 'R', location: 'Dock', locCity: 'Ketchikan', mailingCity: 'Anchorage' },
     [{ parcelno: '2', ownerName: 'Ben', acres: 1, totalValue: 90, zoning: 'R', location: 'Dock', comp: { score: 80, reasons: ['same zoning'] } }],
     {
       apiKey: 'test-key',
@@ -105,6 +107,9 @@ test('AI comparison uses the ranked comps and stays quiet without a key', async 
   assert.equal(explained.text, 'Ben is the closer comp.');
   assert.match(sent.url, /chat\/completions$/);
   assert.match(sent.body.messages[1].content, /Ada/);
+  assert.match(sent.body.messages[1].content, /mailingCity/);
+  assert.match(sent.body.messages[1].content, /Ketchikan/);
+  assert.doesNotMatch(sent.body.messages[1].content, /"city"/);
 });
 
 function feature(parcelno, owner, acres, value, zoning, geometry) {

@@ -68,6 +68,7 @@
         <h2>Parcel</h2>
         <div id="detail" class="fine">Choose an owner or a search result.</div>
         <div id="map" hidden></div>
+        <div id="comps"></div>
         <button id="explain" class="ghost" type="button" hidden>Compare with AI</button>
         <div id="explanation"></div>
       </section>
@@ -82,6 +83,7 @@
     const ownersNode = document.querySelector('#owners');
     const resultsNode = document.querySelector('#results');
     const detailNode = document.querySelector('#detail');
+    const compsNode = document.querySelector('#comps');
     const mapNode = document.querySelector('#map');
     const explainButton = document.querySelector('#explain');
     const explanationNode = document.querySelector('#explanation');
@@ -136,7 +138,7 @@
         return;
       }
       ownersNode.append(table(
-        ['Owner', 'Parcels', 'Of parcels', 'Acres', 'Of land', 'Assessed', 'Of value'],
+        ['Owner', 'Parcels', 'Parcel %', 'Acres', 'Land %', 'Assessed', 'Value %'],
         report.shown.map((owner) => ({
           data: owner,
           cells: [
@@ -176,7 +178,13 @@
         ['Parcel', 'Owner', 'Where', 'Acres', 'Assessed'],
         body.results.map((row) => ({
           data: row,
-          cells: [row.parcelno, row.owner_name || '', row.location || row.mailing_city || '', acres(row.acres), money(row.total_value)],
+          cells: [
+            row.parcelno,
+            row.owner_name || '',
+            [row.location, row.loc_city].filter(Boolean).join(', ') || row.mailing_city || '',
+            acres(row.acres),
+            money(row.total_value),
+          ],
         })),
         (row) => showParcel(row.parcelno),
       ));
@@ -188,6 +196,7 @@
       const body = await fetch(`/api/comps/${encodeURIComponent(parcelno)}`).then((res) => res.json());
       if (body.error) {
         detailNode.textContent = body.error;
+        compsNode.replaceChildren();
         return;
       }
       selected = parcelno;
@@ -201,10 +210,10 @@
         acres(subject.acres),
         subject.zoning,
         money(subject.totalValue),
-        [subject.mailingAddress, subject.mailingCity, subject.mailingState, subject.mailingZip].filter(Boolean).join(', '),
+        subject.mailingLine,
       ].filter(Boolean).join(' · ');
       detailNode.append(title, copy);
-      if (subject.parties?.length) {
+      if (subject.parties?.length > 1) {
         const shares = document.createElement('p');
         shares.textContent = subject.parties.map((party) => `${party.name} ${pct(party.share)}`).join(' · ');
         detailNode.append(shares);
@@ -213,11 +222,11 @@
         ['Score', 'Parcel', 'Owner', 'Why'],
         body.comps.map((comp) => ({
           data: comp,
-          cells: [comp.comp.score.toFixed(1), comp.parcelno, comp.ownerName || '', comp.comp.reasons.join(', ')],
+          cells: [comp.comp.score.toFixed(1), comp.parcelno, comp.ownerName || '', comp.comp.reasons.join(', ') || 'loose match'],
         })),
         (comp) => showParcel(comp.parcelno),
       );
-      detailNode.append(compTable);
+      compsNode.replaceChildren(compTable);
       explainButton.hidden = false;
       explanationNode.textContent = '';
       drawMap(subject, body.comps);
@@ -267,8 +276,13 @@
     explainButton.addEventListener('click', async () => {
       if (!selected) return;
       explanationNode.textContent = 'Comparing…';
-      const body = await fetch(`/api/explain/${encodeURIComponent(selected)}`, { method: 'POST' }).then((res) => res.json());
-      explanationNode.textContent = body.text || body.error || '';
+      try {
+        const res = await fetch(`/api/explain/${encodeURIComponent(selected)}`, { method: 'POST' });
+        const body = await res.json();
+        explanationNode.textContent = body.text || body.error || 'No comparison came back.';
+      } catch {
+        explanationNode.textContent = 'The comparison did not finish. The ranked comps are still on this page.';
+      }
     });
     loadOwners();
     loadSearches();

@@ -15,6 +15,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { explainComps } from './lib/comps-ai.js';
+import { formatMailing } from './lib/records.js';
 import { compsFor, getParcel, importFile, listSearches, openDatabase, ownerReport, searchParcels } from './lib/parcels-db.js';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -65,7 +66,7 @@ function printOwners(report) {
 function printParcel(parcel) {
   console.log(`${parcel.parcelno}  ${parcel.owner_name || 'No owner'}`);
   console.log(`  ${parcel.location || 'No location'} · ${parcel.acres?.toFixed?.(2) || parcel.acres || '?'} acres · ${parcel.zoning || 'zoning unknown'} · ${money(parcel.total_value) || 'value unknown'}`);
-  console.log(`  mail: ${[parcel.mailing_address, parcel.mailing_city, parcel.mailing_state, parcel.mailing_zip].filter(Boolean).join(', ') || 'none'}`);
+  console.log(`  mail: ${formatMailing(parcel) || 'none'}`);
 }
 
 async function serve(db, port) {
@@ -103,7 +104,7 @@ async function serve(db, port) {
       }
       const explainMatch = url.pathname.match(/^\/api\/explain\/(.+)$/);
       if (req.method === 'POST' && explainMatch) {
-        const found = compsFor(db, decodeURIComponent(explainMatch[1]));
+        const found = compsFor(db, decodeURIComponent(explainMatch[1]), 8, { save: false });
         if (!found) return sendJson(res, { error: 'Parcel not in the database.' }, 404);
         const explanation = await explainComps(found.subject, found.comps);
         return sendJson(res, explanation);
