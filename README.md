@@ -113,7 +113,7 @@ With no arguments, `node extract-parcels.mjs` reads the layer URL and flags from
 
 `npm start` runs a small web server. Railway should keep that process up. `railway.json` sets the start command, a health check at `/health`, and a restart policy of `ON_FAILURE`.
 
-The site serves `/extension.zip` and reads a GeoJSON or CSV you drop on the page. Set `AI_API_KEY` on the server when you want the written comparison.
+The site serves `/extension.zip` and reads a GeoJSON or CSV you drop on the page. Set `AI_API_KEY` on the server when you want the written comparison. A Claude key (`sk-ant-…`) goes to Anthropic and uses the newest Sonnet the key can reach; any other key goes to OpenAI with `gpt-4o-mini`. `AI_MODEL` picks a specific model, `AI_PROVIDER=anthropic` or `openai` overrides the guess, and `AI_BASE_URL` points at another OpenAI-compatible service. `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` also work; a rejected key falls through to the next one.
 
 Without a database, the saved parcels stay in that browser. With one, the server keeps them behind a sign-in for one person:
 

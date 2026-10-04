@@ -183,7 +183,7 @@ test('AI comparison uses the ranked comps and stays quiet without a key', async 
   const off = aiStatus({ apiKey: '' });
   assert.equal(off.available, false);
   const on = aiStatus({ apiKey: 'secret-key', model: 'test-model' });
-  assert.deepEqual(on, { available: true, model: 'test-model' });
+  assert.deepEqual(on, { available: true, provider: 'openai', model: 'test-model' });
 
   let asked = null;
   const answer = await explainComps(
@@ -234,7 +234,7 @@ test('a pasted key is trimmed and a rejected key says what to fix', async () => 
   });
   assert.equal(auth, 'Bearer sk-test-key');
   assert.equal(rejected.status, 401);
-  assert.match(rejected.text, /api\.openai\.com turned down the key \(ends in -key, invalid_api_key\) \(HTTP 401\)/);
+  assert.match(rejected.text, /turned down the key at api\.openai\.com \(ends in -key, invalid_api_key\) \(HTTP 401\)/);
   assert.match(rejected.text, /AI_API_KEY/);
   assert.doesNotMatch(rejected.text, /sk-test/);
 });
@@ -265,7 +265,7 @@ test('a rejected AI_API_KEY falls back to OPENAI_API_KEY', async (t) => {
   const both = await explainComps({ parcelno: '1' }, [], {
     fetchImpl: async () => ({ ok: false, status: 401, json: async () => ({ error: { code: 'invalid_api_key' } }) }),
   });
-  assert.match(both.text, /AI_API_KEY \(ends in 1111, invalid_api_key\) and OPENAI_API_KEY \(ends in 3333, invalid_api_key\)/);
+  assert.match(both.text, /AI_API_KEY at api\.openai\.com \(ends in 1111, invalid_api_key\) and OPENAI_API_KEY at api\.openai\.com \(ends in 3333, invalid_api_key\)/);
 });
 
 function feature(parcelno, owner, acres, value, zoning, geometry) {
@@ -338,4 +338,39 @@ test('a later file names who gained parcels and who lost them', () => {
   );
   assert.deepEqual(next.gained, [{ name: 'Ada Lovelace', count: 1 }]);
   assert.deepEqual(next.lost, [{ name: 'City of Ketchikan', count: 1 }]);
+});
+
+test('a Claude key goes to the Anthropic Messages API with the newest Sonnet', async () => {
+  const calls = [];
+  const fetchImpl = async (url, init = {}) => {
+    calls.push({ url, headers: init.headers, body: init.body ? JSON.parse(init.body) : null });
+    if (url.endsWith('/models?limit=100')) {
+      return { ok: true, json: async () => ({ data: [{ id: 'claude-haiku-9' }, { id: 'claude-sonnet-9' }, { id: 'claude-sonnet-8' }] }) };
+    }
+    return { ok: true, json: async () => ({ content: [{ type: 'text', text: 'Claude compared them.' }] }) };
+  };
+  const answer = await explainComps({ parcelno: '1', exemption: 'SENCT' }, [], {
+    apiKey: '"sk-ant-api03-test-zzzz"',
+    question: 'Which is closer?',
+    fetchImpl,
+  });
+  assert.equal(answer.text, 'Claude compared them.');
+  assert.equal(calls[0].url, 'https://api.anthropic.com/v1/models?limit=100');
+  const sent = calls[1];
+  assert.equal(sent.url, 'https://api.anthropic.com/v1/messages');
+  assert.equal(sent.headers['x-api-key'], 'sk-ant-api03-test-zzzz');
+  assert.equal(sent.headers['anthropic-version'], '2023-06-01');
+  assert.equal(sent.headers.Authorization, undefined);
+  assert.equal(sent.body.model, 'claude-sonnet-9');
+  assert.match(sent.body.system, /exemption codes and zoning codes exactly as written/);
+  assert.equal(sent.body.messages.length, 1);
+  assert.equal(JSON.parse(sent.body.messages[0].content).question, 'Which is closer?');
+  assert.deepEqual(aiStatus({ apiKey: 'sk-ant-x', model: 'claude-opus-9' }), { available: true, provider: 'anthropic', model: 'claude-opus-9' });
+
+  const rejected = await explainComps({ parcelno: '1' }, [], {
+    apiKey: 'sk-ant-bad-yyyy',
+    model: 'claude-sonnet-9',
+    fetchImpl: async () => ({ ok: false, status: 401, json: async () => ({ type: 'error', error: { type: 'authentication_error' } }) }),
+  });
+  assert.match(rejected.text, /api\.anthropic\.com \(ends in yyyy, authentication_error\) \(HTTP 401\)/);
 });
