@@ -12,6 +12,8 @@
 
 * { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background:
@@ -161,7 +163,61 @@ footer p {
   outline-offset: 3px;
 }
 
+.viewer { margin-top: 36px; }
+
+.drop {
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+  margin-top: 14px;
+  padding: 18px;
+  border: 1.5px dashed var(--line);
+  border-radius: 18px;
+  background: var(--paper);
+  color: var(--muted);
+  text-align: center;
+  cursor: pointer;
+}
+
+.drop.dragging { border-color: var(--copper); color: var(--ink); }
+
+.drop input { display: none; }
+
+#view-map {
+  height: 480px;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+#view-table { margin-top: 14px; overflow: auto; }
+
+#view-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--paper);
+}
+
+#view-table th, #view-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+#view-raw {
+  max-height: 480px;
+  overflow: auto;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--spruce);
+  color: var(--foam);
+  white-space: pre-wrap;
+}
+
 @media (max-width: 800px) {
   .hero, .steps, .columns { grid-template-columns: 1fr; }
   .map-card { order: -1; }
+  #view-map { height: 320px; }
 }

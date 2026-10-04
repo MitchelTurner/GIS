@@ -19,6 +19,14 @@
 
   <p id="banner" class="banner" hidden></p>
 
+  <section id="open">
+    <div class="section-head">
+      <h2>Open a saved file</h2>
+      <p>Choose a <code>.geojson</code> parcel file to draw it on the map, or a <code>.json</code> field report to see the table. The file stays in this tab.</p>
+    </div>
+    <input id="open-file" type="file" accept=".geojson,.json,application/geo+json,application/json">
+  </section>
+
   <section id="connect" hidden>
     <p>Continue reads the map service shown above. The GeoJSON file stays on this computer. The install site never receives it.</p>
     <button id="allow" type="button">Continue</button>
@@ -77,7 +85,29 @@
       <button id="again" type="button">Download GeoJSON again</button>
       <button id="report" type="button" class="ghost">Download field report</button>
       <button id="change-fields" type="button" class="ghost">Change fields</button>
+      <button id="close-file" type="button" class="ghost" hidden>Close file</button>
       <button id="back-result" type="button" class="ghost" hidden>All layers</button>
+    </div>
+  </section>
+
+  <section id="report-view" hidden>
+    <div class="section-head">
+      <h2 id="report-title">Field report</h2>
+      <p id="report-copy"></p>
+    </div>
+    <div id="report-table"></div>
+    <div class="actions">
+      <button id="close-report" type="button" class="ghost">Close file</button>
+    </div>
+  </section>
+
+  <section id="raw-view" hidden>
+    <div class="section-head">
+      <h2 id="raw-title">JSON</h2>
+    </div>
+    <pre id="raw-json"></pre>
+    <div class="actions">
+      <button id="close-raw" type="button" class="ghost">Close file</button>
     </div>
   </section>
 

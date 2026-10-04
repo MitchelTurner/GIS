@@ -23,6 +23,15 @@ const TYPES = {
   '.ico': 'image/x-icon',
 };
 
+function leafletFile(urlPath) {
+  const prefix = '/vendor/leaflet/';
+  if (!urlPath.startsWith(prefix)) return null;
+  const base = path.join(extensionDir, 'vendor/leaflet');
+  const abs = path.resolve(base, urlPath.slice(prefix.length));
+  if (abs !== base && !abs.startsWith(base + path.sep)) return null;
+  return abs;
+}
+
 function safePublicPath(urlPath) {
   const decoded = decodeURIComponent(urlPath.split('?')[0]);
   const relative = decoded === '/' ? 'index.html' : decoded.replace(/^\/+/, '');
@@ -60,6 +69,18 @@ export async function createApp() {
           'Content-Length': String(zip.length),
           'Content-Disposition': 'attachment; filename="ketchikan-parcel-extract.zip"',
           'Cache-Control': 'no-cache',
+        }, method);
+        return;
+      }
+
+      const leafletPath = leafletFile(url.pathname);
+      if (leafletPath) {
+        const body = await readFile(leafletPath);
+        const type = TYPES[path.extname(leafletPath)] || 'application/octet-stream';
+        send(res, 200, body, {
+          'Content-Type': type,
+          'Content-Length': String(body.length),
+          'Cache-Control': 'public, max-age=300',
         }, method);
         return;
       }

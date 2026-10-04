@@ -116,7 +116,7 @@ form {
   padding-right: 4px;
 }
 
-input[type="search"], input[type="url"], input[type="password"], input[type="text"] {
+input[type="search"], input[type="url"], input[type="password"], input[type="text"], input[type="file"] {
   min-width: 0;
   padding: 8px 10px;
   border: 1px solid var(--line);
@@ -164,6 +164,31 @@ button:disabled { opacity: 0.6; cursor: progress; }
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--line);
+}
+
+#report-table { overflow: auto; }
+
+#report-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--paper);
+}
+
+#report-table th, #report-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+#raw-json {
+  max-height: 440px;
+  overflow: auto;
+  margin: 0;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--spruce);
+  color: var(--foam);
+  white-space: pre-wrap;
 }
 
 .field[hidden] { display: none; }

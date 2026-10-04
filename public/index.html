@@ -6,6 +6,7 @@
   <title>Ketchikan Parcel Extract</title>
   <meta name="description" content="Download a browser extension that saves the borough parcel layer as GeoJSON.">
   <link rel="icon" href="/icon128.png" type="image/png">
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -25,7 +26,7 @@
         <p class="lede">The extension reads the map service the GIS viewer is using, lets you pick the fields worth keeping, and downloads a GeoJSON file. The file stays on your computer.</p>
         <div class="cta">
           <a class="button" href="/extension.zip">Download the extension</a>
-          <p id="size" class="fine">Version 1.1.1. Chrome and Edge. Unzip, then load this folder.</p>
+          <p id="size" class="fine">Version 1.2.0. Chrome and Edge. Unzip, then load this folder.</p>
         </div>
       </div>
       <div class="map-card" aria-hidden="true">
@@ -41,6 +42,19 @@
           <text x="292" y="156" fill="#fbf8f1" font-family="ui-sans-serif, sans-serif" font-size="11">selected</text>
         </svg>
       </div>
+    </section>
+
+    <section class="viewer" id="viewer">
+      <h2>View a downloaded file</h2>
+      <p class="lede">Open a <code>.geojson</code> parcel file on a map, or a <code>.json</code> field report as a table. The file is read in this tab and is not uploaded.</p>
+      <label id="drop" class="drop">
+        <span>Drop a .geojson or .json file here, or choose one</span>
+        <input id="file" type="file" accept=".geojson,.json,application/geo+json,application/json">
+      </label>
+      <p id="file-status" class="fine"></p>
+      <div id="view-map" hidden></div>
+      <div id="view-table" hidden></div>
+      <pre id="view-raw" hidden></pre>
     </section>
 
     <section class="steps">
@@ -87,14 +101,16 @@
   </main>
 
   <footer>
-    <p>The install site only hands out the extension. It does not call the map service and it does not keep a copy of the parcels.</p>
+    <p>The install site does not call the map service. A file you open here stays in this browser tab.</p>
   </footer>
+  <script src="/vendor/leaflet/leaflet.js"></script>
+  <script type="module" src="/viewer.js"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));
       if (!bytes) return;
       const node = document.getElementById('size');
-      node.textContent = `Version 1.1.1. Chrome and Edge. Zip, ${(bytes / 1e6).toFixed(1)} MB.`;
+      node.textContent = `Version 1.2.0. Chrome and Edge. Zip, ${(bytes / 1e6).toFixed(1)} MB.`;
     }).catch(() => {});
   </script>
 </body>

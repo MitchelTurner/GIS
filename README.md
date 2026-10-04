@@ -15,6 +15,8 @@ After installing:
 3. Pick the parcel layer. Recommended fields are the ones filled on at least 90% of a sample, with object id and shape columns left off.
 4. Download the GeoJSON. A map of the file opens in the extension, and a field report is a second download.
 
+To look at a file later, open it on the install page under **View a downloaded file**, or use **Open a saved file** in the extension. A `.geojson` file draws on the map. A field-report `.json` file becomes a table. Either way the file is read in that browser tab and is not uploaded.
+
 The long download runs in an extension tab so the browser does not cancel it. The extension asks permission for the map host you choose. Parcel data is written to the Downloads folder and is not sent to the install site.
 
 Chrome and Edge: unzip, open `chrome://extensions` or `edge://extensions`, turn on Developer mode, and choose **Load unpacked** on the unzipped folder. Firefox can load `manifest.json` as a temporary add-on from `about:debugging`. Those steps are repeated on the install page and in `extension/INSTALL.txt`.
@@ -79,11 +81,11 @@ With no arguments, `node extract-parcels.mjs` reads the layer URL and flags from
 
 `npm start` runs a small web server. Railway should keep that process up. `railway.json` sets the start command, a health check at `/health`, and a restart policy of `ON_FAILURE`.
 
-The site has two jobs: explain how to load the extension, and serve `/extension.zip`. It does not call the map service and it does not store parcels.
+The site explains how to load the extension, serves `/extension.zip`, and can open a GeoJSON or JSON file you already downloaded. It does not call the map service and it does not store parcels.
 
 ## Output
 
-`parcels.geojson` is a standard `FeatureCollection`. Load it in QGIS, [geojson.io](https://geojson.io), or any library that reads GeoJSON.
+`parcels.geojson` is a standard `FeatureCollection`. Open it on the install page, in the extension, in QGIS, or in any library that reads GeoJSON.
 
 `parcels.fields.json` looks like this:
 

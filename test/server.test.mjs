@@ -28,6 +28,14 @@ test('install page serves the extension zip', async () => {
     const missing = await fetch(`http://127.0.0.1:${port}/../package.json`);
     assert.equal(missing.status, 404);
 
+    const leaflet = await fetch(`http://127.0.0.1:${port}/vendor/leaflet/leaflet.js`);
+    assert.equal(leaflet.status, 200);
+    assert.match(await leaflet.text(), /geoJSON/);
+    const marker = await fetch(`http://127.0.0.1:${port}/vendor/leaflet/images/marker-icon.png`);
+    assert.equal(marker.status, 200);
+    const escaped = await fetch(`http://127.0.0.1:${port}/vendor/leaflet/../../package.json`);
+    assert.equal(escaped.status, 404);
+
     const zip = await fetch(`http://127.0.0.1:${port}/extension.zip`);
     assert.equal(zip.status, 200);
     assert.match(zip.headers.get('content-type'), /zip/);

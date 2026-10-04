@@ -5,6 +5,7 @@ import {
   recommendedField,
   sampleFill,
   pullFeatures,
+  fieldReport,
 } from './lib/arcgis.js';
 
 const nf = new Intl.NumberFormat('en-US');
@@ -36,6 +37,16 @@ const mapNode = document.querySelector('#map');
 const againButton = document.querySelector('#again');
 const reportButton = document.querySelector('#report');
 const backResult = document.querySelector('#back-result');
+const changeFields = document.querySelector('#change-fields');
+const closeFileButton = document.querySelector('#close-file');
+const reportSection = document.querySelector('#report-view');
+const reportTitle = document.querySelector('#report-title');
+const reportCopy = document.querySelector('#report-copy');
+const reportTable = document.querySelector('#report-table');
+const rawSection = document.querySelector('#raw-view');
+const rawTitle = document.querySelector('#raw-title');
+const rawJson = document.querySelector('#raw-json');
+const openInput = document.querySelector('#open-file');
 
 let serviceUrl = null;
 let layerUrl = null;
@@ -49,7 +60,48 @@ function showBanner(message) {
 }
 
 function hideAll() {
-  for (const node of [connect, paste, layersSection, fieldsSection, resultSection]) node.hidden = true;
+  for (const node of [connect, paste, layersSection, fieldsSection, resultSection, reportSection, rawSection]) {
+    node.hidden = true;
+  }
+}
+
+function classifyDocument(data) {
+  if (data && typeof data === 'object') {
+    if (data.type === 'FeatureCollection' || data.type === 'Feature') return 'geojson';
+    if (typeof data.type === 'string' && data.coordinates) return 'geojson';
+  }
+  if (Array.isArray(data) && data.length > 0 && data.every((row) => (
+    row && typeof row === 'object' && typeof row.field === 'string' && typeof row.pct === 'number'
+  ))) {
+    return 'report';
+  }
+  return 'json';
+}
+
+function asFeatureCollection(data) {
+  if (data.type === 'FeatureCollection') return data;
+  if (data.type === 'Feature') return { type: 'FeatureCollection', features: [data] };
+  return {
+    type: 'FeatureCollection',
+    features: [{ type: 'Feature', geometry: data, properties: {} }],
+  };
+}
+
+function closeOpenedFile() {
+  if (layerUrl) {
+    hideAll();
+    fieldsSection.hidden = false;
+    title.textContent = layerName;
+    return;
+  }
+  if (serviceUrl) {
+    inspect(serviceUrl);
+    return;
+  }
+  hideAll();
+  paste.hidden = false;
+  title.textContent = 'Paste a map service';
+  subtitle.textContent = '';
 }
 
 function originPattern(url) {
@@ -209,6 +261,7 @@ function drawMap(collection) {
   }).addTo(map);
   const bounds = layer.getBounds();
   if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24] });
+  else map.setView([55.342, -131.646], 11);
   requestAnimationFrame(() => map.invalidateSize());
 }
 
@@ -221,7 +274,67 @@ function showResult(result) {
   const dropped = result.dropped ? ` ${nf.format(result.dropped)} had no geometry and were skipped.` : '';
   resultCopy.textContent = `${featureCount(result.features.length)} downloaded to your computer.${dropped}`;
   backResult.hidden = !serviceUrl;
+  changeFields.hidden = false;
+  closeFileButton.hidden = true;
   drawMap(result.collection);
+}
+
+function showOpenedGeoJson(name, data) {
+  const collection = asFeatureCollection(data);
+  const features = collection.features || [];
+  saved = {
+    name: name.replace(/\.(geo)?json$/i, ''),
+    features,
+    collection,
+    dropped: 0,
+    report: fieldReport(features),
+  };
+  hideAll();
+  resultSection.hidden = false;
+  title.textContent = name;
+  resultTitle.textContent = name;
+  resultCopy.textContent = `${featureCount(features.length)}. Click a shape to read its fields.`;
+  backResult.hidden = !serviceUrl;
+  changeFields.hidden = true;
+  closeFileButton.hidden = false;
+  drawMap(collection);
+}
+
+function showOpenedReport(name, rows) {
+  hideAll();
+  reportSection.hidden = false;
+  title.textContent = name;
+  reportTitle.textContent = name;
+  reportCopy.textContent = `${nf.format(rows.length)} ${rows.length === 1 ? 'field' : 'fields'}.`;
+  reportTable.replaceChildren();
+  const table = document.createElement('table');
+  const head = document.createElement('tr');
+  for (const label of ['Field', 'Filled', 'Percent']) {
+    const cell = document.createElement('th');
+    cell.textContent = label;
+    head.append(cell);
+  }
+  table.append(head);
+  const sorted = [...rows].sort((a, b) => b.pct - a.pct);
+  for (const row of sorted) {
+    const tr = document.createElement('tr');
+    for (const value of [row.field, row.filled, `${row.pct}%`]) {
+      const cell = document.createElement('td');
+      cell.textContent = value === undefined || value === null ? '' : String(value);
+      tr.append(cell);
+    }
+    table.append(tr);
+  }
+  reportTable.append(table);
+}
+
+function showOpenedJson(name, data) {
+  hideAll();
+  rawSection.hidden = false;
+  title.textContent = name;
+  rawTitle.textContent = name;
+  const text = JSON.stringify(data, null, 2);
+  rawJson.textContent = text.length > 200000 ? `${text.slice(0, 200000)}\n\n… file continues …` : text;
 }
 
 async function inspect(url) {
@@ -350,7 +463,7 @@ async function runDownload() {
 
 downloadButton.addEventListener('click', runDownload);
 
-document.querySelector('#change-fields').addEventListener('click', () => {
+changeFields.addEventListener('click', () => {
   resultSection.hidden = true;
   fieldsSection.hidden = false;
   if (map) {
@@ -367,6 +480,28 @@ againButton.addEventListener('click', async () => {
   } catch (err) {
     showBanner(err.message);
   }
+});
+
+closeFileButton.addEventListener('click', closeOpenedFile);
+document.querySelector('#close-report').addEventListener('click', closeOpenedFile);
+document.querySelector('#close-raw').addEventListener('click', closeOpenedFile);
+
+openInput.addEventListener('change', () => {
+  const file = openInput.files?.[0];
+  openInput.value = '';
+  if (!file) return;
+  file.text().then((text) => {
+    try {
+      const data = JSON.parse(text.replace(/^\uFEFF/, ''));
+      const kind = classifyDocument(data);
+      showBanner('');
+      if (kind === 'geojson') showOpenedGeoJson(file.name, data);
+      else if (kind === 'report') showOpenedReport(file.name, data);
+      else showOpenedJson(file.name, data);
+    } catch (err) {
+      showBanner(`${file.name} is not JSON. ${err.message}`);
+    }
+  }).catch((err) => showBanner(err.message));
 });
 
 reportButton.addEventListener('click', async () => {

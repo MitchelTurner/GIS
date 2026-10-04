@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Ketchikan Parcel Extract",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Save the parcel layer from a borough GIS map as GeoJSON.",
   "action": {
     "default_popup": "popup.html",
