@@ -37,6 +37,7 @@ let focusIds = new Set();
 const ownerColorMap = new Map();
 let importToken = 0;
 let pendingFileKey = '';
+let openOwnerKey = '';
 
 function pct(value) {
   return `${(Number(value) * 100).toFixed(1)}%`;
@@ -62,6 +63,53 @@ function showWorkspace(hasParcels) {
 function rateLabel(value, size) {
   const rate = perAcre(value, size);
   return rate == null ? '' : `${money(rate)}/ac`;
+}
+
+function addLabel(parent, text) {
+  const label = document.createElement('p');
+  label.className = 'sheet-label';
+  label.textContent = text;
+  parent.append(label);
+}
+
+function addFacts(parent, title, rows) {
+  const filled = rows.filter(([, value]) => value != null && String(value).trim() !== '');
+  if (!filled.length) return;
+  if (title) addLabel(parent, title);
+  const list = document.createElement('dl');
+  list.className = 'facts';
+  for (const [label, value] of filled) {
+    const wrap = document.createElement('div');
+    const term = document.createElement('dt');
+    term.textContent = label;
+    const detail = document.createElement('dd');
+    detail.textContent = String(value);
+    wrap.append(term, detail);
+    list.append(wrap);
+  }
+  parent.append(list);
+}
+
+function statStrip(rows) {
+  const list = document.createElement('dl');
+  list.className = 'stats';
+  for (const [label, value] of rows) {
+    const wrap = document.createElement('div');
+    const term = document.createElement('dt');
+    term.textContent = label;
+    const detail = document.createElement('dd');
+    detail.textContent = value;
+    wrap.append(term, detail);
+    list.append(wrap);
+  }
+  return list;
+}
+
+function markOwner(key) {
+  openOwnerKey = key || '';
+  for (const row of ownersNode.querySelectorAll('tr[data-owner]')) {
+    row.classList.toggle('is-on', row.dataset.owner === openOwnerKey);
+  }
 }
 
 async function remember(kind, query) {
@@ -117,23 +165,33 @@ function fillZoning() {
 function renderOwners() {
   paintColors();
   fillZoning();
+  const everyone = library.ownerReport({ privateOnly: false, limit: 1 });
   const report = library.ownerReport({ privateOnly: document.querySelector('#private').checked, limit: 40 });
-  const summary = document.createElement('p');
-  summary.className = 'fine';
-  const assessed = report.value ? ` · ${money(report.value)} assessed` : '';
-  summary.textContent = `${report.parcels.toLocaleString()} parcels · ${report.acres.toFixed(1)} acres · ${report.owners.toLocaleString()} owners${assessed}`;
   const missingValue = !library.parcels.some((parcel) => Number(parcel.total_value) > 0);
+  const stats = statStrip([
+    ['Parcels', everyone.parcels.toLocaleString()],
+    ['Acres', everyone.acres.toFixed(1)],
+    ['Owners', everyone.owners.toLocaleString()],
+    ['Assessed', everyone.value ? money(everyone.value) : '—'],
+  ]);
+  const caption = document.createElement('p');
+  caption.className = 'fine';
+  const shown = report.shown.length;
+  const listNote = report.owners > shown ? `Showing the ${shown} largest. ` : '';
+  caption.textContent = `${listNote}Acres is that owner's share of the file. Click a name for the mailing address.`;
   const table = document.createElement('table');
   const head = document.createElement('tr');
-  for (const label of ['Owner', 'Land', 'Assessed']) {
+  for (const label of ['Owner', 'Acres', 'Assessed']) {
     const cell = document.createElement('th');
     cell.textContent = label;
+    if (label !== 'Owner') cell.className = 'num';
     head.append(cell);
   }
   table.append(head);
   for (const owner of report.shown) {
     const row = document.createElement('tr');
     row.className = 'clickable';
+    row.dataset.owner = owner.ownerKey;
     const name = document.createElement('td');
     const swatch = document.createElement('span');
     swatch.className = 'swatch';
@@ -142,13 +200,19 @@ function renderOwners() {
     strong.textContent = owner.publicOwner ? `${owner.name} (public)` : owner.name;
     const meta = document.createElement('span');
     meta.className = 'fine';
-    const bits = [`${owner.parcelCount} ${owner.parcelCount === 1 ? 'parcel' : 'parcels'}`, acres(owner.acres)];
+    const bits = [`${owner.parcelCount} ${owner.parcelCount === 1 ? 'parcel' : 'parcels'}`];
     if (outreach[owner.ownerKey]?.status) bits.push(CONTACT_STATUS[outreach[owner.ownerKey].status]);
-    meta.textContent = bits.filter(Boolean).join(' · ');
+    meta.textContent = bits.join(' · ');
     name.append(swatch, strong, meta);
     const land = document.createElement('td');
-    land.textContent = pct(owner.acreShare);
+    land.className = 'num';
+    land.textContent = acres(owner.acres);
+    const share = document.createElement('span');
+    share.className = 'fine';
+    share.textContent = `${pct(owner.acreShare)} of the file`;
+    land.append(share);
     const value = document.createElement('td');
+    value.className = 'num';
     value.textContent = money(owner.value);
     const per = document.createElement('span');
     per.className = 'fine';
@@ -158,7 +222,7 @@ function renderOwners() {
     row.addEventListener('click', () => showOwner(owner.ownerKey));
     table.append(row);
   }
-  const nodes = [summary, table];
+  const nodes = [stats, caption, table];
   if (missingValue) {
     const note = document.createElement('p');
     note.className = 'fine';
@@ -167,9 +231,11 @@ function renderOwners() {
     nodes.unshift(note);
   }
   ownersNode.replaceChildren(...nodes);
+  markOwner(openOwnerKey);
 }
 
 function renderSearches() {
+  document.querySelector('#recent-title').hidden = searches.length === 0;
   searchesNode.replaceChildren();
   for (const search of searches) {
     const button = document.createElement('button');
@@ -187,20 +253,29 @@ function renderSearches() {
 function resultTable(rows) {
   const table = document.createElement('table');
   const head = document.createElement('tr');
-  for (const label of ['Parcel', 'Owner', 'Where']) {
+  for (const label of ['Parcel', 'Owner', 'Where', 'Acres', 'Assessed']) {
     const cell = document.createElement('th');
     cell.textContent = label;
+    if (label === 'Acres' || label === 'Assessed') cell.className = 'num';
     head.append(cell);
   }
   table.append(head);
   for (const row of rows) {
     const tr = document.createElement('tr');
     tr.className = 'clickable';
-    for (const value of [row.parcelno, row.owner_name || '', [row.location, row.loc_city].filter(Boolean).join(', ')]) {
+    const cells = [
+      row.parcelno,
+      row.owner_name || '',
+      [row.location, row.loc_city].filter(Boolean).join(', '),
+      acres(row.acres),
+      money(row.total_value),
+    ];
+    cells.forEach((value, index) => {
       const cell = document.createElement('td');
+      if (index >= 3) cell.className = 'num';
       cell.textContent = value;
       tr.append(cell);
-    }
+    });
     tr.addEventListener('click', () => showParcel(row.parcelno));
     table.append(tr);
   }
@@ -317,11 +392,23 @@ function drawVisible() {
   parcelLayer = L.geoJSON({ type: 'FeatureCollection', features: visible }, {
     style: styleFor,
     onEachFeature(feature, layer) {
-      layer.bindTooltip(`${feature.properties.parcelno} · ${feature.properties.ownerName}`, { sticky: true });
+      const parcel = byParcel.get(feature.properties.parcelno);
+      const tip = [
+        feature.properties.parcelno,
+        feature.properties.ownerName,
+        acres(parcel?.acres),
+        money(parcel?.total_value),
+      ].filter(Boolean).join(' · ');
+      layer.bindTooltip(tip, { sticky: true });
       layer.on('click', () => showParcel(feature.properties.parcelno));
     },
   }).addTo(map);
   mapNode.dataset.shown = String(visible.length);
+  const legend = document.querySelector('#map-legend');
+  if (!mapNode.hidden) {
+    legend.hidden = false;
+    legend.textContent = `${visible.length.toLocaleString()} parcels in this view. Each color is one of the largest owners. Zoning and max $/acre filter the map. Private owners hides public land in the list too.`;
+  }
   const note = document.querySelector('#map-note');
   const anyGeometry = indexedFeatures.length > 0;
   const anyMatch = library.parcels.some((parcel) => parcel.geometry && parcelPasses(parcel));
@@ -340,6 +427,7 @@ function showMap({ fit = true } = {}) {
   const features = indexedFeatures;
   if (!features.length) {
     mapNode.hidden = true;
+    document.querySelector('#map-legend').hidden = true;
     note.hidden = false;
     note.textContent = 'This file has the owners and no parcel outlines. Drop the .geojson to see the map.';
     if (map) {
@@ -388,60 +476,107 @@ async function showParcel(parcelno) {
   }
   selected = parcelno;
   current = found;
-  document.querySelector('#detail-title').textContent = 'Parcel';
+  markOwner('');
+  const subject = found.subject;
+  document.querySelector('#detail-title').textContent = subject.parcelno;
   detailNode.replaceChildren();
-  const title = document.createElement('strong');
-  title.textContent = `${found.subject.parcelno} · ${found.subject.ownerName || 'No owner'}`;
-  const copy = document.createElement('p');
-  const assessedRate = rateLabel(found.subject.totalValue, found.subject.acres);
-  const saleRate = rateLabel(found.subject.salePrice, found.subject.acres);
-  copy.textContent = [
-    [found.subject.location, found.subject.locCity].filter(Boolean).join(', '),
-    acres(found.subject.acres),
-    found.subject.zoning,
-    found.subject.totalValue > 0 ? `Assessed ${money(found.subject.totalValue)}${assessedRate ? ` (${assessedRate})` : ''}` : '',
-    found.subject.salePrice != null ? `Sold ${money(found.subject.salePrice)}${saleRate ? ` (${saleRate})` : ''}${found.subject.saleYear ? ` in ${found.subject.saleYear}` : ''}` : '',
-    found.subject.mailingLine,
-  ].filter(Boolean).join(' · ');
-  detailNode.append(title, copy);
-  const extra = [
-    found.subject.landValue > 0 ? `Land ${money(found.subject.landValue)}` : '',
-    found.subject.improvementValue > 0 ? `Improvements ${money(found.subject.improvementValue)}` : '',
-    found.subject.yearBuilt ? `Built ${found.subject.yearBuilt}` : '',
-  ].filter(Boolean);
-  if (extra.length) {
-    const built = document.createElement('p');
-    built.textContent = extra.join(' · ');
-    detailNode.append(built);
+  const who = document.createElement('p');
+  who.className = 'who';
+  who.textContent = subject.parties.length
+    ? subject.parties.map((party) => `${party.name} ${pct(party.share)}`).join(' · ')
+    : (subject.ownerName || 'No owner');
+  detailNode.append(who);
+  if (subject.mailingLine) {
+    addLabel(detailNode, 'Mail');
+    const mail = document.createElement('p');
+    mail.className = 'mail';
+    mail.textContent = subject.mailingLine;
+    detailNode.append(mail);
   }
-  detailNode.append(saleForm(found.subject));
-  if (found.subject.parties.length > 1) {
-    const shares = document.createElement('p');
-    shares.textContent = found.subject.parties.map((party) => `${party.name} ${pct(party.share)}`).join(' · ');
-    detailNode.append(shares, shareForm(found.subject));
+  addFacts(detailNode, 'Property', [
+    ['Where', [subject.location, subject.locCity].filter(Boolean).join(', ')],
+    ['Subdivision', subject.subdivision],
+    ['Acres', acres(subject.acres)],
+    ['Zoning', subject.zoning],
+    ['Use', subject.propUse],
+    ['Built', subject.yearBuilt || ''],
+  ]);
+  const saleText = subject.salePrice != null
+    ? `${money(subject.salePrice)}${subject.saleYear ? ` in ${subject.saleYear}` : ''}${rateLabel(subject.salePrice, subject.acres) ? ` · ${rateLabel(subject.salePrice, subject.acres)}` : ''}`
+    : '';
+  addFacts(detailNode, 'Value', [
+    ['Assessed', subject.totalValue > 0 ? money(subject.totalValue) : ''],
+    ['Per acre', rateLabel(subject.totalValue, subject.acres)],
+    ['Land', subject.landValue > 0 ? money(subject.landValue) : ''],
+    ['Improvements', subject.improvementValue > 0 ? money(subject.improvementValue) : ''],
+    ['Sale', saleText],
+  ]);
+  addLabel(detailNode, 'Record a sale');
+  detailNode.append(saleForm(subject));
+  if (subject.parties.length > 1) {
+    addLabel(detailNode, 'Ownership split');
+    detailNode.append(shareForm(subject));
   }
-  const list = document.createElement('ol');
-  list.className = 'comps';
-  for (const comp of found.comps) {
-    const item = document.createElement('li');
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'ghost';
-    button.textContent = `${comp.comp.score.toFixed(0)} · ${comp.ownerName || comp.parcelno}`;
-    button.addEventListener('click', () => showParcel(comp.parcelno));
-    const why = document.createElement('span');
-    why.textContent = comp.comp.reasons.join(', ') || 'loose match';
-    item.append(button, why);
-    list.append(item);
+  compsNode.replaceChildren();
+  if (found.comps.length) {
+    addLabel(compsNode, 'Similar parcels');
+    compsNode.append(compTable(found.comps));
+  } else {
+    compsNode.textContent = 'No other parcels to compare.';
   }
-  compsNode.replaceChildren(list);
   explainButton.hidden = false;
   explanationNode.textContent = '';
-  focusIds = new Set([found.subject.parcelno, ...found.comps.map((comp) => comp.parcelno)]);
+  focusIds = new Set([subject.parcelno, ...found.comps.map((comp) => comp.parcelno)]);
   refreshStyles();
   zoomTo(focusIds);
-  mapNode.scrollIntoView({ block: 'nearest' });
+  detailNode.scrollIntoView({ block: 'nearest' });
   await remember('comps', parcelno);
+}
+
+function compTable(comps) {
+  const table = document.createElement('table');
+  table.className = 'comps';
+  const head = document.createElement('tr');
+  for (const label of ['Score', 'Parcel', 'Acres', 'Assessed']) {
+    const cell = document.createElement('th');
+    cell.textContent = label;
+    if (label === 'Score' || label === 'Acres' || label === 'Assessed') cell.className = 'num';
+    head.append(cell);
+  }
+  table.append(head);
+  for (const comp of comps) {
+    const row = document.createElement('tr');
+    row.className = 'clickable';
+    const score = document.createElement('td');
+    score.className = 'num';
+    score.textContent = comp.comp.score.toFixed(0);
+    const name = document.createElement('td');
+    const strong = document.createElement('strong');
+    strong.textContent = comp.parcelno;
+    const who = document.createElement('span');
+    who.className = 'fine';
+    who.textContent = comp.ownerName || '';
+    const why = document.createElement('span');
+    why.className = 'fine';
+    const reasons = (comp.comp.reasons || []).filter((reason) => reason !== 'within 1 km' && reason !== 'nearby');
+    if (comp.comp.distanceKm != null) reasons.push(`${comp.comp.distanceKm} km`);
+    why.textContent = reasons.join(' · ') || 'loose match';
+    name.append(strong, who, why);
+    const size = document.createElement('td');
+    size.className = 'num';
+    size.textContent = acres(comp.acres);
+    const value = document.createElement('td');
+    value.className = 'num';
+    value.textContent = money(comp.totalValue);
+    const rate = document.createElement('span');
+    rate.className = 'fine';
+    rate.textContent = rateLabel(comp.totalValue, comp.acres);
+    value.append(rate);
+    row.append(score, name, size, value);
+    row.addEventListener('click', () => showParcel(comp.parcelno));
+    table.append(row);
+  }
+  return table;
 }
 
 async function showOwner(ownerKey) {
@@ -449,22 +584,26 @@ async function showOwner(ownerKey) {
   if (!owner) return;
   selected = null;
   current = null;
-  document.querySelector('#detail-title').textContent = 'Owner';
+  markOwner(owner.ownerKey);
+  document.querySelector('#detail-title').textContent = owner.publicOwner ? `${owner.name} (public)` : owner.name;
   detailNode.replaceChildren();
   compsNode.replaceChildren();
   explainButton.hidden = true;
   explanationNode.textContent = '';
-  const title = document.createElement('strong');
-  title.textContent = owner.publicOwner ? `${owner.name} (public)` : owner.name;
-  const copy = document.createElement('p');
-  copy.textContent = [
-    owner.mailingLine,
-    `${owner.parcelCount} ${owner.parcelCount === 1 ? 'parcel' : 'parcels'}`,
-    acres(owner.acres),
-    money(owner.value),
-    rateLabel(owner.value, owner.acres),
-  ].filter(Boolean).join(' · ');
-  detailNode.append(title, copy);
+  if (owner.mailingLine) {
+    addLabel(detailNode, 'Mail');
+    const mail = document.createElement('p');
+    mail.className = 'mail';
+    mail.textContent = owner.mailingLine;
+    detailNode.append(mail);
+  }
+  addFacts(detailNode, 'Holdings', [
+    ['Parcels', owner.parcelCount.toLocaleString()],
+    ['Acres', acres(owner.acres)],
+    ['Share of the file', pct(owner.acreShare)],
+    ['Assessed', money(owner.value)],
+    ['Per acre', rateLabel(owner.value, owner.acres)],
+  ]);
   const form = document.createElement('form');
   form.className = 'edit';
   const status = document.createElement('select');
@@ -489,6 +628,7 @@ async function showOwner(ownerKey) {
     renderOwners();
     await showOwner(owner.ownerKey);
   });
+  addLabel(detailNode, 'Contact');
   detailNode.append(form);
   if (owner.linked.length) {
     const linked = document.createElement('p');
@@ -543,22 +683,44 @@ async function showOwner(ownerKey) {
     drawVisible();
     await showOwner(owner.ownerKey);
   });
+  addLabel(detailNode, 'Link another name');
   detailNode.append(linkForm);
-  const parcels = document.createElement('div');
-  parcels.className = 'owner-parcels';
-  for (const parcel of owner.parcelList) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'ghost';
-    button.textContent = parcel.parcelno;
-    button.addEventListener('click', () => showParcel(parcel.parcelno));
-    parcels.append(button);
+  addLabel(detailNode, 'Parcels');
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet-scroll';
+  const table = document.createElement('table');
+  const head = document.createElement('tr');
+  for (const label of ['Parcel', 'Where', 'Acres', 'Assessed']) {
+    const cell = document.createElement('th');
+    cell.textContent = label;
+    if (label === 'Acres' || label === 'Assessed') cell.className = 'num';
+    head.append(cell);
   }
-  detailNode.append(parcels);
+  table.append(head);
+  for (const parcel of owner.parcelList) {
+    const row = document.createElement('tr');
+    row.className = 'clickable';
+    const cells = [
+      parcel.parcelno,
+      [parcel.location, parcel.locCity].filter(Boolean).join(', '),
+      acres(parcel.acres),
+      money(parcel.totalValue),
+    ];
+    cells.forEach((value, index) => {
+      const cell = document.createElement('td');
+      if (index >= 2) cell.className = 'num';
+      cell.textContent = value;
+      row.append(cell);
+    });
+    row.addEventListener('click', () => showParcel(parcel.parcelno));
+    table.append(row);
+  }
+  wrap.append(table);
+  detailNode.append(wrap);
   focusIds = new Set(owner.parcelList.map((parcel) => parcel.parcelno));
   refreshStyles();
   zoomTo(focusIds);
-  mapNode.scrollIntoView({ block: 'nearest' });
+  detailNode.scrollIntoView({ block: 'nearest' });
 }
 
 function saleForm(subject) {
@@ -684,6 +846,7 @@ async function useFile(file) {
     if (token !== importToken) return;
     selected = null;
     current = null;
+    openOwnerKey = '';
     focusIds = new Set();
     detailNode.textContent = 'Click a parcel on the map, or an owner in the list.';
     compsNode.replaceChildren();
@@ -778,12 +941,14 @@ document.querySelector('#clear').addEventListener('click', async () => {
   links = {};
   selected = null;
   current = null;
+  openOwnerKey = '';
   await saveKey('parcels', []);
   await saveKey('searches', []);
   await saveKey('changes', changes);
   await saveKey('outreach', outreach);
   await saveKey('links', links);
   document.querySelector('#detail-title').textContent = 'Parcel';
+  document.querySelector('#map-legend').hidden = true;
   document.querySelector('#zoning').replaceChildren(new Option('All zoning', ''));
   document.querySelector('#max-acre').value = '';
   document.querySelector('#private').checked = false;

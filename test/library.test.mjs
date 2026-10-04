@@ -63,7 +63,7 @@ test('a new file keeps a typed sale price and a typed share', () => {
 
 test('a linked trust shares one row and a sale year survives the next file', () => {
   const library = createLibrary([
-    feature('1', 'Ada Lovelace', 2, 200000, 'R', null, 'Ward Cove', { Year_Built: 1978, Apr_Land_V: 80000, Apr_Imps: 120000 }),
+    feature('1', 'Ada Lovelace', 2, 200000, 'R', null, 'Ward Cove', { Year_Built: 1978, Apr_Land_V: 80000, Apr_Imps: 120000, PropUse: 'RES' }),
     feature('2', 'Smith Family Trust', 4, 300000, 'R', null, 'Dock Street'),
   ]);
   const ada = library.ownerReport().shown.find((owner) => owner.name === 'Ada Lovelace');
@@ -79,17 +79,19 @@ test('a linked trust shares one row and a sale year survives the next file', () 
   assert.equal(library.ownerReport().shown.length, 1);
   const parcel = library.parcels.find((item) => item.parcelno === '1');
   assert.equal(parcel.year_built, 1978);
+  assert.equal(parcel.prop_use, 'RES');
   assert.equal(parcel.land_value, 80000);
   assert.equal(parcel.improvement_value, 120000);
   library.update('1', { sale_price: 250000, sale_year: 2024 });
   library.replace([
-    feature('1', 'Ada Lovelace', 2, 200000, 'R', null, 'Ward Cove', { Year_Built: 1978, Apr_Land_V: 80000, Apr_Imps: 120000 }),
+    feature('1', 'Ada Lovelace', 2, 200000, 'R', null, 'Ward Cove', { Year_Built: 1978, Apr_Land_V: 80000, Apr_Imps: 120000, PropUse: 'RES' }),
     feature('2', 'Smith Family Trust', 4, 300000, 'R', null, 'Dock Street'),
   ]);
   const kept = library.parcels.find((item) => item.parcelno === '1');
   assert.equal(kept.sale_price, 250000);
   assert.equal(kept.sale_year, 2024);
   assert.equal(library.comps('1').subject.yearBuilt, 1978);
+  assert.equal(library.comps('1').subject.propUse, 'RES');
   assert.equal(library.comps('1').subject.saleYear, 2024);
 });
 

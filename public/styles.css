@@ -67,7 +67,7 @@ h2.next { margin-top: 22px; }
 
 .fine { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
 
-#owners td .fine { display: block; }
+td .fine { display: block; }
 
 .swatch {
   display: inline-block;
@@ -96,6 +96,17 @@ h2.next { margin-top: 22px; }
 }
 
 .edit label, .edit select, .edit textarea { font-size: 14px; }
+
+label.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+label.filter select, label.filter input { color: var(--ink); font-size: 15px; font-weight: 500; }
 
 .edit select, .edit textarea, #zoning, #max-acre {
   padding: 8px 10px;
@@ -170,17 +181,45 @@ tr.clickable { cursor: pointer; }
 
 #detail, #explanation:not(:empty) { background: var(--paper); border-radius: 16px; padding: 14px; }
 
+#detail h3 { margin: 0 0 4px; font-size: 22px; }
+
+.who { margin: 0 0 8px; }
+
+.mail { margin: 0 0 8px; font-weight: 650; }
+
+.sheet-label { margin: 14px 0 6px; font-size: 13px; font-weight: 650; color: var(--spruce); }
+
+.stats, .facts { display: grid; gap: 8px; margin: 0 0 12px; }
+
+.stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.facts { grid-template-columns: 1fr 1fr; }
+
+.stats div, .facts div { min-width: 0; }
+
+.stats div { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
+
+.stats dt, .facts dt { color: var(--muted); font-size: 12px; }
+
+.stats dd, .facts dd { margin: 0; }
+
+.stats dd { font-weight: 650; font-variant-numeric: tabular-nums; }
+
+.sheet-scroll { max-height: 280px; overflow: auto; border-radius: 12px; }
+
+tr.is-on { background: #efe4d4; }
+
 #explanation:not(:empty) { margin-top: 10px; white-space: pre-wrap; }
 
 #map { height: 480px; margin: 0 0 18px; border-radius: 16px; border: 1px solid var(--line); }
 
 #explain { margin-top: 10px; }
 
-.comps { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+table.comps { margin-top: 8px; }
 
-.comps li { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+table.comps td { font-size: 14px; }
 
-.comps span { color: var(--muted); font-size: 14px; }
+td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 
 .searches { display: flex; flex-wrap: wrap; gap: 8px; }
 
@@ -210,6 +249,8 @@ details p { max-width: 40rem; }
 
 @media (max-width: 800px) {
   .grid, .top { display: block; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .facts { grid-template-columns: 1fr; }
   nav { margin-top: 10px; flex-wrap: wrap; }
   #size { display: none; }
   #map { height: 320px; }

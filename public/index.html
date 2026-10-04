@@ -7,7 +7,7 @@
   <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
   <link rel="icon" href="/icon128.png" type="image/png">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=5">
+  <link rel="stylesheet" href="/styles.css?v=6">
 </head>
 <body>
   <header class="top">
@@ -41,10 +41,15 @@
         <input id="q" type="search" placeholder="Owner, town, parcel, or street" aria-label="Search parcels">
         <button type="submit">Search</button>
         <label class="private"><input id="private" type="checkbox"> Private owners only</label>
-        <select id="zoning" aria-label="Zoning"><option value="">All zoning</option></select>
-        <input id="max-acre" inputmode="decimal" placeholder="Max $/acre" aria-label="Maximum dollars per acre">
+        <label class="filter">Zoning
+          <select id="zoning" aria-label="Zoning"><option value="">All zoning</option></select>
+        </label>
+        <label class="filter">Max $/acre
+          <input id="max-acre" inputmode="decimal" placeholder="Any" aria-label="Maximum dollars per acre">
+        </label>
       </form>
       <div id="map" hidden></div>
+      <p id="map-legend" class="fine" hidden></p>
       <p id="map-note" class="fine" hidden></p>
       <section id="changes" hidden>
         <h2>Since the last file</h2>
@@ -53,13 +58,13 @@
       <div class="grid">
         <section>
           <div class="section-head">
-            <h2>Who owns the land</h2>
+            <h2>Largest owners</h2>
             <button id="export" class="ghost" type="button" hidden>Export contacts</button>
           </div>
           <div id="owners"></div>
           <h2 id="results-title" class="next" hidden>Search</h2>
           <div id="results" class="fine"></div>
-          <h2 class="next">Recent</h2>
+          <h2 id="recent-title" class="next" hidden>Recent</h2>
           <div id="searches" class="searches"></div>
         </section>
         <section>
@@ -73,7 +78,7 @@
     </section>
   </main>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=5"></script>
+  <script type="module" src="/app.js?v=6"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));

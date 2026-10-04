@@ -25,7 +25,7 @@ test('install page serves the extension zip', async () => {
     assert.match(html, /Download the extension/);
     assert.match(html, /Who owns the land/);
     assert.match(html, /Since the last file/);
-    assert.match(html, /app\.js\?v=5/);
+    assert.match(html, /app\.js\?v=6/);
     assert.match(html, /Export contacts/);
     assert.match(html, /href="\/extension\.zip"/);
     assert.equal(html.includes('View a downloaded file'), false);
