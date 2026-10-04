@@ -76,14 +76,17 @@ test('cleanFeature rounds coordinates and drops empty geometry', () => {
   assert.equal(cleanFeature({ type: 'Feature', geometry: null, properties: {} }, 6), null);
 });
 
-test('contact fields are the owner, town, and mailing address', () => {
+test('contact fields are the owner, town, mailing address, size, and value', () => {
   const field = (name) => ({ name, alias: name, type: 'String', esriType: 'esriFieldTypeString' });
   assert.equal(contactField(field('Owner_Name')), true);
   assert.equal(contactField(field('Address_full')), true);
   assert.equal(contactField(field('CITY')), true);
+  assert.equal(contactField(field('Land_Acres')), true);
+  assert.equal(contactField(field('Total_Appr')), true);
+  assert.equal(contactField(field('Apr_Land_V')), true);
+  assert.equal(contactField(field('Zoning_Typ')), true);
   assert.equal(contactField(field('Owner_1_1')), false);
   assert.equal(contactField(field('OBJECTID')), false);
-  assert.equal(contactField(field('Apr_Land_V')), false);
   const columns = contactColumns([{
     properties: { LotNum: '3', ZIP: '99901', Owner_Name: 'Ada', CITY: 'Ketchikan', Address: '1 Dock St' },
   }]);

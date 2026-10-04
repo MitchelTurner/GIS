@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parcel studio</title>
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1c1915;
+      --muted: #5e584e;
+      --spruce: #1e3a32;
+      --foam: #f3efe4;
+      --paper: #fffaf3;
+      --line: #e3d8c6;
+      --copper: #b8613a;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--foam); color: var(--ink); font: 16px/1.45 "Avenir Next", "Segoe UI", sans-serif; }
+    header, main { max-width: 1100px; margin: 0 auto; padding: 22px 20px; }
+    header { display: flex; justify-content: space-between; gap: 16px; align-items: end; }
+    h1, h2 { font-family: Palatino, Georgia, serif; font-weight: 600; margin: 0; }
+    h1 { font-size: 34px; }
+    h2 { font-size: 22px; margin-bottom: 8px; }
+    p { color: var(--muted); }
+    form { display: flex; gap: 8px; margin: 8px 0 18px; }
+    input[type="search"] { flex: 1; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); font: inherit; }
+    button { border: 0; border-radius: 999px; padding: 10px 14px; background: var(--copper); color: #fffaf4; font: inherit; font-weight: 600; cursor: pointer; }
+    button.ghost { background: transparent; color: var(--spruce); border: 1px solid var(--line); }
+    label.private { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 14px; }
+    .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
+    [hidden] { display: none !important; }
+    table { width: 100%; border-collapse: collapse; background: var(--paper); font-size: 14px; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    tr.clickable { cursor: pointer; }
+    #owners, #results, #detail { overflow-x: auto; }
+    #map { height: 280px; margin: 10px 0; border-radius: 16px; border: 1px solid var(--line); }
+    #detail, #explanation:not(:empty) { background: var(--paper); border-radius: 16px; padding: 14px; }
+    #explanation:not(:empty) { margin-top: 10px; white-space: pre-wrap; }
+    #explain { margin-top: 10px; }
+    .searches { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .fine { color: var(--muted); font-size: 13px; }
+    @media (max-width: 800px) { .grid, header { grid-template-columns: 1fr; display: block; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Parcel studio</h1>
+      <p>Owners, shares of the land, and comps from the database on this computer.</p>
+    </div>
+    <label class="private"><input id="private" type="checkbox"> Private owners only</label>
+  </header>
+  <main>
+    <form id="search-form">
+      <input id="q" type="search" placeholder="Owner, town, parcel number, or street" aria-label="Search parcels">
+      <button type="submit">Search</button>
+    </form>
+    <div class="grid">
+      <section>
+        <h2>Who owns the land</h2>
+        <div id="owners"></div>
+        <h2 style="margin-top:18px">Search results</h2>
+        <div id="results" class="fine">Search stays in this database. Previous searches are listed below.</div>
+      </section>
+      <section>
+        <h2>Parcel</h2>
+        <div id="detail" class="fine">Choose an owner or a search result.</div>
+        <div id="map" hidden></div>
+        <button id="explain" class="ghost" type="button" hidden>Compare with AI</button>
+        <div id="explanation"></div>
+      </section>
+    </div>
+    <section>
+      <h2>Previous searches</h2>
+      <div id="searches" class="searches"></div>
+    </section>
+  </main>
+  <script src="/vendor/leaflet/leaflet.js"></script>
+  <script>
+    const ownersNode = document.querySelector('#owners');
+    const resultsNode = document.querySelector('#results');
+    const detailNode = document.querySelector('#detail');
+    const mapNode = document.querySelector('#map');
+    const explainButton = document.querySelector('#explain');
+    const explanationNode = document.querySelector('#explanation');
+    const searchesNode = document.querySelector('#searches');
+    let map = null;
+    let selected = null;
+
+    function pct(value) { return `${(Number(value) * 100).toFixed(1)}%`; }
+    function acres(value) { return value == null ? '' : `${Number(value).toFixed(2)} ac`; }
+    function money(value) {
+      if (value == null || Number.isNaN(Number(value))) return '';
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+    }
+    function table(columns, rows, onClick) {
+      const wrap = document.createElement('div');
+      const el = document.createElement('table');
+      const head = document.createElement('tr');
+      for (const column of columns) {
+        const cell = document.createElement('th');
+        cell.textContent = column;
+        head.append(cell);
+      }
+      el.append(head);
+      for (const row of rows) {
+        const tr = document.createElement('tr');
+        if (onClick) tr.className = 'clickable';
+        for (const value of row.cells) {
+          const cell = document.createElement('td');
+          cell.textContent = value ?? '';
+          tr.append(cell);
+        }
+        if (onClick) tr.addEventListener('click', () => onClick(row.data));
+        el.append(tr);
+      }
+      wrap.append(el);
+      return wrap;
+    }
+
+    async function loadOwners() {
+      const privateOnly = document.querySelector('#private').checked ? '1' : '0';
+      const report = await fetch(`/api/owners?private=${privateOnly}`).then((res) => res.json());
+      ownersNode.replaceChildren();
+      const summary = document.createElement('p');
+      summary.className = 'fine';
+      const assessed = report.value ? ` · ${money(report.value)} assessed` : '';
+      summary.textContent = `${report.parcels} parcels · ${Number(report.acres).toFixed(1)} acres · ${report.owners} owners${assessed}. Share of land is each owner's acres divided by every acre in the database. Two names on one parcel each count for half.`;
+      ownersNode.append(summary);
+      if (!report.shown.length) {
+        const empty = document.createElement('p');
+        empty.textContent = 'No owners yet. Import a GeoJSON file with node analyze.mjs import.';
+        ownersNode.append(empty);
+        return;
+      }
+      ownersNode.append(table(
+        ['Owner', 'Parcels', 'Of parcels', 'Acres', 'Of land', 'Assessed', 'Of value'],
+        report.shown.map((owner) => ({
+          data: owner,
+          cells: [
+            owner.publicOwner ? `${owner.name} (public)` : owner.name,
+            String(owner.parcelCount),
+            pct(owner.countShare),
+            acres(owner.acres),
+            pct(owner.acreShare),
+            money(owner.value),
+            owner.value ? pct(owner.valueShare) : '',
+          ],
+        })),
+        (owner) => searchParcels(owner.name),
+      ));
+    }
+
+    async function loadSearches() {
+      const body = await fetch('/api/searches').then((res) => res.json());
+      searchesNode.replaceChildren();
+      for (const search of body.searches) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'ghost';
+        button.textContent = search.query;
+        button.addEventListener('click', () => {
+          if (search.kind === 'comps') showParcel(search.query);
+          else searchParcels(search.query);
+        });
+        searchesNode.append(button);
+      }
+    }
+
+    async function searchParcels(query) {
+      document.querySelector('#q').value = query;
+      const body = await fetch(`/api/search?q=${encodeURIComponent(query)}`).then((res) => res.json());
+      resultsNode.replaceChildren(table(
+        ['Parcel', 'Owner', 'Where', 'Acres', 'Assessed'],
+        body.results.map((row) => ({
+          data: row,
+          cells: [row.parcelno, row.owner_name || '', row.location || row.mailing_city || '', acres(row.acres), money(row.total_value)],
+        })),
+        (row) => showParcel(row.parcelno),
+      ));
+      if (!body.results.length) resultsNode.textContent = 'No parcels matched.';
+      loadSearches();
+    }
+
+    async function showParcel(parcelno) {
+      const body = await fetch(`/api/comps/${encodeURIComponent(parcelno)}`).then((res) => res.json());
+      if (body.error) {
+        detailNode.textContent = body.error;
+        return;
+      }
+      selected = parcelno;
+      const subject = body.subject;
+      detailNode.innerHTML = '';
+      const title = document.createElement('strong');
+      title.textContent = `${subject.parcelno} · ${subject.ownerName || 'No owner'}`;
+      const copy = document.createElement('p');
+      copy.textContent = [
+        subject.location,
+        acres(subject.acres),
+        subject.zoning,
+        money(subject.totalValue),
+        [subject.mailingAddress, subject.mailingCity, subject.mailingState, subject.mailingZip].filter(Boolean).join(', '),
+      ].filter(Boolean).join(' · ');
+      detailNode.append(title, copy);
+      if (subject.parties?.length) {
+        const shares = document.createElement('p');
+        shares.textContent = subject.parties.map((party) => `${party.name} ${pct(party.share)}`).join(' · ');
+        detailNode.append(shares);
+      }
+      const compTable = table(
+        ['Score', 'Parcel', 'Owner', 'Why'],
+        body.comps.map((comp) => ({
+          data: comp,
+          cells: [comp.comp.score.toFixed(1), comp.parcelno, comp.ownerName || '', comp.comp.reasons.join(', ')],
+        })),
+        (comp) => showParcel(comp.parcelno),
+      );
+      detailNode.append(compTable);
+      explainButton.hidden = false;
+      explanationNode.textContent = '';
+      drawMap(subject, body.comps);
+      loadSearches();
+    }
+
+    function featureGeometry(record) {
+      if (record.geometry) return record.geometry;
+      if (record.lon == null || record.lat == null) return null;
+      return { type: 'Point', coordinates: [record.lon, record.lat] };
+    }
+
+    function drawMap(subject, comps) {
+      const subjectGeometry = featureGeometry(subject);
+      const compFeatures = comps.filter((comp) => featureGeometry(comp)).map((comp) => ({
+        type: 'Feature',
+        geometry: featureGeometry(comp),
+        properties: { parcelno: comp.parcelno },
+      }));
+      if (!subjectGeometry && !compFeatures.length) {
+        mapNode.hidden = true;
+        return;
+      }
+      mapNode.hidden = false;
+      if (map) { map.remove(); map = null; }
+      map = L.map(mapNode);
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19, attribution: 'Tiles © Esri',
+      }).addTo(map);
+      const subjectLayer = L.geoJSON(subjectGeometry || { type: 'FeatureCollection', features: [] }, {
+        style: { color: '#f4efe4', weight: 2, fillColor: '#c46b3a', fillOpacity: 0.45 },
+      }).addTo(map);
+      const compLayer = L.geoJSON({
+        type: 'FeatureCollection',
+        features: compFeatures,
+      }, { style: { color: '#f4efe4', weight: 1, fillColor: '#1e3a32', fillOpacity: 0.35 } }).addTo(map);
+      const group = L.featureGroup([subjectLayer, compLayer]);
+      if (group.getBounds().isValid()) map.fitBounds(group.getBounds(), { padding: [20, 20] });
+      requestAnimationFrame(() => map.invalidateSize());
+    }
+
+    document.querySelector('#search-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      searchParcels(document.querySelector('#q').value);
+    });
+    document.querySelector('#private').addEventListener('change', loadOwners);
+    explainButton.addEventListener('click', async () => {
+      if (!selected) return;
+      explanationNode.textContent = 'Comparing…';
+      const body = await fetch(`/api/explain/${encodeURIComponent(selected)}`, { method: 'POST' }).then((res) => res.json());
+      explanationNode.textContent = body.text || body.error || '';
+    });
+    loadOwners();
+    loadSearches();
+  </script>
+</body>
+</html>

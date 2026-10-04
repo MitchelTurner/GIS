@@ -25,7 +25,7 @@ Lot outlines (`KetchikanAK_LotPolys`) repeat `LotNum` because that layer has no 
 
 `https://services2.arcgis.com/65jtiGuzdaRB5FxF/arcgis/rest/services/Parcel_Ketchikan/FeatureServer/0`
 
-In the extension, that layer is preselected to owner, town, and mailing fields. From the terminal:
+In the extension, that layer is preselected to owner, town, mailing address, acres, assessed value, and zoning. From the terminal:
 
 ```bash
 node extract-parcels.mjs pull \
@@ -34,6 +34,22 @@ node extract-parcels.mjs pull \
 ```
 
 `owners.contacts.csv` is the spreadsheet. `CITY` is the mailing town. `Location` is the property. Keep this file on your computer. The install site does not store it.
+
+## Parcel studio
+
+After a download, keep the parcels in a local database. The next search reads that database instead of starting from an empty file. The database is not uploaded to the install site, and `npm start` does not serve it.
+
+```bash
+node analyze.mjs import owners.geojson
+node analyze.mjs owners
+node analyze.mjs search "ward cove"
+node analyze.mjs comps PARCELNO
+node analyze.mjs serve
+```
+
+`serve` opens http://127.0.0.1:3210 on this computer. It lists who owns what share of the acres, of the parcel count, and of the assessed value. Each search is saved and is still there the next time you open the page. Comps are ranked by size, assessed value, zoning, subdivision, and distance. Two names on one parcel split that parcel equally, because the borough layer does not record a 60/40 share. Set `AI_API_KEY` and use **Compare with AI**, or `node analyze.mjs ask PARCELNO`, for a written comparison. Without a key, the ranked comps still work. Node 22 or newer is required for this database. A download from extension 1.3.2 can be imported now; acres come from the polygon. Version 1.3.3 adds assessed value and zoning to that download, which makes the comps more specific.
+
+A GeoJSON import is the useful one. Acres come from `Land_Acres` when that column is present, and from the polygon when it is not. A contacts CSV can be imported too, but it has no map shape.
 
 ## Command line
 
@@ -115,6 +131,17 @@ The site explains how to load the extension, serves `/extension.zip`, and can op
 A field under about 90% filled is not reliable enough to hang a sidebar on.
 
 ## Ideas
+
+The database is the place to extend. A few limits are already visible from the borough layer:
+
+- Comps here compare size, zoning, and assessed value. They are not sale comps until a sales price is stored next to the parcel.
+- Two owners on one deed split 50/50. The layer never says who holds 60 percent.
+- “SMITH JOHN” and “Smith, John A” stay separate until names are normalized.
+- Importing again can list who gained or lost parcels since the last pull. That is more useful than reading a new spreadsheet by eye.
+- Government owners can be set aside when the question is private land. The studio checkbox does that.
+- Leave `data/parcels.sqlite` on this computer. The Railway page is only for installing the extension.
+
+## Ideas for later tools
 
 The extractor is the data step. The comments in the script already assume a map with a sidebar. These are the directions that follow directly from what the script produces.
 
