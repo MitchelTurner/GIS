@@ -37,7 +37,7 @@ node extract-parcels.mjs pull \
 
 ## Parcel studio
 
-After a download, drop the GeoJSON on the public site. The map draws every parcel right away and colors the largest owners. A dot in the owner list matches those shapes. Click a shape, or an owner, and the map zooms there. The page saves the file in that browser and, on the next visit, starts from those same parcels. It lists who owns what share of the acres. “SMITH JOHN” and “Smith, John A” count as one owner. A parcel shows the mailing address, the ownership split, and comps ranked by size, value, zoning, subdivision, and distance. Type a sale price when you have one: comps use that price when both parcels have it, and the assessed value stays labeled. Two names start at an even split. Type 60 and 40 when the deed says so. Replacing the file lists who gained parcels and who lost them. The contacts spreadsheet has the owners and no outlines, so the map stays empty until the GeoJSON is the file on the page. **Compare with AI** writes the comparison when the server has `AI_API_KEY`. The ranked comps still work without a key.
+After a download, drop the GeoJSON on the public site. The map draws the parcels in view and colors the largest owners. A dot in the owner list matches those shapes. Point at a shape for the parcel number and owner. Click a shape to open that parcel, or click an owner to see every parcel they hold and the one mailing address. The page saves the file in that browser and, on the next visit, starts from those same parcels. It lists who owns what share of the acres, and the assessed value per acre. “SMITH JOHN” and “Smith, John A” count as one owner. A trust or an LLC stays separate until you type the other owner’s name and link them. Mark an owner “Want to contact,” “Called,” or “Not interested,” add a note, and export that contact list. A parcel shows the mailing address, year built, land and improvement values, the ownership split, and comps ranked by size, value, zoning, subdivision, and distance. Type a sale price and a sale year: comps use that price when both parcels have one from the last five years, and the assessed value stays labeled. Two names start at an even split. Type 60 and 40 when the deed says so. Filter the map to private owners, one zoning, or a maximum dollars per acre. Replacing the file lists who gained parcels and who lost them. The contacts spreadsheet has the owners and no outlines, so the map stays empty until the GeoJSON is the file on the page. **Compare with AI** writes the comparison when the server has `AI_API_KEY`. The ranked comps still work without a key.
 
 The same work can run on this computer with Node 22 or newer:
 
@@ -134,10 +134,11 @@ A field under about 90% filled is not reliable enough to hang a sidebar on.
 
 The public page already does the comparisons that the borough layer leaves out:
 
-- The map colors the largest owners, and the same color sits beside the name in the list.
-- A sale price typed on a parcel is kept with that parcel. Comps use it when both parcels have one.
+- The map colors the largest owners, filters to private land, one zoning, or a maximum dollars per acre, and names the parcel under the pointer.
+- A sale price and sale year typed on a parcel are kept with that parcel. Comps use a sale from the last five years when both parcels have one, and show dollars per acre.
 - A typed share, such as 60 and 40, replaces the even split for that deed.
-- “SMITH JOHN” and “Smith, John A” are the same owner, so the acres stay on one row.
+- “SMITH JOHN” and “Smith, John A” are the same owner. Link a trust or an LLC to a person when you know they are the same.
+- Mark owners to contact, keep a note, and export that list with one mailing address.
 - The next file lists who gained parcels and who lost them.
 - Government owners can be set aside when the question is private land. The studio checkbox does that.
 - Leave `data/parcels.sqlite` on this computer. The public page keeps its copy in the browser.

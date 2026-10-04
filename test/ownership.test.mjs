@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { explainComps } from '../lib/comps-ai.js';
 import { geometryAcres, isPublicOwner, ownerKey, ownershipChanges, parties, rankComps, summarizeOwners } from '../lib/ownership.js';
-import { compsFor, importRecords, listSearches, openDatabase, ownerReport, searchParcels } from '../lib/parcels-db.js';
+import { compsFor, getParcel, importRecords, listSearches, openDatabase, ownerReport, searchParcels, updateParcel } from '../lib/parcels-db.js';
 
 test('two names on a parcel split the land equally', () => {
   const owners = parties('Ada Lovelace & Ben Lovelace', null);
@@ -89,6 +89,27 @@ test('the database keeps owners, searches, and closer comps', () => {
   assert.ok(report.value > 0);
 });
 
+test('the local database keeps a typed sale and a typed share', () => {
+  const db = openDatabase(':memory:');
+  const square = (lon, lat) => ({
+    type: 'Polygon',
+    coordinates: [[[lon, lat], [lon + 0.001, lat], [lon + 0.001, lat + 0.001], [lon, lat + 0.001], [lon, lat]]],
+  });
+  const rows = [
+    feature('1', 'Ada Lovelace', 1, 100000, 'R', square(-131.65, 55.34)),
+    feature('2', 'Ada Lovelace & Ben Lovelace', 1.1, 110000, 'R', square(-131.649, 55.341)),
+  ];
+  importRecords(db, rows);
+  updateParcel(db, '2', { sale_price: 250000, sale_year: 2024, shares: { 'ADA LOVELACE': 0.6, 'BEN LOVELACE': 0.4 } });
+  importRecords(db, rows);
+  const kept = getParcel(db, '2');
+  assert.equal(kept.sale_price, 250000);
+  assert.equal(kept.sale_year, 2024);
+  const comps = compsFor(db, '2', 2, { save: false });
+  assert.equal(comps.subject.salePrice, 250000);
+  assert.deepEqual(comps.subject.parties.map((party) => party.share).sort(), [0.4, 0.6]);
+});
+
 test('AI comparison uses the ranked comps and stays quiet without a key', async () => {
   const quiet = await explainComps({ parcelno: '1' }, [], { apiKey: '' });
   assert.equal(quiet.available, false);
@@ -162,6 +183,21 @@ test('a typed share replaces the even split', () => {
   const ada = owners.find((party) => party.display === 'Ada Lovelace');
   assert.equal(ada.share, 0.6);
   assert.equal(owners.find((party) => party.display === 'Ben Lovelace').share, 0.4);
+});
+
+test('an old sale stays on assessed value', () => {
+  const subject = { parcelno: '1', acres: 1, total_value: 100000, sale_price: 200000, sale_year: 2025, zoning: 'R', lat: 55.34, lon: -131.65 };
+  const ranked = rankComps(subject, [
+    { parcelno: 'old', acres: 1.1, total_value: 500000, sale_price: 210000, sale_year: 2014, zoning: 'R', lat: 55.341, lon: -131.649 },
+    { parcelno: 'near', acres: 1.05, total_value: 105000, zoning: 'R', lat: 55.341, lon: -131.649 },
+  ], 2);
+  assert.equal(ranked[0].parcelno, 'near');
+  assert.equal(ranked.find((parcel) => parcel.parcelno === 'old').comp.comparedSale, false);
+  assert.equal(ranked[0].comp.reasons.includes('similar assessed value per acre'), true);
+});
+
+test('a trust stays separate until it is linked', () => {
+  assert.notEqual(ownerKey('Smith Family Trust'), ownerKey('Smith, John A'));
 });
 
 test('sale prices rank comps when both parcels have one', () => {

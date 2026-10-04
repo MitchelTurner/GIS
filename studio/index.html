@@ -209,7 +209,9 @@
         subject.location,
         acres(subject.acres),
         subject.zoning,
-        money(subject.totalValue),
+        subject.totalValue != null ? `Assessed ${money(subject.totalValue)}` : '',
+        subject.salePrice != null ? `Sold ${money(subject.salePrice)}${subject.saleYear ? ` in ${subject.saleYear}` : ''}` : '',
+        subject.yearBuilt ? `Built ${subject.yearBuilt}` : '',
         subject.mailingLine,
       ].filter(Boolean).join(' · ');
       detailNode.append(title, copy);

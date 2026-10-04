@@ -95,7 +95,25 @@ h2.next { margin-top: 22px; }
   font: inherit;
 }
 
-.edit label { display: flex; gap: 6px; align-items: center; font-size: 14px; }
+.edit label, .edit select, .edit textarea { font-size: 14px; }
+
+.edit select, .edit textarea, #zoning, #max-acre {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  font: inherit;
+}
+
+.edit textarea { width: 100%; min-height: 4.5rem; }
+
+#max-acre { width: 8rem; }
+
+.section-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+.section-head h2 { margin-bottom: 8px; }
+
+.owner-parcels { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 
 #changes { margin: 0 0 16px; }
 
