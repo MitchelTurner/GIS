@@ -47,10 +47,9 @@ let draftLayer = null;
 let drawMode = false;
 let dragStart = null;
 let savedZoning = '';
-// off: this site has no server sign-in; out: sign-in needed; in: the server holds the parcels.
+// in: the server's database holds the parcels; off: only this browser does.
 let serverMode = 'off';
 let toastTimer = null;
-const signinNode = document.querySelector('#signin');
 const toastNode = document.querySelector('#toast');
 
 function pct(value) {
@@ -67,12 +66,10 @@ function money(value) {
 }
 
 function showWorkspace(hasParcels) {
-  signinNode.hidden = true;
   emptyNode.hidden = hasParcels;
   workspaceNode.hidden = !hasParcels;
   replaceNode.hidden = !hasParcels;
   document.querySelector('#clear').hidden = !hasParcels || serverMode === 'in';
-  document.querySelector('#signout').hidden = serverMode !== 'in';
   document.querySelector('#export').hidden = !hasParcels;
   document.querySelector('#labels').hidden = !hasParcels;
 }
@@ -1122,10 +1119,6 @@ function showLoaded() {
 
 async function fetchServerRecords() {
   const res = await fetch('/api/parcels/geometry', { credentials: 'same-origin' });
-  if (res.status === 401) {
-    showSignin('Sign in again to load the parcels.');
-    return null;
-  }
   if (!res.ok) throw new Error('The server did not send the parcels.');
   return recordsFromText(await res.text(), 'server.geojson');
 }
@@ -1134,7 +1127,6 @@ async function loadFromServer() {
   statusNode.textContent = 'Loading parcels from the server…';
   try {
     const records = await fetchServerRecords();
-    if (!records) return;
     if (!records.length) {
       statusNode.textContent = library.parcels.length
         ? 'The server has no parcels yet. Drop the .geojson again to save it for every browser.'
@@ -1151,26 +1143,10 @@ async function loadFromServer() {
   }
 }
 
-function showSignin(note = '') {
-  serverMode = 'out';
-  signinNode.hidden = false;
-  emptyNode.hidden = true;
-  workspaceNode.hidden = true;
-  replaceNode.hidden = true;
-  document.querySelector('#clear').hidden = true;
-  document.querySelector('#export').hidden = true;
-  document.querySelector('#labels').hidden = true;
-  document.querySelector('#signout').hidden = true;
-  document.querySelector('#signin-note').textContent = note;
-  statusNode.textContent = '';
-  document.querySelector('#signin-email').focus();
-}
-
 async function checkServer() {
   try {
-    const res = await fetch('/api/auth/me', { credentials: 'same-origin' });
-    if (res.status === 200) return 'in';
-    if (res.status === 401) return 'out';
+    const res = await fetch('/api/server', { credentials: 'same-origin' });
+    if (res.ok && (await res.json()).database) return 'in';
   } catch {
     // Offline or no server: the page works from this browser's copy.
   }
@@ -1202,11 +1178,6 @@ async function useFile(file) {
       const form = new FormData();
       form.append('file', file, file.name);
       const res = await fetch('/api/imports', { method: 'POST', body: form, credentials: 'same-origin' });
-      if (res.status === 401) {
-        showSignin('Sign in again to save the file.');
-        if (pendingFileKey === key) pendingFileKey = '';
-        return;
-      }
       const summary = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(summary.message || 'The server did not save it.');
       if (token !== importToken) return;
@@ -1245,69 +1216,9 @@ async function useFile(file) {
   }
 }
 
-document.querySelector('#signin-form').addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const note = document.querySelector('#signin-note');
-  const button = event.target.querySelector('button[type="submit"]');
-  note.textContent = 'Signing in…';
-  button.disabled = true;
-  try {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify({
-        email: document.querySelector('#signin-email').value,
-        password: document.querySelector('#signin-password').value,
-      }),
-    });
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      note.textContent = body.message || 'Sign-in did not go through.';
-      return;
-    }
-    document.querySelector('#signin-password').value = '';
-    note.textContent = '';
-    serverMode = 'in';
-    showEmptyText();
-    showWorkspace(library.parcels.length > 0);
-    await loadFromServer();
-  } catch {
-    note.textContent = 'The server did not answer. Try again in a moment.';
-  } finally {
-    button.disabled = false;
-  }
-});
-
-document.querySelector('#signout').addEventListener('click', async () => {
-  await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
-  library = createLibrary();
-  library.setLinks(links);
-  changes = { gained: [], lost: [] };
-  await saveKey('parcels', []);
-  await saveKey('changes', changes);
-  selected = null;
-  current = null;
-  neighborMap = new Map();
-  ownersNode.replaceChildren();
-  resultsNode.replaceChildren();
-  detailNode.textContent = 'Click a parcel on the map, or an owner in the list.';
-  compsNode.replaceChildren();
-  showExplain(false);
-  mapNode.hidden = true;
-  if (map) {
-    map.remove();
-    map = null;
-    parcelLayer = null;
-    areaLayer = null;
-    draftLayer = null;
-  }
-  showSignin('Signed out. This browser no longer holds the parcels.');
-});
-
 function showEmptyText() {
   document.querySelector('#empty-lede').innerHTML = serverMode === 'in'
-    ? 'Drop the <strong>.geojson</strong> from the extension. The server keeps it, so every browser you sign in from sees the same parcels, and a newer file marks owner changes.'
+    ? 'Drop the <strong>.geojson</strong> from the extension. The server keeps it, so every browser sees the same parcels, and a newer file marks owner changes.'
     : 'Drop the <strong>.geojson</strong> from the extension. The map draws every parcel, and this browser keeps the file for the next search. The spreadsheet has the same owners and no outlines.';
 }
 
@@ -1553,15 +1464,11 @@ if (buybox.area && [buybox.area.south, buybox.area.west, buybox.area.north, buyb
 syncDrawButton();
 serverMode = await checkServer();
 showEmptyText();
-if (serverMode === 'out') {
-  showSignin();
+if (Array.isArray(savedParcels) && savedParcels.length) {
+  library = createLibrary(savedParcels);
+  library.setLinks(links);
+  showLoaded();
 } else {
-  if (Array.isArray(savedParcels) && savedParcels.length) {
-    library = createLibrary(savedParcels);
-    library.setLinks(links);
-    showLoaded();
-  } else {
-    showWorkspace(false);
-  }
-  if (serverMode === 'in') await loadFromServer();
+  showWorkspace(false);
 }
+if (serverMode === 'in') await loadFromServer();

@@ -7,7 +7,7 @@
   <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
   <link rel="icon" href="/icon128.png" type="image/png">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=10">
+  <link rel="stylesheet" href="/styles.css?v=11">
 </head>
 <body>
   <header class="top">
@@ -19,28 +19,12 @@
       <a class="text-link" href="/extension.zip">Download the extension</a>
       <button id="replace" class="ghost" type="button" hidden>Replace file</button>
       <button id="clear" class="ghost" type="button" hidden>Clear</button>
-      <button id="signout" class="ghost" type="button" hidden>Sign out</button>
       <input id="file" type="file" accept=".geojson,.json,.csv,application/geo+json,application/json,text/csv">
       <span id="size" class="fine"></span>
     </nav>
   </header>
 
   <main>
-    <section id="signin" hidden>
-      <h1>Sign in</h1>
-      <p class="lede">The server keeps the parcels, so every browser you sign in from sees the same file.</p>
-      <form id="signin-form" class="signin">
-        <label class="filter">Email
-          <input id="signin-email" type="email" autocomplete="username" required>
-        </label>
-        <label class="filter">Password
-          <input id="signin-password" type="password" autocomplete="current-password" required>
-        </label>
-        <button type="submit">Sign in</button>
-      </form>
-      <p id="signin-note" class="fine" role="alert"></p>
-    </section>
-
     <section id="empty">
       <h1>Who owns the land</h1>
       <p id="empty-lede" class="lede">Drop the <strong>.geojson</strong> from the extension. The map draws every parcel, and this browser keeps the file for the next search. The spreadsheet has the same owners and no outlines.</p>
@@ -108,7 +92,7 @@
     </section>
   </main>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=10"></script>
+  <script type="module" src="/app.js?v=11"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));

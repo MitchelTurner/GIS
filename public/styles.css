@@ -268,17 +268,6 @@ td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: t
   font-weight: 600;
 }
 
-.signin { align-items: flex-end; max-width: 38rem; margin-top: 16px; }
-
-.signin input {
-  width: 15rem;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--paper);
-  font: inherit;
-}
-
 .drop {
   display: grid;
   place-items: center;

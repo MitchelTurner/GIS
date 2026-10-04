@@ -293,7 +293,7 @@ export class ParcelController {
     const result = await this.parcels.geometry(/\bgzip\b/.test(accept), req.headers['if-none-match']);
     res.setHeader('ETag', result.etag);
     res.setHeader('Cache-Control', 'private, no-cache');
-    res.setHeader('Vary', 'Accept-Encoding, Cookie');
+    res.setHeader('Vary', 'Accept-Encoding');
     if (result.notModified) {
       res.status(304).end();
       return;

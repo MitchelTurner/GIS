@@ -115,16 +115,14 @@ With no arguments, `node extract-parcels.mjs` reads the layer URL and flags from
 
 The site serves `/extension.zip` and reads a GeoJSON or CSV you drop on the page. Set `AI_API_KEY` on the server when you want the written comparison. A Claude key (`sk-ant-…`) goes to Anthropic and uses the newest Sonnet the key can reach; any other key goes to OpenAI with `gpt-4o-mini`. `AI_MODEL` picks a specific model, `AI_PROVIDER=anthropic` or `openai` overrides the guess, and `AI_BASE_URL` points at another OpenAI-compatible service. `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` also work; a rejected key falls through to the next one.
 
-Without a database, the saved parcels stay in that browser. With one, the server keeps them behind a sign-in for one person:
+Without a database, the saved parcels stay in that browser. With one, the server keeps them:
 
 1. In Railway, add a PostgreSQL database to the project and reference its `DATABASE_URL` in this service.
-2. Run `npm install`, then `npm run hash-password` on your computer. Type the password, at least 12 characters, and press Enter. It prints an argon2 hash.
-3. Set `ADMIN_EMAIL` to your email and `ADMIN_PASSWORD_HASH` to that hash.
-4. Redeploy. The build runs `npm run build` (Prisma client and the Nest server in `api/`). `npm start` applies migrations with `prisma migrate deploy` and starts the server.
+2. Redeploy. The build runs `npm run build` (Prisma client and the Nest server in `api/`). `npm start` applies migrations with `prisma migrate deploy` and starts the server.
 
-After sign-in, a dropped GeoJSON goes to `POST /api/imports`. Re-importing never deletes a parcel. An owner change gets an **Owner changed** badge with the earlier owner, and a parcel left out of the newer file gets a **Missing** badge. Every browser you sign in from loads the same parcels. Sale prices, shares, owner links, and contact marks still live in the browser. `docs/FIELD_MAP.md` lists each exported field and where it lands.
+A dropped GeoJSON goes to `POST /api/imports`. Re-importing never deletes a parcel. An owner change gets an **Owner changed** badge with the earlier owner, and a parcel left out of the newer file gets a **Missing** badge. Every browser loads the same parcels. Sale prices, shares, owner links, and contact marks still live in the browser. `docs/FIELD_MAP.md` lists each exported field and where it lands.
 
-Every `/api` route except sign-in needs the session cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, 30 days. `/health`, the page, and `/extension.zip` stay public.
+There is no sign-in. Anyone with the site's address can see the stored owners and mailing addresses, upload a new file, and run the AI comparison on your key. Uploads and AI requests sent from another website are refused.
 
 Real exports carry owner names and mailing addresses. `.gitignore` keeps `*.geojson` and `exports/` out of git. Tests use the made-up owners in `test/fixtures/`. To run the server tests against a scratch database whose name ends in `_test`:
 

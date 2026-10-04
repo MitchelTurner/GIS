@@ -69,13 +69,3 @@ model Parcel {
   @@index([ownerKey])
   @@map("parcels")
 }
-
-model Session {
-  /// sha256 of the cookie token; the token itself is never stored.
-  id         String   @id
-  createdAt  DateTime @default(now()) @map("created_at")
-  expiresAt  DateTime @map("expires_at")
-  lastSeenAt DateTime @default(now()) @map("last_seen_at")
-
-  @@map("sessions")
-}

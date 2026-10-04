@@ -2,7 +2,7 @@
   "name": "gis-parcel-extractor",
   "version": "1.0.0",
   "private": true,
-  "description": "Browser extension that saves an ArcGIS parcel layer as GeoJSON, plus the install page and a signed-in parcel workspace.",
+  "description": "Browser extension that saves an ArcGIS parcel layer as GeoJSON, plus the install page and a parcel workspace that can keep imports in Postgres.",
   "type": "module",
   "main": "extract-parcels.mjs",
   "engines": {
@@ -11,7 +11,6 @@
   "scripts": {
     "start": "node scripts/start.mjs",
     "build": "prisma generate && tsc -p api",
-    "hash-password": "node scripts/hash-password.mjs",
     "studio": "node analyze.mjs serve",
     "test": "node --test"
   },
@@ -24,7 +23,6 @@
     "@types/express": "^5.0.6",
     "@types/multer": "^2.3.0",
     "@types/node": "^22.20.5",
-    "argon2": "^0.45.1",
     "prisma": "^6.19.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",

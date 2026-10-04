@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// With DATABASE_URL: apply migrations, then serve the site with sign-in and the parcel API.
+// With DATABASE_URL: apply migrations, then serve the site and the parcel API.
 // Without it: serve the install page and browser-only workspace, as before.
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
@@ -11,16 +11,13 @@ const apiEntry = path.join(root, 'api', 'main.js');
 
 async function main() {
   if (!process.env.DATABASE_URL) {
-    console.log('DATABASE_URL is not set; serving the site without sign-in.');
+    console.log('DATABASE_URL is not set; parcels stay in each browser.');
     const { start } = await import('../server.mjs');
     await start();
     return;
   }
   if (!existsSync(apiEntry)) {
     throw new Error('api/main.js is missing. Run `npm run build` before `npm start`.');
-  }
-  if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD_HASH) {
-    console.warn('ADMIN_EMAIL or ADMIN_PASSWORD_HASH is not set; sign-in will refuse every attempt.');
   }
   const prismaCli = path.join(root, 'node_modules', 'prisma', 'build', 'index.js');
   const migrate = spawnSync(process.execPath, [prismaCli, 'migrate', 'deploy'], { cwd: root, stdio: 'inherit' });

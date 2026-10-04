@@ -5,13 +5,13 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import type { NextFunction, Request, Response } from 'express';
 import { createHandler } from '../server.mjs';
 import { AiController } from './ai.js';
-import { AuthController, AuthService, SessionGuard } from './auth.js';
+import { SameOriginGuard, ServerController } from './guard.js';
 import { ImportController, ParcelController, ParcelService } from './parcels.js';
 import { PrismaService } from './prisma.service.js';
 
 @Module({
-  controllers: [AuthController, ImportController, ParcelController, AiController],
-  providers: [PrismaService, AuthService, ParcelService, { provide: APP_GUARD, useClass: SessionGuard }],
+  controllers: [ServerController, ImportController, ParcelController, AiController],
+  providers: [PrismaService, ParcelService, { provide: APP_GUARD, useClass: SameOriginGuard }],
 })
 class AppModule {}
 
@@ -35,6 +35,6 @@ export async function createServer() {
 export async function bootstrap(port = Number(process.env.PORT) || 3000) {
   const app = await createServer();
   await app.listen(port, '0.0.0.0');
-  console.log(`Parcel site with sign-in listening on ${port}`);
+  console.log(`Parcel site with the database listening on ${port}`);
   return app;
 }
