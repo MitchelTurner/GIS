@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ketchikan Parcel Extract</title>
-  <meta name="description" content="Download a browser extension that saves the borough parcel layer as GeoJSON.">
+  <title>Ketchikan parcels</title>
+  <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
   <link rel="icon" href="/icon128.png" type="image/png">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="/styles.css">
@@ -12,105 +12,63 @@
 <body>
   <header class="top">
     <a class="brand" href="/">
-      <img src="/icon128.png" width="36" height="36" alt="">
-      <span>Parcel Extract</span>
+      <img src="/icon128.png" width="32" height="32" alt="">
+      <span>Parcels</span>
     </a>
-    <a class="text-link" href="https://www.kgbak.us/432/GIS-Viewer">Borough GIS viewer</a>
+    <nav>
+      <a class="text-link" href="/extension.zip">Download the extension</a>
+      <button id="replace" class="ghost" type="button" hidden>Replace file</button>
+      <button id="clear" class="ghost" type="button" hidden>Clear</button>
+      <input id="file" type="file" accept=".geojson,.json,.csv,application/geo+json,application/json,text/csv">
+      <span id="size" class="fine"></span>
+    </nav>
   </header>
 
   <main>
-    <section class="hero">
-      <div>
-        <p class="eyebrow">For the Ketchikan Gateway Borough map</p>
-        <h1>Save the parcel layer from the map you already have open.</h1>
-        <p class="lede">The extension reads the map service the GIS viewer is using, lets you pick the fields worth keeping, and downloads a GeoJSON file. The file stays on your computer.</p>
-        <div class="cta">
-          <a class="button" href="/extension.zip">Download the extension</a>
-          <p id="size" class="fine">Version 1.3.3. Chrome and Edge. Unzip, then load this folder.</p>
-        </div>
-      </div>
-      <div class="map-card" aria-hidden="true">
-        <svg viewBox="0 0 440 340">
-          <rect width="440" height="340" rx="22" fill="#16332c"/>
-          <path d="M28 250 C 90 210, 140 280, 210 240 C 280 200, 300 150, 390 170 L 410 300 L 40 310 Z" fill="#1f4a40"/>
-          <path d="M70 86 L 150 54 L 214 98 L 168 168 L 78 150 Z" fill="#e7c7a1" stroke="#fbf8f1" stroke-width="2"/>
-          <path d="M168 168 L 214 98 L 292 118 L 270 196 L 176 188 Z" fill="#f3e6d4" stroke="#fbf8f1" stroke-width="2"/>
-          <path d="M78 150 L 168 168 L 176 188 L 132 230 L 60 200 Z" fill="#d7b48a" stroke="#fbf8f1" stroke-width="2"/>
-          <path d="M214 98 L 300 70 L 348 124 L 292 118 Z" fill="#c46b3a" stroke="#fbf8f1" stroke-width="2" opacity="0.95"/>
-          <circle cx="348" cy="124" r="5" fill="#fbf8f1"/>
-          <text x="28" y="36" fill="#d5e4dc" font-family="Palatino, Georgia, serif" font-size="18">Parcels</text>
-          <text x="292" y="156" fill="#fbf8f1" font-family="ui-sans-serif, sans-serif" font-size="11">selected</text>
-        </svg>
-      </div>
+    <section id="empty">
+      <h1>Who owns the land</h1>
+      <p class="lede">Drop the parcel file from the extension. This browser saves it, then every search uses that same file.</p>
+      <button id="drop" class="drop" type="button">Drop a .geojson or .csv here, or choose a file</button>
+      <p id="status" class="fine"></p>
+      <details>
+        <summary>How to get the file</summary>
+        <p>Unzip the extension. In Chrome or Edge, open the extensions page, turn on Developer mode, and choose Load unpacked. On the borough map, click <strong>Owners and mailing</strong>. Drop the GeoJSON here.</p>
+      </details>
     </section>
 
-    <section class="viewer" id="viewer">
-      <h2>View a downloaded file</h2>
-      <p class="lede">Open a <code>.geojson</code> parcel file on a map, or a <code>.json</code> field report as a table. The file is read in this tab and is not uploaded.</p>
-      <label id="drop" class="drop">
-        <span>Drop a .geojson or .json file here, or choose one</span>
-        <input id="file" type="file" accept=".geojson,.json,application/geo+json,application/json">
-      </label>
-      <p id="file-status" class="fine"></p>
-      <div id="view-map" hidden></div>
-      <div id="view-table" hidden></div>
-      <pre id="view-raw" hidden></pre>
-    </section>
-
-    <section class="steps">
-      <article>
-        <span>1</span>
-        <h2>Install it</h2>
-        <p>Unzip the download. In Chrome or Edge, open the extensions page, turn on Developer mode, and choose Load unpacked.</p>
-      </article>
-      <article>
-        <span>2</span>
-        <h2>Open the map</h2>
-        <p>Go to the borough GIS viewer. The imagery in the background is only the basemap.</p>
-      </article>
-      <article>
-        <span>3</span>
-        <h2>Download the layer</h2>
-        <p>Click Parcel Extract and choose <strong>Owners and mailing</strong>. The spreadsheet and the map save in your Downloads folder. That page is not asking you to open a file.</p>
-      </article>
-    </section>
-
-    <section class="install">
-      <h2>Load the extension</h2>
-      <div class="columns">
-        <div>
-          <h3>Chrome and Edge</h3>
-          <ol>
-            <li>Unzip <code>ketchikan-parcel-extract.zip</code>.</li>
-            <li>Open <code>chrome://extensions</code> or <code>edge://extensions</code>.</li>
-            <li>Turn on Developer mode.</li>
-            <li>Click Load unpacked and choose the unzipped folder, the one that contains <code>manifest.json</code>.</li>
-          </ol>
-        </div>
-        <div>
-          <h3>Firefox</h3>
-          <ol>
-            <li>Open <code>about:debugging#/runtime/this-firefox</code>.</li>
-            <li>Click Load Temporary Add-on and choose <code>manifest.json</code> inside the unzipped folder.</li>
-            <li>Firefox removes temporary add-ons when it quits.</li>
-          </ol>
-        </div>
+    <section id="workspace" hidden>
+      <form id="search-form">
+        <input id="q" type="search" placeholder="Owner, town, parcel, or street" aria-label="Search parcels">
+        <button type="submit">Search</button>
+        <label class="private"><input id="private" type="checkbox"> Private owners only</label>
+      </form>
+      <div class="grid">
+        <section>
+          <h2>Who owns the land</h2>
+          <div id="owners"></div>
+          <h2 id="results-title" class="next" hidden>Search</h2>
+          <div id="results" class="fine"></div>
+          <h2 class="next">Recent</h2>
+          <div id="searches" class="searches"></div>
+        </section>
+        <section>
+          <h2>Parcel</h2>
+          <div id="detail" class="fine">Choose an owner.</div>
+          <div id="map" hidden></div>
+          <div id="comps"></div>
+          <button id="explain" class="ghost" type="button" hidden>Compare with AI</button>
+          <div id="explanation"></div>
+        </section>
       </div>
-      <p class="fine">Then open the <a href="https://www.kgbak.us/432/GIS-Viewer">GIS viewer</a>. If the popup does not see a layer, paste a URL that ends in <code>MapServer</code>, <code>FeatureServer</code>, or a layer number such as <code>MapServer/0</code>.</p>
     </section>
   </main>
-
-  <footer>
-    <p>The install site does not call the map service. A file you open here stays in this browser tab.</p>
-  </footer>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/viewer.js"></script>
+  <script type="module" src="/app.js"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));
       if (!bytes) return;
-      const node = document.getElementById('size');
-      node.textContent = `Version 1.3.3. Chrome and Edge. Zip, ${(bytes / 1e6).toFixed(1)} MB.`;
+      document.getElementById('size').textContent = `Version 1.3.3 · ${(bytes / 1e6).toFixed(1)} MB`;
     }).catch(() => {});
   </script>
 </body>

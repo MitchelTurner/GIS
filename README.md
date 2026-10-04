@@ -1,6 +1,6 @@
 # Ketchikan parcel extract
 
-A browser extension saves a borough parcel layer as GeoJSON. Railway hosts the page where people download that extension. The same pull is available as `extract-parcels.mjs` for a terminal or a scheduled job.
+A browser extension saves a borough parcel layer as GeoJSON. The public site reads that file and shows who owns what share of the land, then ranks similar parcels. The same pull is available as `extract-parcels.mjs` for a terminal or a scheduled job.
 
 It is aimed at the Ketchikan Gateway Borough tax parcels. Any ArcGIS MapServer or FeatureServer layer of polygons, lines, or points will work. Node 18 or newer is enough to run the install page and the command-line pull. There are no packages to install.
 
@@ -13,7 +13,7 @@ After installing:
 1. Open the [borough GIS viewer](https://www.kgbak.us/432/GIS-Viewer) and pan the map.
 2. Click the Parcel Extract icon and choose **Owners and mailing**. The files save in your Downloads folder: a `.contacts.csv` spreadsheet and a `.geojson` map. World Imagery is only the basemap. The page is not asking you to open a file you already have.
 
-To look at a file later, open it on the install page under **View a downloaded file**, or use **Open a file you already saved** in the extension. A `.geojson` file draws on the map. A field-report `.json` file becomes a table. Either way the file is read in that browser tab and is not uploaded.
+Open the public site and drop that GeoJSON on the page. The browser saves the parcels, shows each owner's share of the land, and keeps every search for the next visit. Use **Open a file you already saved** in the extension when you want the map without the ownership page.
 
 The long download runs in an extension tab so the browser does not cancel it. The extension asks permission for the map host you choose. Parcel data is written to the Downloads folder and is not sent to the install site.
 
@@ -33,11 +33,13 @@ node extract-parcels.mjs pull \
   --contact --out owners.geojson
 ```
 
-`owners.contacts.csv` is the spreadsheet. `CITY` is the mailing town. `Location` is the property. Keep this file on your computer. The install site does not store it.
+`owners.contacts.csv` is the spreadsheet. `CITY` is the mailing town. `Location` is the property. Drop either file on the public site. The browser keeps the copy it needs for the next search.
 
 ## Parcel studio
 
-After a download, keep the parcels in a local database. The next search reads that database instead of starting from an empty file. The database is not uploaded to the install site, and `npm start` does not serve it.
+After a download, drop the GeoJSON on the public site. The page saves it in that browser and, on the next visit, starts from those same parcels. It lists who owns what share of the acres. Open a parcel to see the mailing address, the ownership split, and comps ranked by size, assessed value, zoning, subdivision, and distance. Two names on one parcel split that parcel equally, because the borough layer does not record a 60/40 share. **Compare with AI** writes the comparison when the server has `AI_API_KEY`. The ranked comps still work without a key.
+
+The same work can run on this computer with Node 22 or newer:
 
 ```bash
 node analyze.mjs import owners.geojson
@@ -47,9 +49,7 @@ node analyze.mjs comps PARCELNO
 node analyze.mjs serve
 ```
 
-`serve` opens http://127.0.0.1:3210 on this computer. It lists who owns what share of the acres, of the parcel count, and of the assessed value. Each search is saved and is still there the next time you open the page. Comps are ranked by size, assessed value, zoning, subdivision, and distance. Two names on one parcel split that parcel equally, because the borough layer does not record a 60/40 share. Set `AI_API_KEY` and use **Compare with AI**, or `node analyze.mjs ask PARCELNO`, for a written comparison. Without a key, the ranked comps still work. Node 22 or newer is required for this database. A download from extension 1.3.2 can be imported now; acres come from the polygon. Version 1.3.3 adds assessed value and zoning to that download, which makes the comps more specific.
-
-A GeoJSON import is the useful one. Acres come from `Land_Acres` when that column is present, and from the polygon when it is not. A contacts CSV can be imported too, but it has no map shape.
+`serve` opens http://127.0.0.1:3210. A GeoJSON import is the useful one. Acres come from `Land_Acres` when that column is present, and from the polygon when it is not. A contacts CSV can be imported too, but it has no map shape.
 
 ## Command line
 
@@ -113,7 +113,7 @@ With no arguments, `node extract-parcels.mjs` reads the layer URL and flags from
 
 `npm start` runs a small web server. Railway should keep that process up. `railway.json` sets the start command, a health check at `/health`, and a restart policy of `ON_FAILURE`.
 
-The site explains how to load the extension, serves `/extension.zip`, and can open a GeoJSON or JSON file you already downloaded. It does not call the map service and it does not store parcels.
+The site serves `/extension.zip` and reads a GeoJSON or CSV you drop on the page. The saved parcels stay in that browser. Set `AI_API_KEY` on the server when you want the written comparison.
 
 ## Output
 

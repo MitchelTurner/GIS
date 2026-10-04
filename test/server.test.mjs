@@ -23,7 +23,18 @@ test('install page serves the extension zip', async () => {
     assert.equal(page.status, 200);
     const html = await page.text();
     assert.match(html, /Download the extension/);
+    assert.match(html, /Who owns the land/);
     assert.match(html, /href="\/extension\.zip"/);
+    assert.equal(html.includes('View a downloaded file'), false);
+    assert.equal(html.includes('Load the extension'), false);
+
+    const library = await fetch(`http://127.0.0.1:${port}/lib/library.js`);
+    assert.equal(library.status, 200);
+    assert.match(await library.text(), /createLibrary/);
+    const hidden = await fetch(`http://127.0.0.1:${port}/lib/parcels-db.js`);
+    assert.equal(hidden.status, 404);
+    const escapedLib = await fetch(`http://127.0.0.1:${port}/lib/../package.json`);
+    assert.equal(escapedLib.status, 404);
 
     const missing = await fetch(`http://127.0.0.1:${port}/../package.json`);
     assert.equal(missing.status, 404);
@@ -49,6 +60,31 @@ test('install page serves the extension zip', async () => {
     assert.match(listed.stdout, /ketchikan-parcel-extract\/lib\/arcgis\.js/);
     assert.match(listed.stdout, /ketchikan-parcel-extract\/vendor\/leaflet\/leaflet\.js/);
     await rm(dir, { recursive: true, force: true });
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+test('compare sends the comps and does not require a stored parcel file', async () => {
+  const server = await createApp({
+    explain: async (subject, comps) => ({ available: true, text: `${subject.parcelno} against ${comps.length}` }),
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const { port } = server.address();
+  try {
+    const res = await fetch(`http://127.0.0.1:${port}/api/explain`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject: { parcelno: '1002', ownerName: 'Ada' }, comps: [{ parcelno: '1003' }] }),
+    });
+    assert.equal(res.status, 200);
+    assert.equal((await res.json()).text, '1002 against 1');
+    const bad = await fetch(`http://127.0.0.1:${port}/api/explain`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{',
+    });
+    assert.equal(bad.status, 400);
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }

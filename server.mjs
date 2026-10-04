@@ -7,6 +7,7 @@ import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { explainComps } from './lib/comps-ai.js';
 import { zipDirectory } from './lib/zip.js';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -46,18 +47,47 @@ function send(res, status, body, headers, method) {
   else res.end(body);
 }
 
-export async function createApp() {
+function readBody(req, limit = 120000) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let size = 0;
+    req.on('data', (chunk) => {
+      size += chunk.length;
+      if (size > limit) {
+        reject(Object.assign(new Error('Request is too large.'), { status: 413 }));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('error', reject);
+  });
+}
+
+const SHARED_LIB = new Set(['library.js', 'ownership.js', 'records.js']);
+
+export async function createApp({ explain = explainComps } = {}) {
   const zip = await zipDirectory(extensionDir, 'ketchikan-parcel-extract');
 
   return http.createServer(async (req, res) => {
     try {
       const method = req.method || 'GET';
+      const url = new URL(req.url || '/', 'http://localhost');
+      if (method === 'POST' && url.pathname === '/api/explain') {
+        const raw = await readBody(req);
+        const body = JSON.parse(raw || '{}');
+        const explanation = await explain(body.subject || {}, Array.isArray(body.comps) ? body.comps : []);
+        send(res, 200, JSON.stringify(explanation), {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-store',
+        }, method);
+        return;
+      }
       if (method !== 'GET' && method !== 'HEAD') {
         send(res, 405, 'Method not allowed\n', { 'Content-Type': 'text/plain; charset=utf-8' }, method);
         return;
       }
-
-      const url = new URL(req.url || '/', 'http://localhost');
       if (url.pathname === '/health') {
         send(res, 200, 'ok\n', { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }, method);
         return;
@@ -68,6 +98,21 @@ export async function createApp() {
           'Content-Type': 'application/zip',
           'Content-Length': String(zip.length),
           'Content-Disposition': 'attachment; filename="ketchikan-parcel-extract.zip"',
+          'Cache-Control': 'no-cache',
+        }, method);
+        return;
+      }
+
+      if (url.pathname.startsWith('/lib/')) {
+        const name = url.pathname.slice('/lib/'.length);
+        if (!SHARED_LIB.has(name)) {
+          send(res, 404, 'Not found\n', { 'Content-Type': 'text/plain; charset=utf-8' }, method);
+          return;
+        }
+        const body = await readFile(path.join(root, 'lib', name));
+        send(res, 200, body, {
+          'Content-Type': 'text/javascript; charset=utf-8',
+          'Content-Length': String(body.length),
           'Cache-Control': 'no-cache',
         }, method);
         return;
@@ -95,15 +140,18 @@ export async function createApp() {
       send(res, 200, body, {
         'Content-Type': type,
         'Content-Length': String(body.length),
-        'Cache-Control': path.extname(filePath) === '.html' ? 'no-cache' : 'public, max-age=300',
+        'Cache-Control': ['.html', '.js', '.css'].includes(path.extname(filePath)) ? 'no-cache' : 'public, max-age=300',
       }, method);
     } catch (err) {
       if (err && err.code === 'ENOENT') {
         send(res, 404, 'Not found\n', { 'Content-Type': 'text/plain; charset=utf-8' }, req.method);
         return;
       }
-      console.error(err);
-      send(res, 500, 'Something went wrong.\n', { 'Content-Type': 'text/plain; charset=utf-8' }, req.method);
+      const status = err?.status || (err instanceof SyntaxError ? 400 : 500);
+      if (status === 500) console.error(err);
+      send(res, status, status === 400 ? 'The comparison could not be read.\n' : 'Something went wrong.\n', {
+        'Content-Type': 'text/plain; charset=utf-8',
+      }, req.method);
     }
   });
 }
