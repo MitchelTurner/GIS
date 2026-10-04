@@ -1,0 +1,715 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.644,
+       55.342
+      ],
+      [
+       -131.6436,
+       55.342
+      ],
+      [
+       -131.6436,
+       55.34225
+      ],
+      [
+       -131.644,
+       55.34225
+      ],
+      [
+       -131.644,
+       55.342
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "900000000100",
+    "Parcel_Num": "900000000100",
+    "Owner_Name": " LOVELACE ADA ",
+    "Owner_2": "",
+    "Address": "10 EXAMPLE WAY",
+    "CITY": "KETCHIKAN",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "10 EXAMPLE WAY, KETCHIKAN, AK 99901",
+    "Location": "SAMPLE RD 100",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "EXAMPLE SUBDIVISION",
+    "Land_Acres": 1.2,
+    "Land_Sq_Ft": 52272,
+    "Total_Appr": 60000,
+    "Total_Asse": 60000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 60000,
+    "Asd_Land_V": 60000,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 0,
+    "PropUse": "VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 60000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 58200,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 55800,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 54000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 52800
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6432,
+       55.342
+      ],
+      [
+       -131.6428,
+       55.342
+      ],
+      [
+       -131.6428,
+       55.34225
+      ],
+      [
+       -131.6432,
+       55.34225
+      ],
+      [
+       -131.6432,
+       55.342
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "900000000200",
+    "Parcel_Num": "900000000200",
+    "Owner_Name": " LOVELACE ADA ",
+    "Owner_2": "",
+    "Address": "10 EXAMPLE WAY",
+    "CITY": "KETCHIKAN",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "10 EXAMPLE WAY, KETCHIKAN, AK 99901",
+    "Location": "SAMPLE RD 200",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "EXAMPLE SUBDIVISION",
+    "Land_Acres": 0.3,
+    "Land_Sq_Ft": 13068,
+    "Total_Appr": 260000,
+    "Total_Asse": 260000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 50000,
+    "Asd_Land_V": 50000,
+    "Apr_Imps": 210000,
+    "Asd_Imp_Va": 210000,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1978,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 260000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 252200,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 241800,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 234000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 228800
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6424,
+       55.342
+      ],
+      [
+       -131.642,
+       55.342
+      ],
+      [
+       -131.642,
+       55.34225
+      ],
+      [
+       -131.6424,
+       55.34225
+      ],
+      [
+       -131.6424,
+       55.342
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "900000000300",
+    "Parcel_Num": "900000000300",
+    "Owner_Name": " LOVELACE ADA ",
+    "Owner_2": "BYRON ANNE",
+    "Address": "10 EXAMPLE WAY",
+    "CITY": "KETCHIKAN",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "10 EXAMPLE WAY, KETCHIKAN, AK 99901",
+    "Location": "SAMPLE RD 300",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "EXAMPLE SUBDIVISION",
+    "Land_Acres": 0.8,
+    "Land_Sq_Ft": 34848,
+    "Total_Appr": 90000,
+    "Total_Asse": 90000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 90000,
+    "Asd_Land_V": 90000,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "CG",
+    "Year_Built": 0,
+    "PropUse": "COMM VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 90000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 87300,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 83700,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 81000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 79200
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6416,
+       55.342
+      ],
+      [
+       -131.6412,
+       55.342
+      ],
+      [
+       -131.6412,
+       55.34225
+      ],
+      [
+       -131.6416,
+       55.34225
+      ],
+      [
+       -131.6416,
+       55.342
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "900000000400",
+    "Parcel_Num": "900000000400",
+    "Owner_Name": " HOPPER GRACE ",
+    "Owner_2": "",
+    "Address": "200 SAMPLE AVE",
+    "CITY": "SPRINGFIELD",
+    "STATE": "OR",
+    "ZIP": "00000",
+    "Address_full": "200 SAMPLE AVE, SPRINGFIELD, OR 00000",
+    "Location": "TEST ST 400",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "EXAMPLE SUBDIVISION",
+    "Land_Acres": 0.25,
+    "Land_Sq_Ft": 10890,
+    "Total_Appr": 225000,
+    "Total_Asse": 225000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 45000,
+    "Asd_Land_V": 45000,
+    "Apr_Imps": 180000,
+    "Asd_Imp_Va": 180000,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RM",
+    "Year_Built": 1965,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 225000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 218250,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 209250,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 202500,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 198000
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6408,
+       55.342
+      ],
+      [
+       -131.6404,
+       55.342
+      ],
+      [
+       -131.6404,
+       55.34225
+      ],
+      [
+       -131.6408,
+       55.34225
+      ],
+      [
+       -131.6408,
+       55.342
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "900000000500",
+    "Parcel_Num": "900000000500",
+    "Owner_Name": " TESLA NIKOLA ESTATE ",
+    "Owner_2": "",
+    "Address": "30 EXAMPLE WAY",
+    "CITY": "KETCHIKAN",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "30 EXAMPLE WAY, KETCHIKAN, AK 99901",
+    "Location": "TEST ST 500",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "EXAMPLE SUBDIVISION",
+    "Land_Acres": 0.22,
+    "Land_Sq_Ft": 9583,
+    "Total_Appr": 192000,
+    "Total_Asse": 192000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 42000,
+    "Asd_Land_V": 42000,
+    "Apr_Imps": 150000,
+    "Asd_Imp_Va": 150000,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RM",
+    "Year_Built": 1958,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 192000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 186240,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 178560,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 172800,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 168960
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.644,
+       55.3426
+      ],
+      [
+       -131.6436,
+       55.3426
+      ],
+      [
+       -131.6436,
+       55.34285
+      ],
+      [
+       -131.644,
+       55.34285
+      ],
+      [
+       -131.644,
+       55.3426
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "900000000600",
+    "Parcel_Num": "900000000600",
+    "Owner_Name": " HAMILTON MARGARET ",
+    "Owner_2": "",
+    "Address": "PO BOX 1234",
+    "CITY": "KETCHIKAN",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "PO BOX 1234, KETCHIKAN, AK 99901",
+    "Location": "REMOTE TRL 600",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "EXAMPLE SUBDIVISION",
+    "Land_Acres": 4.5,
+    "Land_Sq_Ft": 196020,
+    "Total_Appr": 38000,
+    "Total_Asse": 38000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 38000,
+    "Asd_Land_V": 38000,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RR",
+    "Year_Built": 0,
+    "PropUse": "REMOTE VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 38000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 36860,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 35340,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 34200,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 33440
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6432,
+       55.3426
+      ],
+      [
+       -131.6428,
+       55.3426
+      ],
+      [
+       -131.6428,
+       55.34285
+      ],
+      [
+       -131.6432,
+       55.34285
+      ],
+      [
+       -131.6432,
+       55.3426
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "900000000700",
+    "Parcel_Num": "900000000700",
+    "Owner_Name": " CITY OF KETCHIKAN ",
+    "Owner_2": "",
+    "Address": "1 CIVIC PL",
+    "CITY": "KETCHIKAN",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "1 CIVIC PL, KETCHIKAN, AK 99901",
+    "Location": "CIVIC PL 700",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "EXAMPLE SUBDIVISION",
+    "Land_Acres": 0.5,
+    "Land_Sq_Ft": 21780,
+    "Total_Appr": 520000,
+    "Total_Asse": 0,
+    "Total_Exem": 520000,
+    "Exempt_1": "CTKET",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 120000,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 400000,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "PLI",
+    "Year_Built": 0,
+    "PropUse": "PUBLIC",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 520000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 504400,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 483600,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 468000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 457600
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6424,
+       55.3426
+      ],
+      [
+       -131.642,
+       55.3426
+      ],
+      [
+       -131.642,
+       55.34285
+      ],
+      [
+       -131.6424,
+       55.34285
+      ],
+      [
+       -131.6424,
+       55.3426
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "900000000800CMN1",
+    "Parcel_Num": "9000000008000001",
+    "Owner_Name": " BABBAGE CHARLES ",
+    "Owner_2": "",
+    "Address": "40 EXAMPLE WAY",
+    "CITY": "KETCHIKAN",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "40 EXAMPLE WAY, KETCHIKAN, AK 99901",
+    "Location": "HARBOR VW 800 CONDO 1",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "SITE PLAN",
+    "Land_Acres": 0,
+    "Land_Sq_Ft": 0,
+    "Total_Appr": 140000,
+    "Total_Asse": 140000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 0,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 140000,
+    "Asd_Imp_Va": 140000,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RH",
+    "Year_Built": 1984,
+    "PropUse": "CONDO",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 140000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 135800,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 130200,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 126000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 123200
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6424,
+       55.3426
+      ],
+      [
+       -131.642,
+       55.3426
+      ],
+      [
+       -131.642,
+       55.34285
+      ],
+      [
+       -131.6424,
+       55.34285
+      ],
+      [
+       -131.6424,
+       55.3426
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "900000000800CMN1",
+    "Parcel_Num": "9000000008000002",
+    "Owner_Name": " NOETHER EMMY ",
+    "Owner_2": "",
+    "Address": "50 EXAMPLE WAY",
+    "CITY": "KETCHIKAN",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "50 EXAMPLE WAY, KETCHIKAN, AK 99901",
+    "Location": "HARBOR VW 800 CONDO 2",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "SITE PLAN",
+    "Land_Acres": 0,
+    "Land_Sq_Ft": 0,
+    "Total_Appr": 145000,
+    "Total_Asse": 145000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 0,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 145000,
+    "Asd_Imp_Va": 145000,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RH",
+    "Year_Built": 1984,
+    "PropUse": "CONDO",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 145000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 140650,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 134850,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 130500,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 127600
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6408,
+       55.3426
+      ],
+      [
+       -131.6404,
+       55.3426
+      ],
+      [
+       -131.6404,
+       55.34285
+      ],
+      [
+       -131.6408,
+       55.34285
+      ],
+      [
+       -131.6408,
+       55.3426
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "900000000900",
+    "Parcel_Num": "900000000900",
+    "Owner_Name": " TURING ALAN ",
+    "Owner_2": "",
+    "Address": "60 EXAMPLE WAY",
+    "CITY": "KETCHIKAN",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "60 EXAMPLE WAY, KETCHIKAN, AK 99901",
+    "Location": "SHORE DR 900",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "EXAMPLE SUBDIVISION",
+    "Land_Acres": 0.6,
+    "Land_Sq_Ft": 26136,
+    "Total_Appr": 410000,
+    "Total_Asse": 410000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 150000,
+    "Asd_Land_V": 150000,
+    "Apr_Imps": 260000,
+    "Asd_Imp_Va": 260000,
+    "Water_Fron": 12,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1992,
+    "PropUse": "RES 2-3",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 410000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 397700,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 381300,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 369000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 360800
+   }
+  }
+ ]
+}

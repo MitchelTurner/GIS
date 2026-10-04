@@ -3,3 +3,13 @@ data/
 *.sqlite-journal
 *.sqlite-wal
 *.sqlite-shm
+
+# Real exports carry owner names and mailing addresses. Only synthetic fixtures are committed.
+*.geojson
+!test/fixtures/*.geojson
+*.contacts.csv
+exports/
+
+node_modules/
+.env
+api/**/*.js
