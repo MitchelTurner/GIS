@@ -27,8 +27,8 @@
   <main>
     <section id="empty">
       <h1>Who owns the land</h1>
-      <p class="lede">Drop the parcel file from the extension. This browser saves it, then every search uses that same file.</p>
-      <button id="drop" class="drop" type="button">Drop a .geojson or .csv here, or choose a file</button>
+      <p class="lede">Drop the <strong>.geojson</strong> from the extension. The map draws every parcel, and this browser keeps the file for the next search. The spreadsheet has the same owners and no outlines.</p>
+      <button id="drop" class="drop" type="button">Drop the .geojson here, or choose a file</button>
       <p id="status" class="fine"></p>
       <details>
         <summary>How to get the file</summary>
@@ -42,6 +42,8 @@
         <button type="submit">Search</button>
         <label class="private"><input id="private" type="checkbox"> Private owners only</label>
       </form>
+      <div id="map" hidden></div>
+      <p id="map-note" class="fine" hidden></p>
       <div class="grid">
         <section>
           <h2>Who owns the land</h2>
@@ -53,8 +55,7 @@
         </section>
         <section>
           <h2>Parcel</h2>
-          <div id="detail" class="fine">Choose an owner.</div>
-          <div id="map" hidden></div>
+          <div id="detail" class="fine">Click a parcel on the map, or an owner in the list.</div>
           <div id="comps"></div>
           <button id="explain" class="ghost" type="button" hidden>Compare with AI</button>
           <div id="explanation"></div>

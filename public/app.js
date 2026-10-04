@@ -21,6 +21,8 @@ let searches = [];
 let selected = null;
 let current = null;
 let map = null;
+let parcelLayer = null;
+let focusIds = new Set();
 
 function pct(value) {
   return `${(Number(value) * 100).toFixed(1)}%`;
@@ -132,45 +134,77 @@ async function searchParcels(query) {
   document.querySelector('#results-title').hidden = false;
   if (!rows.length) resultsNode.textContent = 'No parcels matched.';
   else resultsNode.replaceChildren(resultTable(rows));
+  focusIds = new Set(rows.map((row) => row.parcelno));
+  refreshStyles();
+  zoomTo(focusIds);
   await remember('search', query);
 }
 
-function featureGeometry(record) {
-  if (record.geometry) return record.geometry;
-  if (record.lon == null || record.lat == null) return null;
-  return { type: 'Point', coordinates: [record.lon, record.lat] };
+function styleFor(feature) {
+  const id = feature.properties.parcelno;
+  if (id === selected) return { color: '#fffaf3', weight: 3, fillColor: '#e28a4f', fillOpacity: 0.72 };
+  if (focusIds.has(id)) return { color: '#fffaf3', weight: 2.5, fillColor: '#e28a4f', fillOpacity: 0.55 };
+  return { color: '#fffaf3', weight: 1.5, fillColor: '#c46b3a', fillOpacity: 0.45 };
 }
 
-function drawMap(subject, comps) {
-  const subjectGeometry = featureGeometry(subject);
-  const compFeatures = comps.filter((comp) => featureGeometry(comp)).map((comp) => ({
+function refreshStyles() {
+  if (parcelLayer) parcelLayer.setStyle(styleFor);
+}
+
+function zoomTo(ids) {
+  if (!map || !parcelLayer) return;
+  const bounds = L.latLngBounds([]);
+  parcelLayer.eachLayer((layer) => {
+    const id = layer.feature?.properties?.parcelno;
+    if (ids && ids.size && !ids.has(id)) return;
+    if (layer.getBounds) bounds.extend(layer.getBounds());
+    else if (layer.getLatLng) bounds.extend(layer.getLatLng());
+  });
+  if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24], maxZoom: 16 });
+}
+
+function showMap() {
+  const note = document.querySelector('#map-note');
+  const features = library.parcels.filter((parcel) => parcel.geometry).map((parcel) => ({
     type: 'Feature',
-    geometry: featureGeometry(comp),
-    properties: { parcelno: comp.parcelno },
+    geometry: parcel.geometry,
+    properties: { parcelno: parcel.parcelno },
   }));
-  if (!subjectGeometry && !compFeatures.length) {
+  if (!features.length) {
     mapNode.hidden = true;
+    note.hidden = false;
+    note.textContent = 'This file has the owners and no parcel outlines. Drop the .geojson to see the map.';
+    if (map) {
+      map.remove();
+      map = null;
+      parcelLayer = null;
+    }
     return;
   }
+  note.hidden = true;
   mapNode.hidden = false;
-  if (map) {
-    map.remove();
-    map = null;
+  mapNode.getBoundingClientRect();
+  if (!map) {
+    map = L.map(mapNode, { preferCanvas: true });
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      attribution: 'Tiles © Esri',
+    }).addTo(map);
   }
-  map = L.map(mapNode);
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 19,
-    attribution: 'Tiles © Esri',
+  if (parcelLayer) map.removeLayer(parcelLayer);
+  parcelLayer = L.geoJSON({ type: 'FeatureCollection', features }, {
+    style: styleFor,
+    onEachFeature(feature, layer) {
+      layer.on('click', () => showParcel(feature.properties.parcelno));
+    },
   }).addTo(map);
-  const subjectLayer = L.geoJSON(subjectGeometry || { type: 'FeatureCollection', features: [] }, {
-    style: { color: '#f4efe4', weight: 2, fillColor: '#c46b3a', fillOpacity: 0.55 },
-  }).addTo(map);
-  const compLayer = L.geoJSON({ type: 'FeatureCollection', features: compFeatures }, {
-    style: { color: '#f4efe4', weight: 1, fillColor: '#1e3a32', fillOpacity: 0.35 },
-  }).addTo(map);
-  const group = L.featureGroup([subjectLayer, compLayer]);
-  if (group.getBounds().isValid()) map.fitBounds(group.getBounds(), { padding: [20, 20] });
-  requestAnimationFrame(() => map.invalidateSize());
+  const fit = () => {
+    map.invalidateSize();
+    const bounds = parcelLayer.getBounds();
+    if (bounds.isValid()) map.fitBounds(bounds, { padding: [16, 16] });
+  };
+  requestAnimationFrame(fit);
+  setTimeout(fit, 250);
 }
 
 async function showParcel(parcelno) {
@@ -178,7 +212,6 @@ async function showParcel(parcelno) {
   if (!found) {
     detailNode.textContent = 'That parcel is not in the saved file.';
     compsNode.replaceChildren();
-    mapNode.hidden = true;
     explainButton.hidden = true;
     return;
   }
@@ -218,7 +251,10 @@ async function showParcel(parcelno) {
   compsNode.replaceChildren(list);
   explainButton.hidden = false;
   explanationNode.textContent = '';
-  drawMap(found.subject, found.comps);
+  focusIds = new Set([found.subject.parcelno, ...found.comps.map((comp) => comp.parcelno)]);
+  refreshStyles();
+  zoomTo(focusIds);
+  mapNode.scrollIntoView({ block: 'nearest' });
   await remember('comps', parcelno);
 }
 
@@ -235,14 +271,15 @@ async function useFile(file) {
     await saveKey('parcels', library.parcels);
     selected = null;
     current = null;
-    detailNode.textContent = 'Choose an owner.';
+    focusIds = new Set();
+    detailNode.textContent = 'Click a parcel on the map, or an owner in the list.';
     compsNode.replaceChildren();
-    mapNode.hidden = true;
     explainButton.hidden = true;
     explanationNode.textContent = '';
     resultsNode.textContent = '';
     document.querySelector('#results-title').hidden = true;
     showWorkspace(true);
+    showMap();
     renderOwners();
     statusNode.textContent = '';
     fileInput.value = '';
@@ -290,6 +327,13 @@ document.querySelector('#clear').addEventListener('click', async () => {
   detailNode.textContent = 'Choose an owner.';
   compsNode.replaceChildren();
   mapNode.hidden = true;
+  document.querySelector('#map-note').hidden = true;
+  if (map) {
+    map.remove();
+    map = null;
+    parcelLayer = null;
+  }
+  focusIds = new Set();
   explainButton.hidden = true;
   explanationNode.textContent = '';
   showWorkspace(false);
@@ -319,6 +363,7 @@ searches = (await loadKey('searches')) || [];
 if (Array.isArray(savedParcels) && savedParcels.length) {
   library = createLibrary(savedParcels);
   showWorkspace(true);
+  showMap();
   renderOwners();
   renderSearches();
 }

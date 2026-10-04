@@ -37,7 +37,7 @@ node extract-parcels.mjs pull \
 
 ## Parcel studio
 
-After a download, drop the GeoJSON on the public site. The page saves it in that browser and, on the next visit, starts from those same parcels. It lists who owns what share of the acres. Open a parcel to see the mailing address, the ownership split, and comps ranked by size, assessed value, zoning, subdivision, and distance. Two names on one parcel split that parcel equally, because the borough layer does not record a 60/40 share. **Compare with AI** writes the comparison when the server has `AI_API_KEY`. The ranked comps still work without a key.
+After a download, drop the GeoJSON on the public site. The map draws every parcel right away. Click a shape, or an owner, and the map zooms there. The page saves the file in that browser and, on the next visit, starts from those same parcels. It lists who owns what share of the acres. A parcel shows the mailing address, the ownership split, and comps ranked by size, assessed value, zoning, subdivision, and distance. The contacts spreadsheet has the owners and no outlines, so the map stays empty until the GeoJSON is the file on the page. Two names on one parcel split that parcel equally, because the borough layer does not record a 60/40 share. **Compare with AI** writes the comparison when the server has `AI_API_KEY`. The ranked comps still work without a key.
 
 The same work can run on this computer with Node 22 or newer:
 

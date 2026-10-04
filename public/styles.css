@@ -120,7 +120,7 @@ tr.clickable { cursor: pointer; }
 
 #explanation:not(:empty) { margin-top: 10px; white-space: pre-wrap; }
 
-#map { height: 240px; margin: 10px 0; border-radius: 16px; border: 1px solid var(--line); }
+#map { height: 480px; margin: 0 0 18px; border-radius: 16px; border: 1px solid var(--line); }
 
 #explain { margin-top: 10px; }
 
@@ -160,5 +160,5 @@ details p { max-width: 40rem; }
   .grid, .top { display: block; }
   nav { margin-top: 10px; flex-wrap: wrap; }
   #size { display: none; }
-  #map { height: 220px; }
+  #map { height: 320px; }
 }
