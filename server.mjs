@@ -7,7 +7,7 @@ import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { explainComps } from './lib/comps-ai.js';
+import { aiStatus, explainComps } from './lib/comps-ai.js';
 import { zipDirectory } from './lib/zip.js';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -77,7 +77,9 @@ export async function createApp({ explain = explainComps } = {}) {
       if (method === 'POST' && url.pathname === '/api/explain') {
         const raw = await readBody(req);
         const body = JSON.parse(raw || '{}');
-        const explanation = await explain(body.subject || {}, Array.isArray(body.comps) ? body.comps : []);
+        const explanation = await explain(body.subject || {}, Array.isArray(body.comps) ? body.comps : [], {
+          question: body.question,
+        });
         send(res, 200, JSON.stringify(explanation), {
           'Content-Type': 'application/json; charset=utf-8',
           'Cache-Control': 'no-store',
@@ -86,6 +88,13 @@ export async function createApp({ explain = explainComps } = {}) {
       }
       if (method !== 'GET' && method !== 'HEAD') {
         send(res, 405, 'Method not allowed\n', { 'Content-Type': 'text/plain; charset=utf-8' }, method);
+        return;
+      }
+      if (method === 'GET' && url.pathname === '/api/ai') {
+        send(res, 200, JSON.stringify(aiStatus()), {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-store',
+        }, method);
         return;
       }
       if (url.pathname === '/health') {

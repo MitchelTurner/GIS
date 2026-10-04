@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { explainComps } from '../lib/comps-ai.js';
+import { aiStatus, explainComps } from '../lib/comps-ai.js';
 import { geometryAcres, isCondo, isPublicOwner, neighborBenchmarks, ownerKey, ownershipChanges, parties, placesDiffer, rankComps, summarizeOwners } from '../lib/ownership.js';
 import { compsFor, getParcel, importRecords, listSearches, openDatabase, ownerReport, searchParcels, updateParcel } from '../lib/parcels-db.js';
 
@@ -179,6 +179,48 @@ test('AI comparison uses the ranked comps and stays quiet without a key', async 
   );
   assert.equal(priced.subject.sale, 200000);
   assert.equal(priced.comps[0].sale, 210000);
+
+  const off = aiStatus({ apiKey: '' });
+  assert.equal(off.available, false);
+  const on = aiStatus({ apiKey: 'secret-key', model: 'test-model' });
+  assert.deepEqual(on, { available: true, model: 'test-model' });
+
+  let asked = null;
+  const answer = await explainComps(
+    {
+      parcelno: '9',
+      taxableValue: 0,
+      appraisedValue: 10000,
+      exemption: 'SENCT',
+      waterfront: 155,
+      deedDate: '24-AUG-84',
+      valueHistory: [{ year: 2025, amount: 9000 }, { year: 2026, amount: 10000 }],
+      neighbor: { rate: 10000, median: 100000, below: true },
+    },
+    [],
+    {
+      apiKey: 'test-key',
+      question: '  Is the taxable amount the one to use?  ',
+      fetchImpl: async (_url, init) => {
+        asked = JSON.parse(JSON.parse(init.body).messages[1].content);
+        return { ok: true, json: async () => ({ choices: [{ message: { content: 'Taxable is zero.' } }] }) };
+      },
+    },
+  );
+  assert.equal(answer.text, 'Taxable is zero.');
+  assert.equal(asked.question, 'Is the taxable amount the one to use?');
+  assert.equal(asked.subject.taxable, 0);
+  assert.equal(asked.subject.appraised, 10000);
+  assert.equal(asked.subject.exemption, 'SENCT');
+  assert.equal(asked.subject.waterfront, 'Yes');
+  assert.equal(asked.subject.deedDate, '24-AUG-84');
+  assert.equal(asked.subject.neighbor.below, true);
+  assert.deepEqual(asked.subject.valueHistory, [
+    { year: 2025, amount: 9000 },
+    { year: 2026, amount: 10000 },
+  ]);
+  assert.equal(JSON.stringify(asked).includes('155'), false);
+  assert.equal(JSON.stringify(asked).includes('secret'), false);
 });
 
 function feature(parcelno, owner, acres, value, zoning, geometry) {

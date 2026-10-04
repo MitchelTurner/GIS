@@ -11,6 +11,8 @@ const detailNode = document.querySelector('#detail');
 const compsNode = document.querySelector('#comps');
 const mapNode = document.querySelector('#map');
 const explainButton = document.querySelector('#explain');
+const askWrap = document.querySelector('#ask-wrap');
+const askInput = document.querySelector('#ask');
 const explanationNode = document.querySelector('#explanation');
 const searchesNode = document.querySelector('#searches');
 const statusNode = document.querySelector('#status');
@@ -111,6 +113,15 @@ function statStrip(rows) {
     list.append(wrap);
   }
   return list;
+}
+
+function showExplain(on) {
+  explainButton.hidden = !on;
+  askWrap.hidden = !on;
+  if (!on) {
+    explanationNode.textContent = '';
+    askInput.value = '';
+  }
 }
 
 function markOwner(key) {
@@ -644,7 +655,7 @@ async function showParcel(parcelno) {
   if (!found) {
     detailNode.textContent = 'That parcel is not in the saved file.';
     compsNode.replaceChildren();
-    explainButton.hidden = true;
+    showExplain(false);
     return;
   }
   selected = parcelno;
@@ -708,7 +719,7 @@ async function showParcel(parcelno) {
   } else {
     compsNode.textContent = 'No other parcels to compare.';
   }
-  explainButton.hidden = false;
+  showExplain(true);
   explanationNode.textContent = '';
   focusIds = new Set([subject.parcelno, ...found.comps.map((comp) => comp.parcelno)]);
   refreshStyles();
@@ -772,8 +783,7 @@ async function showOwner(ownerKey) {
   document.querySelector('#detail-title').textContent = owner.publicOwner ? `${owner.name} (public)` : owner.name;
   detailNode.replaceChildren();
   compsNode.replaceChildren();
-  explainButton.hidden = true;
-  explanationNode.textContent = '';
+  showExplain(false);
   if (owner.mailingLine) {
     addLabel(detailNode, 'Mail');
     const mail = document.createElement('p');
@@ -1057,8 +1067,7 @@ async function useFile(file) {
     focusIds = new Set();
     detailNode.textContent = 'Click a parcel on the map, or an owner in the list.';
     compsNode.replaceChildren();
-    explainButton.hidden = true;
-    explanationNode.textContent = '';
+    showExplain(false);
     resultsNode.textContent = '';
     document.querySelector('#results-title').hidden = true;
     refreshNeighbors();
@@ -1236,27 +1245,45 @@ document.querySelector('#clear').addEventListener('click', async () => {
     parcelLayer = null;
   }
   focusIds = new Set();
-  explainButton.hidden = true;
-  explanationNode.textContent = '';
+  showExplain(false);
   showWorkspace(false);
+});
+askInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    explainButton.click();
+  }
 });
 explainButton.addEventListener('click', async () => {
   if (!current) return;
   explanationNode.textContent = 'Comparing…';
+  explainButton.disabled = true;
   try {
     const slim = ({ geometry, ...parcel }) => parcel;
+    const subject = slim(current.subject);
+    const bench = neighborMap.get(subject.parcelno);
+    if (bench) subject.neighbor = { rate: bench.rate, median: bench.median, below: bench.below };
     const res = await fetch('/api/explain', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        subject: slim(current.subject),
+        subject,
         comps: current.comps.map(slim),
+        question: askInput.value.trim(),
       }),
     });
-    const body = await res.json();
+    const raw = await res.text();
+    let body = {};
+    try {
+      body = JSON.parse(raw);
+    } catch {
+      body = { text: raw };
+    }
     explanationNode.textContent = body.text || body.error || 'No comparison came back.';
   } catch {
     explanationNode.textContent = 'The comparison did not finish. The ranked comps are still on this page.';
+  } finally {
+    explainButton.disabled = false;
   }
 });
 

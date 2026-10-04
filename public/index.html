@@ -7,7 +7,7 @@
   <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
   <link rel="icon" href="/icon128.png" type="image/png">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=7">
+  <link rel="stylesheet" href="/styles.css?v=8">
 </head>
 <body>
   <header class="top">
@@ -80,6 +80,10 @@
           <h2 id="detail-title">Parcel</h2>
           <div id="detail" class="fine">Click a parcel on the map, or an owner in the list.</div>
           <div id="comps"></div>
+          <label id="ask-wrap" class="ask" hidden>
+            <span>Ask the comparison</span>
+            <input id="ask" type="text" maxlength="400" placeholder="Is the taxable amount the one to use?" aria-label="Question for the comparison">
+          </label>
           <button id="explain" class="ghost" type="button" hidden>Compare with AI</button>
           <div id="explanation"></div>
         </section>
@@ -87,7 +91,7 @@
     </section>
   </main>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=7"></script>
+  <script type="module" src="/app.js?v=8"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));

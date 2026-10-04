@@ -25,7 +25,8 @@ test('install page serves the extension zip', async () => {
     assert.match(html, /Download the extension/);
     assert.match(html, /Who owns the land/);
     assert.match(html, /Since the last file/);
-    assert.match(html, /app\.js\?v=7/);
+    assert.match(html, /app\.js\?v=8/);
+    assert.match(html, /Ask the comparison/);
     assert.match(html, /Mail goes somewhere else/);
     assert.match(html, /Draw an area/);
     assert.match(html, /Export labels/);
@@ -72,8 +73,12 @@ test('install page serves the extension zip', async () => {
 });
 
 test('compare sends the comps and does not require a stored parcel file', async () => {
+  let asked = null;
   const server = await createApp({
-    explain: async (subject, comps) => ({ available: true, text: `${subject.parcelno} against ${comps.length}` }),
+    explain: async (subject, comps, options = {}) => {
+      asked = options.question;
+      return { available: true, text: `${subject.parcelno} against ${comps.length}` };
+    },
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const { port } = server.address();
@@ -85,12 +90,24 @@ test('compare sends the comps and does not require a stored parcel file', async 
     });
     assert.equal(res.status, 200);
     assert.equal((await res.json()).text, '1002 against 1');
+    const askedRes = await fetch(`http://127.0.0.1:${port}/api/explain`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject: { parcelno: '1002' }, comps: [], question: 'Is it exempt?' }),
+    });
+    assert.equal(askedRes.status, 200);
+    assert.equal(asked, 'Is it exempt?');
     const bad = await fetch(`http://127.0.0.1:${port}/api/explain`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: '{',
     });
     assert.equal(bad.status, 400);
+    const status = await fetch(`http://127.0.0.1:${port}/api/ai`);
+    assert.equal(status.status, 200);
+    const ai = await status.json();
+    assert.equal(typeof ai.available, 'boolean');
+    assert.equal(JSON.stringify(ai).includes('sk-'), false);
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }
