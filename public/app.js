@@ -431,6 +431,15 @@ function zoomTo(ids) {
   if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24], maxZoom: 16 });
 }
 
+function goToParcel(parcelno, { scroll = true } = {}) {
+  if (!map || mapNode.hidden) return;
+  const parcel = library.parcels.find((item) => item.parcelno === parcelno);
+  const box = bboxOf(parcel?.geometry);
+  if (!box) return;
+  if (scroll) mapNode.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  map.flyToBounds([[box.minLat, box.minLon], [box.maxLat, box.maxLon]], { padding: [60, 60], maxZoom: 18, duration: 0.8 });
+}
+
 function renderChanges() {
   const section = document.querySelector('#changes');
   const list = document.querySelector('#change-list');
@@ -471,7 +480,7 @@ function drawVisible() {
   const byParcel = new Map(library.parcels.map((parcel) => [parcel.parcelno, parcel]));
   const visible = indexedFeatures.filter((feature) => {
     const parcel = byParcel.get(feature.properties.parcelno);
-    return parcel && parcelPasses(parcel) && intersects(feature.bbox, view);
+    return parcel && (parcelPasses(parcel) || parcel.parcelno === selected) && intersects(feature.bbox, view);
   });
   if (parcelLayer) map.removeLayer(parcelLayer);
   parcelLayer = L.geoJSON({ type: 'FeatureCollection', features: visible }, {
@@ -485,7 +494,7 @@ function drawVisible() {
         money(parcel?.total_value),
       ].filter(Boolean).join(' · ');
       layer.bindTooltip(tip, { sticky: true });
-      layer.on('click', () => showParcel(feature.properties.parcelno));
+      layer.on('click', () => showParcel(feature.properties.parcelno, { fromMap: true }));
     },
   }).addTo(map);
   mapNode.dataset.shown = String(visible.length);
@@ -650,7 +659,7 @@ function clearDrawnArea() {
   syncDrawButton();
 }
 
-async function showParcel(parcelno) {
+async function showParcel(parcelno, { fromMap = false } = {}) {
   const found = library.comps(parcelno);
   if (!found) {
     detailNode.textContent = 'That parcel is not in the saved file.';
@@ -722,9 +731,8 @@ async function showParcel(parcelno) {
   showExplain(true);
   explanationNode.textContent = '';
   focusIds = new Set([subject.parcelno, ...found.comps.map((comp) => comp.parcelno)]);
-  refreshStyles();
-  zoomTo(focusIds);
-  detailNode.scrollIntoView({ block: 'nearest' });
+  drawVisible();
+  goToParcel(subject.parcelno, { scroll: !fromMap });
   await remember('comps', parcelno);
 }
 
