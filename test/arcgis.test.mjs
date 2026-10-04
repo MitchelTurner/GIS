@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   classifyArcGisUrl,
+  isBasemapUrl,
+  KETCHIKAN_OWNERS_URL,
   esriPolygonToGeoJson,
   esriFeatureToGeoJson,
   cleanFeature,
@@ -14,6 +16,14 @@ import {
   pullFeatures,
   readEndpoint,
 } from '../extension/lib/arcgis.js';
+
+test('the imagery basemap is not the owner layer', () => {
+  assert.equal(isBasemapUrl('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'), true);
+  assert.equal(isBasemapUrl(KETCHIKAN_OWNERS_URL), false);
+  const owners = classifyArcGisUrl(KETCHIKAN_OWNERS_URL);
+  assert.equal(owners.kind, 'layer');
+  assert.equal(owners.url, KETCHIKAN_OWNERS_URL);
+});
 
 test('classifyArcGisUrl keeps the layer and drops the query', () => {
   const layer = classifyArcGisUrl('https://gis.example.com/arcgis/rest/services/Parcels/MapServer/0/query?f=json');

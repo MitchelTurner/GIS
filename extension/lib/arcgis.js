@@ -6,6 +6,13 @@
 const MAX_RETRIES = 4;
 const USER_AGENT = 'ketchikan-parcel-extract/1.0';
 
+export const KETCHIKAN_OWNERS_URL = 'https://services2.arcgis.com/65jtiGuzdaRB5FxF/arcgis/rest/services/Parcel_Ketchikan/FeatureServer/0';
+
+export function isBasemapUrl(url) {
+  return /services\.arcgisonline\.com/i.test(url)
+    || /\/(World_Imagery|World_Topo_Map|World_Street_Map)\//i.test(url);
+}
+
 export function classifyArcGisUrl(raw) {
   let parsed;
   try {
