@@ -312,6 +312,7 @@ function drawVisible() {
       layer.on('click', () => showParcel(feature.properties.parcelno));
     },
   }).addTo(map);
+  mapNode.dataset.shown = String(visible.length);
   const note = document.querySelector('#map-note');
   const anyGeometry = indexedFeatures.length > 0;
   const anyMatch = library.parcels.some((parcel) => parcel.geometry && parcelPasses(parcel));

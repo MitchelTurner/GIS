@@ -75,6 +75,7 @@ test('a linked trust shares one row and a sale year survives the next file', () 
   assert.equal(joined.acres, 6);
   assert.equal(joined.name, 'Ada Lovelace');
   assert.equal(joined.linked.length, 1);
+  assert.equal(joined.linked[0].name, 'Smith Family Trust');
   assert.equal(library.ownerReport().shown.length, 1);
   const parcel = library.parcels.find((item) => item.parcelno === '1');
   assert.equal(parcel.year_built, 1978);
