@@ -187,9 +187,9 @@ function drawMap(collection) {
   }
   mapNode.hidden = false;
   map = L.map(mapNode, { scrollWheelZoom: true });
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     maxZoom: 19,
-    attribution: '&copy; OpenStreetMap',
+    attribution: 'Tiles &copy; Esri',
   }).addTo(map);
   const layer = L.geoJSON(collection, {
     style: {
