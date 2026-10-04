@@ -229,14 +229,43 @@ test('a pasted key is trimmed and a rejected key says what to fix', async () => 
     apiKey: ' "sk-test-key"\n',
     fetchImpl: async (_url, init) => {
       auth = init.headers.Authorization;
-      return { ok: false, status: 401, json: async () => ({}) };
+      return { ok: false, status: 401, json: async () => ({ error: { code: 'invalid_api_key', message: 'Incorrect API key provided: sk-tes***-key' } }) };
     },
   });
   assert.equal(auth, 'Bearer sk-test-key');
   assert.equal(rejected.status, 401);
-  assert.match(rejected.text, /api\.openai\.com turned down the API key \(HTTP 401\)/);
+  assert.match(rejected.text, /api\.openai\.com turned down the key \(ends in -key, invalid_api_key\) \(HTTP 401\)/);
   assert.match(rejected.text, /AI_API_KEY/);
-  assert.doesNotMatch(rejected.text, /sk-test-key/);
+  assert.doesNotMatch(rejected.text, /sk-test/);
+});
+
+test('a rejected AI_API_KEY falls back to OPENAI_API_KEY', async (t) => {
+  const saved = { AI_API_KEY: process.env.AI_API_KEY, OPENAI_API_KEY: process.env.OPENAI_API_KEY };
+  t.after(() => {
+    for (const [name, value] of Object.entries(saved)) {
+      if (value === undefined) delete process.env[name];
+      else process.env[name] = value;
+    }
+  });
+  process.env.AI_API_KEY = 'sk-old-1111';
+  process.env.OPENAI_API_KEY = 'sk-new-2222';
+  const used = [];
+  const fetchImpl = async (_url, init) => {
+    used.push(init.headers.Authorization);
+    if (init.headers.Authorization.endsWith('2222')) {
+      return { ok: true, json: async () => ({ choices: [{ message: { content: 'Compared.' } }] }) };
+    }
+    return { ok: false, status: 401, json: async () => ({ error: { code: 'invalid_api_key' } }) };
+  };
+  const answer = await explainComps({ parcelno: '1' }, [], { fetchImpl });
+  assert.equal(answer.text, 'Compared.');
+  assert.deepEqual(used, ['Bearer sk-old-1111', 'Bearer sk-new-2222']);
+
+  process.env.OPENAI_API_KEY = 'sk-also-bad-3333';
+  const both = await explainComps({ parcelno: '1' }, [], {
+    fetchImpl: async () => ({ ok: false, status: 401, json: async () => ({ error: { code: 'invalid_api_key' } }) }),
+  });
+  assert.match(both.text, /AI_API_KEY \(ends in 1111, invalid_api_key\) and OPENAI_API_KEY \(ends in 3333, invalid_api_key\)/);
 });
 
 function feature(parcelno, owner, acres, value, zoning, geometry) {
