@@ -240,6 +240,45 @@ td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: t
 
 .searches { display: flex; flex-wrap: wrap; gap: 8px; }
 
+.badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.badge.changed { background: #f7e2b5; color: #6b4708; }
+
+.badge.missing { background: #e9e1d6; color: var(--muted); border: 1px dashed #b9ab96; }
+
+.flags { margin: 0 0 10px; }
+
+.flags .badge { margin-top: 4px; }
+
+.flag-note { margin: 4px 0 6px; font-size: 14px; }
+
+.toast {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--spruce);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.signin { align-items: flex-end; max-width: 38rem; margin-top: 16px; }
+
+.signin input {
+  width: 15rem;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  font: inherit;
+}
+
 .drop {
   display: grid;
   place-items: center;

@@ -25,7 +25,7 @@ test('install page serves the extension zip', async () => {
     assert.match(html, /Download the extension/);
     assert.match(html, /Who owns the land/);
     assert.match(html, /Since the last file/);
-    assert.match(html, /app\.js\?v=8/);
+    assert.match(html, /app\.js\?v=9/);
     assert.match(html, /Ask the comparison/);
     assert.match(html, /Mail goes somewhere else/);
     assert.match(html, /Draw an area/);
