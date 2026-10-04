@@ -1,5 +1,7 @@
 import { classifyArcGisUrl } from './lib/arcgis.js';
 
+document.querySelector('#version').textContent = `v${chrome.runtime.getManifest().version}`;
+
 const detectedSection = document.querySelector('#detected');
 const detectedList = document.querySelector('#detected-list');
 const recentSection = document.querySelector('#recent');
