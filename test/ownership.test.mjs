@@ -374,3 +374,38 @@ test('a Claude key goes to the Anthropic Messages API with the newest Sonnet', a
   });
   assert.match(rejected.text, /api\.anthropic\.com \(ends in yyyy, authentication_error\) \(HTTP 401\)/);
 });
+
+test('a Claude 400 quotes the reason and retries without temperature when asked', async () => {
+  const refuse = (message) => ({ ok: false, status: 400, json: async () => ({ type: 'error', error: { type: 'invalid_request_error', message } }) });
+  const broke = await explainComps({ parcelno: '1' }, [], {
+    apiKey: 'sk-ant-api03-wwww',
+    model: 'claude-sonnet-9',
+    fetchImpl: async () => refuse('Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing.'),
+  });
+  assert.match(broke.text, /out of credit\. Add credit under Billing/);
+  assert.match(broke.text, /api\.anthropic\.com said: "Your credit balance is too low/);
+  assert.equal(broke.status, 400);
+
+  const bodies = [];
+  const answer = await explainComps({ parcelno: '1' }, [], {
+    apiKey: 'sk-ant-api03-vvvv',
+    model: 'claude-sonnet-9',
+    fetchImpl: async (url, init) => {
+      const body = JSON.parse(init.body);
+      bodies.push(body);
+      if ('temperature' in body) return refuse('temperature is not supported for this model.');
+      return { ok: true, json: async () => ({ content: [{ type: 'text', text: 'Compared without temperature.' }] }) };
+    },
+  });
+  assert.equal(answer.text, 'Compared without temperature.');
+  assert.equal(bodies.length, 2);
+  assert.equal(bodies[0].temperature, 0.2);
+  assert.equal('temperature' in bodies[1], false);
+
+  const other = await explainComps({ parcelno: '1' }, [], {
+    apiKey: 'sk-ant-api03-uuuu',
+    model: 'claude-sonnet-9',
+    fetchImpl: async () => refuse('messages: text content blocks must be non-empty'),
+  });
+  assert.match(other.text, /refused the request \(HTTP 400\) for model claude-sonnet-9\. api\.anthropic\.com said: "messages: text content blocks must be non-empty"/);
+});
