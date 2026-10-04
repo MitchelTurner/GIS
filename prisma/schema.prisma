@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Import {
+  id                Int      @id @default(autoincrement())
+  filename          String
+  createdAt         DateTime @default(now()) @map("created_at")
+  featureCount      Int      @map("feature_count")
+  parcelCount       Int      @map("parcel_count")
+  added             Int
+  updated           Int
+  ownerChanged      Int      @map("owner_changed")
+  missing           Int
+  returned          Int
+  duplicatesDropped Int      @map("duplicates_dropped")
+
+  @@map("imports")
+}
+
+/// Money is in cents. Field sources are in docs/FIELD_MAP.md; a field with no source stays null.
+model Parcel {
+  id                    Int       @id @default(autoincrement())
+  parcelId              String    @unique @map("parcel_id")
+  parcelNo              String?   @map("parcel_no")
+  ownerName             String?   @map("owner_name")
+  ownerName2            String?   @map("owner_name_2")
+  ownerKey              String?   @map("owner_key")
+  ownerSignature        String?   @map("owner_signature")
+  mailingAddress        String?   @map("mailing_address")
+  mailingCity           String?   @map("mailing_city")
+  mailingState          String?   @map("mailing_state")
+  mailingZip            String?   @map("mailing_zip")
+  situsAddress          String?   @map("situs_address")
+  situsCity             String?   @map("situs_city")
+  subdivision           String?
+  landAcres             Float?    @map("land_acres")
+  landSqFt              Float?    @map("land_sq_ft")
+  areaSqFt              Float?    @map("area_sq_ft")
+  appraisedCents        BigInt?   @map("appraised_cents")
+  taxableCents          BigInt?   @map("taxable_cents")
+  exemptCents           BigInt?   @map("exempt_cents")
+  landValueCents        BigInt?   @map("land_value_cents")
+  improvementValueCents BigInt?   @map("improvement_value_cents")
+  exemptCodes           String[]  @default([]) @map("exempt_codes")
+  zoning                String?
+  propUse               String?   @map("prop_use")
+  yearBuilt             Int?      @map("year_built")
+  waterfrontCode        Int?      @map("waterfront_code")
+  deedRefDate           String?   @map("deed_ref_date")
+  valueHistory          Json      @default("[]") @map("value_history")
+  centroidLat           Float?    @map("centroid_lat")
+  centroidLng           Float?    @map("centroid_lng")
+  geometry              Json?
+  raw                   Json
+  firstImportId         Int       @map("first_import_id")
+  lastImportId          Int       @map("last_import_id")
+  ownerChangedAt        DateTime? @map("owner_changed_at")
+  previousOwnerName     String?   @map("previous_owner_name")
+  missingSince          DateTime? @map("missing_since")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  @@index([ownerKey])
+  @@map("parcels")
+}
+
+model Session {
+  /// sha256 of the cookie token; the token itself is never stored.
+  id         String   @id
+  createdAt  DateTime @default(now()) @map("created_at")
+  expiresAt  DateTime @map("expires_at")
+  lastSeenAt DateTime @default(now()) @map("last_seen_at")
+
+  @@map("sessions")
+}

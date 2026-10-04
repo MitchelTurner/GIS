@@ -113,7 +113,25 @@ With no arguments, `node extract-parcels.mjs` reads the layer URL and flags from
 
 `npm start` runs a small web server. Railway should keep that process up. `railway.json` sets the start command, a health check at `/health`, and a restart policy of `ON_FAILURE`.
 
-The site serves `/extension.zip` and reads a GeoJSON or CSV you drop on the page. The saved parcels stay in that browser. Set `AI_API_KEY` on the server when you want the written comparison.
+The site serves `/extension.zip` and reads a GeoJSON or CSV you drop on the page. Set `AI_API_KEY` on the server when you want the written comparison.
+
+Without a database, the saved parcels stay in that browser. With one, the server keeps them behind a sign-in for one person:
+
+1. In Railway, add a PostgreSQL database to the project and reference its `DATABASE_URL` in this service.
+2. Run `npm install`, then `npm run hash-password` on your computer. Type the password, at least 12 characters, and press Enter. It prints an argon2 hash.
+3. Set `ADMIN_EMAIL` to your email and `ADMIN_PASSWORD_HASH` to that hash.
+4. Redeploy. The build runs `npm run build` (Prisma client and the Nest server in `api/`). `npm start` applies migrations with `prisma migrate deploy` and starts the server.
+
+After sign-in, a dropped GeoJSON goes to `POST /api/imports`. Re-importing never deletes a parcel. An owner change gets an **Owner changed** badge with the earlier owner, and a parcel left out of the newer file gets a **Missing** badge. Every browser you sign in from loads the same parcels. Sale prices, shares, owner links, and contact marks still live in the browser. `docs/FIELD_MAP.md` lists each exported field and where it lands.
+
+Every `/api` route except sign-in needs the session cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, 30 days. `/health`, the page, and `/extension.zip` stay public.
+
+Real exports carry owner names and mailing addresses. `.gitignore` keeps `*.geojson` and `exports/` out of git. Tests use the made-up owners in `test/fixtures/`. To run the server tests against a scratch database whose name ends in `_test`:
+
+```bash
+npm run build
+TEST_DATABASE_URL=postgresql://user:pass@localhost:5432/parcels_test npm test
+```
 
 ## Output
 

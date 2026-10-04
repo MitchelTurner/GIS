@@ -65,12 +65,12 @@ function readBody(req, limit = 120000) {
   });
 }
 
-const SHARED_LIB = new Set(['library.js', 'ownership.js', 'records.js']);
+const SHARED_LIB = new Set(['library.js', 'ownership.js', 'records.js', 'parcel-ids.js', 'parcel-import.js']);
 
-export async function createApp({ explain = explainComps } = {}) {
+export async function createHandler({ explain = explainComps } = {}) {
   const zip = await zipDirectory(extensionDir, 'ketchikan-parcel-extract');
 
-  return http.createServer(async (req, res) => {
+  return async (req, res) => {
     try {
       const method = req.method || 'GET';
       const url = new URL(req.url || '/', 'http://localhost');
@@ -162,7 +162,11 @@ export async function createApp({ explain = explainComps } = {}) {
         'Content-Type': 'text/plain; charset=utf-8',
       }, req.method);
     }
-  });
+  };
+}
+
+export async function createApp(options = {}) {
+  return http.createServer(await createHandler(options));
 }
 
 export async function start(port = Number(process.env.PORT) || 3000) {
