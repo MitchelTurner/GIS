@@ -211,6 +211,25 @@ tr.is-on { background: #efe4d4; }
 
 #explanation:not(:empty) { margin-top: 10px; white-space: pre-wrap; }
 
+.ask-all { margin: 0 0 18px; }
+
+.ask-all .ask { margin-top: 0; }
+
+.ask-all > button { margin-top: 8px; }
+
+.answer:not(:empty) { margin-top: 10px; padding: 14px; border-radius: 16px; background: var(--paper); white-space: pre-wrap; }
+
+.parcel-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--spruce);
+  font: inherit;
+  font-weight: 650;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 #map { height: 480px; margin: 0 0 18px; border-radius: 16px; border: 1px solid var(--line); }
 
 #map.drawing, #map.drawing .leaflet-container { cursor: crosshair; }

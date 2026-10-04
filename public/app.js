@@ -49,7 +49,12 @@ let dragStart = null;
 let savedZoning = '';
 // in: the server's database holds the parcels; off: only this browser does.
 let serverMode = 'off';
+let aiReady = false;
 let toastTimer = null;
+const askAllNode = document.querySelector('#ask-all');
+const askAllInput = document.querySelector('#ask-all-input');
+const askAllButton = document.querySelector('#ask-all-button');
+const askAllAnswer = document.querySelector('#ask-all-answer');
 const toastNode = document.querySelector('#toast');
 
 function pct(value) {
@@ -72,6 +77,47 @@ function showWorkspace(hasParcels) {
   document.querySelector('#clear').hidden = !hasParcels || serverMode === 'in';
   document.querySelector('#export').hidden = !hasParcels;
   document.querySelector('#labels').hidden = !hasParcels;
+  askAllNode.hidden = !hasParcels || serverMode !== 'in' || !aiReady;
+}
+
+// Parcel numbers in an AI answer become links to that parcel.
+function renderAnswer(node, text, lookups = []) {
+  node.replaceChildren();
+  const known = new Set(library.parcels.map((parcel) => parcel.parcelno));
+  let last = 0;
+  for (const match of String(text).matchAll(/[0-9A-Z][0-9A-Z~-]{4,}/g)) {
+    if (!known.has(match[0])) continue;
+    node.append(text.slice(last, match.index));
+    const link = document.createElement('button');
+    link.type = 'button';
+    link.className = 'parcel-link';
+    link.textContent = match[0];
+    link.addEventListener('click', () => showParcel(match[0]));
+    node.append(link);
+    last = match.index + match[0].length;
+  }
+  node.append(text.slice(last));
+  if (lookups.length) {
+    const note = document.createElement('p');
+    note.className = 'fine';
+    note.textContent = `Checked the database ${lookups.length} ${lookups.length === 1 ? 'time' : 'times'}.`;
+    node.append(note);
+  }
+}
+
+async function postJson(url, payload) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const raw = await res.text();
+  try {
+    const body = JSON.parse(raw);
+    return { ...body, text: body.text || (Array.isArray(body.message) ? body.message.join(' ') : body.message) || body.error };
+  } catch {
+    return { text: raw };
+  }
 }
 
 function rateLabel(value, size) {
@@ -1399,29 +1445,51 @@ explainButton.addEventListener('click', async () => {
     const subject = slim(current.subject);
     const bench = neighborMap.get(subject.parcelno);
     if (bench) subject.neighbor = { rate: bench.rate, median: bench.median, below: bench.below };
-    const res = await fetch('/api/explain', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        subject,
-        comps: current.comps.map(slim),
-        question: askInput.value.trim(),
-      }),
+    const body = await postJson('/api/explain', {
+      subject,
+      comps: current.comps.map(slim),
+      question: askInput.value.trim(),
     });
-    const raw = await res.text();
-    let body = {};
-    try {
-      body = JSON.parse(raw);
-    } catch {
-      body = { text: raw };
-    }
-    explanationNode.textContent = body.text || body.error || 'No comparison came back.';
+    renderAnswer(explanationNode, body.text || 'No comparison came back.', body.lookups);
   } catch {
     explanationNode.textContent = 'The comparison did not finish. The ranked comps are still on this page.';
   } finally {
     explainButton.disabled = false;
   }
 });
+
+askAllInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    askAllButton.click();
+  }
+});
+askAllButton.addEventListener('click', async () => {
+  const question = askAllInput.value.trim();
+  if (!question) {
+    askAllInput.focus();
+    return;
+  }
+  askAllAnswer.textContent = 'Looking through the parcels…';
+  askAllButton.disabled = true;
+  try {
+    const body = await postJson('/api/ask', { question, parcel: selected || undefined });
+    renderAnswer(askAllAnswer, body.text || 'No answer came back.', body.lookups);
+  } catch {
+    askAllAnswer.textContent = 'The question did not finish. Try again.';
+  } finally {
+    askAllButton.disabled = false;
+  }
+});
+
+async function checkAi() {
+  try {
+    const res = await fetch('/api/ai');
+    return res.ok && Boolean((await res.json()).available);
+  } catch {
+    return false;
+  }
+}
 
 function csvCell(value) {
   const text = String(value ?? '');
@@ -1463,6 +1531,7 @@ if (buybox.area && [buybox.area.south, buybox.area.west, buybox.area.north, buyb
 }
 syncDrawButton();
 serverMode = await checkServer();
+aiReady = serverMode === 'in' && await checkAi();
 showEmptyText();
 if (Array.isArray(savedParcels) && savedParcels.length) {
   library = createLibrary(savedParcels);

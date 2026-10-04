@@ -5,13 +5,14 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import type { NextFunction, Request, Response } from 'express';
 import { createHandler } from '../server.mjs';
 import { AiController } from './ai.js';
+import { AiToolService } from './ai-tools.js';
 import { SameOriginGuard, ServerController } from './guard.js';
 import { ImportController, ParcelController, ParcelService } from './parcels.js';
 import { PrismaService } from './prisma.service.js';
 
 @Module({
   controllers: [ServerController, ImportController, ParcelController, AiController],
-  providers: [PrismaService, ParcelService, { provide: APP_GUARD, useClass: SameOriginGuard }],
+  providers: [PrismaService, ParcelService, AiToolService, { provide: APP_GUARD, useClass: SameOriginGuard }],
 })
 class AppModule {}
 

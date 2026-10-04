@@ -7,7 +7,7 @@
   <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
   <link rel="icon" href="/icon128.png" type="image/png">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=11">
+  <link rel="stylesheet" href="/styles.css?v=12">
 </head>
 <body>
   <header class="top">
@@ -58,6 +58,14 @@
         <button id="draw" class="ghost" type="button">Draw an area</button>
         <button id="labels" class="ghost" type="button" hidden>Export labels</button>
       </form>
+      <section id="ask-all" class="ask-all" hidden>
+        <label class="ask">
+          <span>Ask about every parcel</span>
+          <input id="ask-all-input" type="text" maxlength="400" placeholder="Which private owners hold the most waterfront acres?" aria-label="Question about every parcel">
+        </label>
+        <button id="ask-all-button" class="ghost" type="button">Ask the AI</button>
+        <div id="ask-all-answer" class="answer"></div>
+      </section>
       <div id="map" hidden></div>
       <p id="map-legend" class="fine" hidden></p>
       <p id="map-note" class="fine" hidden></p>
@@ -92,7 +100,7 @@
     </section>
   </main>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=11"></script>
+  <script type="module" src="/app.js?v=12"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));

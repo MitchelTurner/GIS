@@ -409,3 +409,109 @@ test('a Claude 400 quotes the reason and retries without temperature when asked'
   });
   assert.match(other.text, /refused the request \(HTTP 400\) for model claude-sonnet-9\. api\.anthropic\.com said: "messages: text content blocks must be non-empty"/);
 });
+
+const fakeTools = (ran) => ({
+  definitions: [{ name: 'search_parcels', description: 'Search.', input_schema: { type: 'object', properties: { owner: { type: 'string' } } } }],
+  run: async (name, input) => {
+    ran.push({ name, input });
+    return { matches: 1, parcels: [{ parcel_no: '900000000100', owner_name: 'LOVELACE ADA' }] };
+  },
+});
+
+test('Claude can search the database with tools before answering', async () => {
+  const ran = [];
+  const bodies = [];
+  const answer = await explainComps({}, [], {
+    apiKey: 'sk-ant-api03-tttt',
+    model: 'claude-sonnet-9',
+    question: 'What does Ada Lovelace own?',
+    openParcel: '900000000200',
+    tools: fakeTools(ran),
+    fetchImpl: async (_url, init) => {
+      const body = JSON.parse(init.body);
+      bodies.push(body);
+      if (bodies.length === 1) {
+        return { ok: true, json: async () => ({ stop_reason: 'tool_use', content: [
+          { type: 'text', text: 'Searching.' },
+          { type: 'tool_use', id: 'call-1', name: 'search_parcels', input: { owner: 'LOVELACE' } },
+        ] }) };
+      }
+      return { ok: true, json: async () => ({ stop_reason: 'end_turn', content: [{ type: 'text', text: 'Ada Lovelace owns 900000000100.' }] }) };
+    },
+  });
+  assert.equal(answer.text, 'Ada Lovelace owns 900000000100.');
+  assert.deepEqual(answer.lookups, ['search_parcels']);
+  assert.deepEqual(ran, [{ name: 'search_parcels', input: { owner: 'LOVELACE' } }]);
+  assert.equal(bodies[0].tools[0].name, 'search_parcels');
+  assert.match(bodies[0].system, /whole borough parcel database/);
+  const first = JSON.parse(bodies[0].messages[0].content);
+  assert.equal(first.question, 'What does Ada Lovelace own?');
+  assert.equal(first.openParcel, '900000000200');
+  assert.equal(first.subject, undefined);
+  const [, assistant, results] = bodies[1].messages;
+  assert.equal(assistant.role, 'assistant');
+  assert.equal(assistant.content[1].type, 'tool_use');
+  assert.equal(results.content[0].type, 'tool_result');
+  assert.equal(results.content[0].tool_use_id, 'call-1');
+  assert.match(results.content[0].content, /LOVELACE ADA/);
+});
+
+test('OpenAI keys use function calls for the same tools', async () => {
+  const ran = [];
+  const bodies = [];
+  const answer = await explainComps({}, [], {
+    apiKey: 'sk-openai-ssss',
+    question: 'Who owns the most?',
+    tools: fakeTools(ran),
+    fetchImpl: async (_url, init) => {
+      const body = JSON.parse(init.body);
+      bodies.push(body);
+      if (bodies.length === 1) {
+        return { ok: true, json: async () => ({ choices: [{ finish_reason: 'tool_calls', message: { role: 'assistant', content: null, tool_calls: [
+          { id: 'fc-1', type: 'function', function: { name: 'search_parcels', arguments: '{"owner":"LOVELACE"}' } },
+        ] } }] }) };
+      }
+      return { ok: true, json: async () => ({ choices: [{ message: { content: 'Lovelace holds the most.' } }] }) };
+    },
+  });
+  assert.equal(answer.text, 'Lovelace holds the most.');
+  assert.equal(bodies[0].tools[0].type, 'function');
+  assert.equal(bodies[0].tools[0].function.parameters.type, 'object');
+  assert.deepEqual(ran[0].input, { owner: 'LOVELACE' });
+  const last = bodies[1].messages.at(-1);
+  assert.equal(last.role, 'tool');
+  assert.equal(last.tool_call_id, 'fc-1');
+});
+
+test('an empty Claude reply says why, and lookups stop after eight rounds', async () => {
+  const cut = await explainComps({ parcelno: '1' }, [], {
+    apiKey: 'sk-ant-api03-rrrr',
+    model: 'claude-sonnet-9',
+    fetchImpl: async () => ({ ok: true, json: async () => ({ stop_reason: 'max_tokens', content: [{ type: 'thinking', thinking: '…' }] }) }),
+  });
+  assert.match(cut.text, /ran out of room before writing an answer with model claude-sonnet-9/);
+  const blank = await explainComps({ parcelno: '1' }, [], {
+    apiKey: 'sk-ant-api03-rrrr',
+    model: 'claude-sonnet-9',
+    fetchImpl: async () => ({ ok: true, json: async () => ({ stop_reason: 'end_turn', content: [] }) }),
+  });
+  assert.match(blank.text, /answered with no text \(model claude-sonnet-9, stop reason end_turn\)/);
+
+  const ran = [];
+  const bodies = [];
+  const looped = await explainComps({}, [], {
+    apiKey: 'sk-ant-api03-qqqq',
+    model: 'claude-sonnet-9',
+    question: 'Keep looking',
+    tools: fakeTools(ran),
+    fetchImpl: async (_url, init) => {
+      const body = JSON.parse(init.body);
+      bodies.push(body);
+      if (body.tool_choice?.type === 'none') return { ok: true, json: async () => ({ content: [{ type: 'text', text: 'Done looking.' }] }) };
+      return { ok: true, json: async () => ({ content: [{ type: 'tool_use', id: `c${bodies.length}`, name: 'search_parcels', input: {} }] }) };
+    },
+  });
+  assert.equal(looped.text, 'Done looking.');
+  assert.equal(ran.length, 8);
+  assert.equal(bodies.length, 9);
+});
