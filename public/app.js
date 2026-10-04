@@ -26,6 +26,8 @@ let map = null;
 let parcelLayer = null;
 let focusIds = new Set();
 const ownerColorMap = new Map();
+let importToken = 0;
+let pendingFileKey = '';
 
 function pct(value) {
   return `${(Number(value) * 100).toFixed(1)}%`;
@@ -389,12 +391,18 @@ function shareForm(subject) {
 }
 
 async function useFile(file) {
+  const key = `${file.name}:${file.size}:${file.lastModified}`;
+  if (key === pendingFileKey) return;
+  pendingFileKey = key;
+  const token = ++importToken;
   statusNode.textContent = `Reading ${file.name}…`;
   try {
     const text = await file.text();
+    if (token !== importToken) return;
     const records = recordsFromText(text, file.name);
     if (!records.length) {
       statusNode.textContent = `${file.name} has no parcels.`;
+      if (pendingFileKey === key) pendingFileKey = '';
       return;
     }
     if (library.parcels.length) {
@@ -406,6 +414,7 @@ async function useFile(file) {
     }
     await saveKey('parcels', library.parcels);
     await saveKey('changes', changes);
+    if (token !== importToken) return;
     selected = null;
     current = null;
     focusIds = new Set();
@@ -422,7 +431,10 @@ async function useFile(file) {
     statusNode.textContent = '';
     fileInput.value = '';
   } catch (error) {
-    statusNode.textContent = `${file.name} could not be read. ${error.message}`;
+    if (token === importToken) {
+      statusNode.textContent = `${file.name} could not be read. ${error.message}`;
+      if (pendingFileKey === key) pendingFileKey = '';
+    }
   }
 }
 
