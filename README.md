@@ -37,7 +37,7 @@ node extract-parcels.mjs pull \
 
 ## Parcel studio
 
-After a download, drop the GeoJSON on the public site. The map draws every parcel right away. Click a shape, or an owner, and the map zooms there. The page saves the file in that browser and, on the next visit, starts from those same parcels. It lists who owns what share of the acres. A parcel shows the mailing address, the ownership split, and comps ranked by size, assessed value, zoning, subdivision, and distance. The contacts spreadsheet has the owners and no outlines, so the map stays empty until the GeoJSON is the file on the page. Two names on one parcel split that parcel equally, because the borough layer does not record a 60/40 share. **Compare with AI** writes the comparison when the server has `AI_API_KEY`. The ranked comps still work without a key.
+After a download, drop the GeoJSON on the public site. The map draws every parcel right away and colors the largest owners. A dot in the owner list matches those shapes. Click a shape, or an owner, and the map zooms there. The page saves the file in that browser and, on the next visit, starts from those same parcels. It lists who owns what share of the acres. “SMITH JOHN” and “Smith, John A” count as one owner. A parcel shows the mailing address, the ownership split, and comps ranked by size, value, zoning, subdivision, and distance. Type a sale price when you have one: comps use that price when both parcels have it, and the assessed value stays labeled. Two names start at an even split. Type 60 and 40 when the deed says so. Replacing the file lists who gained parcels and who lost them. The contacts spreadsheet has the owners and no outlines, so the map stays empty until the GeoJSON is the file on the page. **Compare with AI** writes the comparison when the server has `AI_API_KEY`. The ranked comps still work without a key.
 
 The same work can run on this computer with Node 22 or newer:
 
@@ -132,14 +132,15 @@ A field under about 90% filled is not reliable enough to hang a sidebar on.
 
 ## Ideas
 
-The database is the place to extend. A few limits are already visible from the borough layer:
+The public page already does the comparisons that the borough layer leaves out:
 
-- Comps here compare size, zoning, and assessed value. They are not sale comps until a sales price is stored next to the parcel.
-- Two owners on one deed split 50/50. The layer never says who holds 60 percent.
-- “SMITH JOHN” and “Smith, John A” stay separate until names are normalized.
-- Importing again can list who gained or lost parcels since the last pull. That is more useful than reading a new spreadsheet by eye.
+- The map colors the largest owners, and the same color sits beside the name in the list.
+- A sale price typed on a parcel is kept with that parcel. Comps use it when both parcels have one.
+- A typed share, such as 60 and 40, replaces the even split for that deed.
+- “SMITH JOHN” and “Smith, John A” are the same owner, so the acres stay on one row.
+- The next file lists who gained parcels and who lost them.
 - Government owners can be set aside when the question is private land. The studio checkbox does that.
-- Leave `data/parcels.sqlite` on this computer. The Railway page is only for installing the extension.
+- Leave `data/parcels.sqlite` on this computer. The public page keeps its copy in the browser.
 
 ## Ideas for later tools
 

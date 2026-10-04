@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { explainComps } from '../lib/comps-ai.js';
-import { geometryAcres, isPublicOwner, parties, rankComps, summarizeOwners } from '../lib/ownership.js';
+import { geometryAcres, isPublicOwner, ownerKey, ownershipChanges, parties, rankComps, summarizeOwners } from '../lib/ownership.js';
 import { compsFor, importRecords, listSearches, openDatabase, ownerReport, searchParcels } from '../lib/parcels-db.js';
 
 test('two names on a parcel split the land equally', () => {
@@ -105,11 +105,27 @@ test('AI comparison uses the ranked comps and stays quiet without a key', async 
     },
   );
   assert.equal(explained.text, 'Ben is the closer comp.');
+  assert.equal(JSON.parse(sent.body.messages[1].content).subject.sale, undefined);
   assert.match(sent.url, /chat\/completions$/);
   assert.match(sent.body.messages[1].content, /Ada/);
   assert.match(sent.body.messages[1].content, /mailingCity/);
   assert.match(sent.body.messages[1].content, /Ketchikan/);
   assert.doesNotMatch(sent.body.messages[1].content, /"city"/);
+
+  let priced = null;
+  await explainComps(
+    { parcelno: '1', ownerName: 'Ada', salePrice: 200000 },
+    [{ parcelno: '2', sale_price: 210000, comp: { score: 1, reasons: [] } }],
+    {
+      apiKey: 'test-key',
+      fetchImpl: async (_url, init) => {
+        priced = JSON.parse(JSON.parse(init.body).messages[1].content);
+        return { ok: true, json: async () => ({ choices: [{ message: { content: 'ok' } }] }) };
+      },
+    },
+  );
+  assert.equal(priced.subject.sale, 200000);
+  assert.equal(priced.comps[0].sale, 210000);
 });
 
 function feature(parcelno, owner, acres, value, zoning, geometry) {
@@ -133,4 +149,38 @@ test('rankComps prefers the similar neighbor', () => {
     { parcelno: '3', acres: 40, total_value: 900000, zoning: 'I', subdivision: 'Far', lat: 55.1, lon: -131.2, owner_name: 'City' },
   ], 2);
   assert.equal(best.parcelno, '2');
+  assert.equal(best.comp.reasons.includes('similar assessed value'), true);
+});
+
+test('the same person keeps one name across assessor spellings', () => {
+  assert.equal(ownerKey('SMITH JOHN'), ownerKey('Smith, John A'));
+  assert.equal(ownerKey('SMITH JOHN'), 'JOHN SMITH');
+});
+
+test('a typed share replaces the even split', () => {
+  const owners = parties('Ada Lovelace & Ben Lovelace', null, { 'ADA LOVELACE': 0.6, 'BEN LOVELACE': 0.4 });
+  const ada = owners.find((party) => party.display === 'Ada Lovelace');
+  assert.equal(ada.share, 0.6);
+  assert.equal(owners.find((party) => party.display === 'Ben Lovelace').share, 0.4);
+});
+
+test('sale prices rank comps when both parcels have one', () => {
+  const subject = { parcelno: '1', acres: 1, total_value: 100000, sale_price: 200000, zoning: 'R', lat: 55.34, lon: -131.65 };
+  const [best] = rankComps(subject, [
+    { parcelno: '2', acres: 1.1, total_value: 500000, sale_price: 210000, zoning: 'R', lat: 55.341, lon: -131.649, owner_name: 'Ben' },
+    { parcelno: '3', acres: 1.05, total_value: 100000, sale_price: 900000, zoning: 'R', lat: 55.341, lon: -131.649, owner_name: 'Cara' },
+  ], 2);
+  assert.equal(best.parcelno, '2');
+  assert.equal(best.comp.comparedSale, true);
+  assert.equal(best.comp.reasons.includes('similar sale price'), true);
+});
+
+test('a later file names who gained parcels and who lost them', () => {
+  const parcel = { parcelno: '1', owner_name: 'Ada Lovelace', acres: 1 };
+  const next = ownershipChanges(
+    [parcel, { parcelno: '9', owner_name: 'City of Ketchikan', acres: 4 }],
+    [parcel, { parcelno: '2', owner_name: 'Ada Lovelace', acres: 1 }],
+  );
+  assert.deepEqual(next.gained, [{ name: 'Ada Lovelace', count: 1 }]);
+  assert.deepEqual(next.lost, [{ name: 'City of Ketchikan', count: 1 }]);
 });

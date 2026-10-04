@@ -7,7 +7,7 @@
   <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
   <link rel="icon" href="/icon128.png" type="image/png">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=2">
+  <link rel="stylesheet" href="/styles.css?v=3">
 </head>
 <body>
   <header class="top">
@@ -29,12 +29,12 @@
       <h1>Who owns the land</h1>
       <p class="lede">Drop the <strong>.geojson</strong> from the extension. The map draws every parcel, and this browser keeps the file for the next search. The spreadsheet has the same owners and no outlines.</p>
       <button id="drop" class="drop" type="button">Drop the .geojson here, or choose a file</button>
-      <p id="status" class="fine"></p>
       <details>
         <summary>How to get the file</summary>
         <p>Unzip the extension. In Chrome or Edge, open the extensions page, turn on Developer mode, and choose Load unpacked. On the borough map, click <strong>Owners and mailing</strong>. Drop the GeoJSON here.</p>
       </details>
     </section>
+    <p id="status" class="fine"></p>
 
     <section id="workspace" hidden>
       <form id="search-form">
@@ -44,6 +44,10 @@
       </form>
       <div id="map" hidden></div>
       <p id="map-note" class="fine" hidden></p>
+      <section id="changes" hidden>
+        <h2>Since the last file</h2>
+        <ul id="change-list"></ul>
+      </section>
       <div class="grid">
         <section>
           <h2>Who owns the land</h2>
@@ -64,7 +68,7 @@
     </section>
   </main>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=2"></script>
+  <script type="module" src="/app.js?v=3"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));

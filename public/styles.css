@@ -69,6 +69,40 @@ h2.next { margin-top: 22px; }
 
 #owners td .fine { display: block; }
 
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: 1px;
+}
+
+.edit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.edit input {
+  width: 7rem;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  font: inherit;
+}
+
+.edit label { display: flex; gap: 6px; align-items: center; font-size: 14px; }
+
+#changes { margin: 0 0 16px; }
+
+#changes h2 { font-size: 18px; }
+
+#changes ul { margin: 8px 0 0; padding-left: 1.1rem; }
+
 form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 18px; }
 
 input[type="search"] {
