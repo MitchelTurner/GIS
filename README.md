@@ -122,7 +122,7 @@ Without a database, the saved parcels stay in that browser. With one, the server
 1. In Railway, add a PostgreSQL database to the project and reference its `DATABASE_URL` in this service.
 2. Redeploy. The build runs `npm run build` (Prisma client and the Nest server in `api/`). `npm start` applies migrations with `prisma migrate deploy` and starts the server.
 
-A dropped GeoJSON goes to `POST /api/imports`. Re-importing never deletes a parcel. An owner change gets an **Owner changed** badge with the earlier owner, and a parcel left out of the newer file gets a **Missing** badge. Every browser loads the same parcels. Sale prices, shares, owner links, and contact marks still live in the browser. `docs/FIELD_MAP.md` lists each exported field and where it lands.
+A dropped GeoJSON goes to `POST /api/imports`. Re-importing never deletes a parcel. An owner change gets an **Owner changed** badge with the earlier owner, and a parcel left out of the newer file gets a **Missing** badge. Every browser loads the same parcels. Contact marks and notes, owner links, sale prices, ownership shares, the buy box, recent searches, and the owner-change list are stored on the server too (`/api/state`). A device that already had them shares them the first time it connects. An open page picks up changes from other devices when you come back to it, and once a minute. `docs/FIELD_MAP.md` lists each exported field and where it lands.
 
 There is no sign-in. Anyone with the site's address can see the stored owners and mailing addresses, upload a new file, and run the AI comparison on your key. Uploads and AI requests sent from another website are refused.
 
