@@ -39,16 +39,17 @@ async function remember(url) {
   await chrome.storage.local.set({ recent });
 }
 
-async function openExtract(raw) {
+async function openExtract(raw, options = {}) {
   const item = classifyArcGisUrl(raw);
   if (!item) {
     setStatus('Use a URL that ends in MapServer, FeatureServer, or a layer number.');
     return;
   }
   await remember(item.url);
-  await chrome.tabs.create({
-    url: chrome.runtime.getURL(`extract.html?url=${encodeURIComponent(item.url)}`),
-  });
+  const page = new URL(chrome.runtime.getURL('extract.html'));
+  page.searchParams.set('url', item.url);
+  if (options.download) page.searchParams.set('download', '1');
+  await chrome.tabs.create({ url: page.href });
   window.close();
 }
 
@@ -139,7 +140,7 @@ async function urlsOnThisTab() {
   }).slice(0, 8);
 }
 
-document.querySelector('#owners').addEventListener('click', () => openExtract(KETCHIKAN_OWNERS_URL));
+document.querySelector('#owners').addEventListener('click', () => openExtract(KETCHIKAN_OWNERS_URL, { download: true }));
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();

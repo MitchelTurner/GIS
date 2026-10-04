@@ -19,16 +19,8 @@
 
   <p id="banner" class="banner" hidden></p>
 
-  <section id="open">
-    <div class="section-head">
-      <h2>Open a saved file</h2>
-      <p>Choose a <code>.geojson</code> parcel file to draw it on the map, or a <code>.json</code> field report to see the table. The file stays in this tab.</p>
-    </div>
-    <input id="open-file" type="file" accept=".geojson,.json,application/geo+json,application/json">
-  </section>
-
   <section id="connect" hidden>
-    <p>Continue reads the map service shown above. The GeoJSON file stays on this computer. The install site never receives it.</p>
+    <p id="connect-copy">Continue reads the map service shown above. The files stay on this computer.</p>
     <button id="allow" type="button">Continue</button>
   </section>
 
@@ -50,7 +42,7 @@
       <h2>Fields to keep</h2>
       <p id="layer-count"></p>
     </div>
-    <div class="toolbar">
+    <div id="field-toolbar" class="toolbar">
       <input id="filter" type="search" placeholder="Find a field" aria-label="Find a field">
       <button id="use-contact" type="button" hidden>Owners and mailing</button>
       <button id="use-recommended" type="button">Recommended</button>
@@ -111,6 +103,12 @@
       <button id="close-raw" type="button" class="ghost">Close file</button>
     </div>
   </section>
+
+  <details id="open">
+    <summary>Open a file you already saved</summary>
+    <p class="hint">Choose a <code>.geojson</code> or <code>.json</code> file from this computer. This does not download the parcel layer.</p>
+    <input id="open-file" type="file" accept=".geojson,.json,application/geo+json,application/json">
+  </details>
 
   <script src="vendor/leaflet/leaflet.js"></script>
   <script type="module" src="extract.js"></script>

@@ -11,10 +11,9 @@ It is aimed at the Ketchikan Gateway Borough tax parcels. Any ArcGIS MapServer o
 After installing:
 
 1. Open the [borough GIS viewer](https://www.kgbak.us/432/GIS-Viewer) and pan the map.
-2. Click the Parcel Extract icon and choose **Owners and mailing**. The World Imagery entry is the basemap, not the parcels. Lot outlines only repeat a lot number and have no owner.
-3. Download. You get a GeoJSON map and a `.contacts.csv` spreadsheet with the parcel number, owner, mailing address, city, state, ZIP, and the property location.
+2. Click the Parcel Extract icon and choose **Owners and mailing**. The files save in your Downloads folder: a `.contacts.csv` spreadsheet and a `.geojson` map. World Imagery is only the basemap. The page is not asking you to open a file you already have.
 
-To look at a file later, open it on the install page under **View a downloaded file**, or use **Open a saved file** in the extension. A `.geojson` file draws on the map. A field-report `.json` file becomes a table. Either way the file is read in that browser tab and is not uploaded.
+To look at a file later, open it on the install page under **View a downloaded file**, or use **Open a file you already saved** in the extension. A `.geojson` file draws on the map. A field-report `.json` file becomes a table. Either way the file is read in that browser tab and is not uploaded.
 
 The long download runs in an extension tab so the browser does not cancel it. The extension asks permission for the map host you choose. Parcel data is written to the Downloads folder and is not sent to the install site.
 

@@ -138,17 +138,64 @@ function escapeHtml(value) {
   })[char]);
 }
 
-async function saveFile(filename, text, mime) {
-  const blob = new Blob([text], { type: mime });
+function anchorDownload(filename, blob) {
   const url = URL.createObjectURL(blob);
-  if (globalThis.chrome?.downloads?.download) {
-    await chrome.downloads.download({ url, filename, saveAs: false });
-    return;
-  }
   const link = document.createElement('a');
   link.href = url;
   link.download = filename;
+  document.body.append(link);
   link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 120000);
+}
+
+function waitForDownload(id) {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      chrome.downloads.onChanged.removeListener(onChanged);
+      fn(value);
+    };
+    const onChanged = (delta) => {
+      if (delta.id !== id) return;
+      if (delta.state?.current === 'complete') finish(resolve);
+      else if (delta.state?.current === 'interrupted') {
+        finish(reject, new Error(delta.error?.current || 'The browser stopped the download.'));
+      }
+    };
+    const timer = setTimeout(() => finish(reject, new Error('The download did not finish.')), 20000);
+    chrome.downloads.onChanged.addListener(onChanged);
+    chrome.downloads.search({ id }).then((items) => {
+      const item = items?.[0];
+      if (item?.state === 'complete') finish(resolve);
+      if (item?.state === 'interrupted') finish(reject, new Error(item.error || 'The browser stopped the download.'));
+    }).catch(() => {});
+  });
+}
+
+async function saveFile(filename, text, mime) {
+  const blob = new Blob([text], { type: mime });
+  if (globalThis.chrome?.downloads?.download) {
+    const url = URL.createObjectURL(blob);
+    try {
+      const id = await chrome.downloads.download({
+        url,
+        filename,
+        saveAs: false,
+        conflictAction: 'uniquify',
+      });
+      await waitForDownload(id);
+      setTimeout(() => URL.revokeObjectURL(url), 120000);
+      return true;
+    } catch {
+      URL.revokeObjectURL(url);
+    }
+  }
+  anchorDownload(filename, blob);
+  return false;
 }
 
 function checkedFields() {
@@ -216,12 +263,12 @@ function renderFields(info, fill) {
   const count = Number.isFinite(info.count) ? featureCount(info.count) : 'Feature count unavailable';
   const sampled = fill ? ` · sampled ${nf.format(fill.sampled)} for field coverage` : '';
   layerCount.textContent = `${friendlyGeometry(info.geometryType)} · ${count}${sampled}`;
-  downloadButton.textContent = Number.isFinite(info.count)
-    ? `Download ${featureCount(info.count)}`
-    : 'Download GeoJSON';
   fieldList.replaceChildren();
   const contactNames = new Set(orderContactNames(info.fields.filter(contactField).map((field) => field.name)));
   const useContact = contactNames.size > 0;
+  downloadButton.textContent = useContact
+    ? 'Download owners and mailing'
+    : (Number.isFinite(info.count) ? `Download ${featureCount(info.count)}` : 'Download GeoJSON');
   document.querySelector('#use-contact').hidden = !useContact;
   if (useContact) {
     layerCount.textContent = `${layerCount.textContent}. Owner, town, and mailing address are selected.`;
@@ -259,6 +306,12 @@ function renderFields(info, fill) {
     fieldList.append(row);
   }
   backButton.hidden = !serviceUrl;
+  if (autoDownload && !autoStarted) {
+    autoStarted = true;
+    fieldList.hidden = true;
+    document.querySelector('#field-toolbar').hidden = true;
+    runDownload();
+  }
 }
 
 function drawMap(collection) {
@@ -304,8 +357,14 @@ function showResult(result) {
   const name = slug(result.name || layerName);
   resultTitle.textContent = `Saved ${name}.geojson`;
   const dropped = result.dropped ? ` ${nf.format(result.dropped)} had no geometry and were skipped.` : '';
-  const contactNote = result.contacts ? ' A spreadsheet of owners and mailing addresses was saved beside it.' : '';
-  resultCopy.textContent = `${featureCount(result.features.length)} downloaded to your computer.${dropped}${contactNote}`;
+  const names = (result.savedFiles || []).map((file) => file.name);
+  const confirmed = (result.savedFiles || []).length > 0 && result.savedFiles.every((file) => file.confirmed);
+  const savedNote = names.length
+    ? (confirmed
+      ? ` Saved in your Downloads folder: ${names.join(' and ')}.`
+      : ` Look in your Downloads folder for ${names.join(' and ')}. If a file is missing, click Download again.`)
+    : '';
+  resultCopy.textContent = `${featureCount(result.features.length)} ready.${dropped}${savedNote}`;
   backResult.hidden = !serviceUrl;
   changeFields.hidden = false;
   closeFileButton.hidden = true;
@@ -467,8 +526,9 @@ async function runDownload() {
     showBanner('Choose at least one field.');
     return;
   }
-  showBanner('');
+  showBanner(autoDownload ? 'Downloading owners and mailing addresses…' : '');
   downloadButton.disabled = true;
+  const previousLabel = downloadButton.textContent;
   const where = whereInput.value.trim() || '1=1';
   try {
     const result = await pullFeatures(layerUrl, {
@@ -482,22 +542,28 @@ async function runDownload() {
       downloadButton.textContent = `Fetched ${nf.format(done)} of ${nf.format(total)}`;
     });
     const filename = `${slug(result.name || layerName)}.geojson`;
-    await saveFile(filename, JSON.stringify(result.collection), 'application/geo+json');
     const columns = contactColumns(result.features);
-    result.contacts = columns.length > 0;
-    if (result.contacts) {
+    showBanner(columns.length ? 'Saving the spreadsheet and the map…' : 'Saving the map file…');
+    result.savedFiles = [{
+      name: filename,
+      confirmed: await saveFile(filename, JSON.stringify(result.collection), 'application/geo+json'),
+    }];
+    if (columns.length) {
       const csvName = `${slug(result.name || layerName)}.contacts.csv`;
-      await saveFile(csvName, featuresToCsv(result.features, columns), 'text/csv');
+      result.savedFiles.unshift({
+        name: csvName,
+        confirmed: await saveFile(csvName, featuresToCsv(result.features, columns), 'text/csv'),
+      });
     }
     showBanner('');
     showResult(result);
   } catch (err) {
+    fieldList.hidden = false;
+    document.querySelector('#field-toolbar').hidden = false;
     showBanner(err.message);
   } finally {
     downloadButton.disabled = false;
-    if (downloadButton.textContent.startsWith('Fetched')) {
-      downloadButton.textContent = 'Download GeoJSON';
-    }
+    if (downloadButton.textContent.startsWith('Fetched')) downloadButton.textContent = previousLabel;
   }
 }
 
@@ -560,6 +626,9 @@ reportButton.addEventListener('click', async () => {
 
 const params = new URLSearchParams(location.search);
 const initial = classifyArcGisUrl(params.get('url') || '');
+const autoDownload = params.get('download') === '1';
+let autoStarted = false;
+const connectCopy = document.querySelector('#connect-copy');
 const stored = globalThis.chrome?.storage
   ? await chrome.storage.local.get({ token: '' })
   : { token: '' };
@@ -572,6 +641,11 @@ if (!initial) {
 } else {
   subtitle.textContent = initial.url;
   title.textContent = 'Map service';
+  if (autoDownload) {
+    title.textContent = 'Owners and mailing';
+    allow.textContent = 'Download owners and mailing';
+    connectCopy.textContent = 'This saves the owner, town, and mailing address in your Downloads folder. It does not ask you to open a file.';
+  }
   if (await hasPermission(initial.url)) {
     await inspect(initial.url);
   } else {
