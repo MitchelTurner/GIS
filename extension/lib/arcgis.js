@@ -228,7 +228,7 @@ const CONTACT_ORDER = [
   'owner_name', 'owner', 'ownernme1', 'owner_2', 'ownernme2',
   'address', 'city', 'state', 'zip', 'zipcode', 'address_full', 'mail_addr',
   'location', 'loc_city', 'subname',
-  'land_acres', 'land_sq_ft', 'total_appr', 'apr_land_v', 'apr_imps', 'zoning_typ', 'year_built', 'propuse',
+  'land_acres', 'land_sq_ft', 'total_appr', 'total_asse', 'apr_land_v', 'asd_land_v', 'apr_imps', 'asd_imp_va', 'zoning_typ', 'year_built', 'propuse',
 ];
 
 const CONTACT_EXACT = new Set(CONTACT_ORDER);

@@ -93,6 +93,44 @@ test('a linked trust shares one row and a sale year survives the next file', () 
   assert.equal(library.comps('1').subject.saleYear, 2024);
 });
 
+test('a zero appraised column does not hide the assessed amount', () => {
+  const library = createLibrary([
+    feature('1', 'Ada Lovelace', 2, 0, 'R', null, 'Ward Cove', {
+      Total_Asse: 135400,
+      Apr_Land_V: 0,
+      Asd_Land_V: 80000,
+      Apr_Imps: 0,
+      Asd_Imp_Va: 55400,
+    }),
+    feature('2', 'Grace Hopper', 1, 111100, 'R', null, 'Dock Street', { Total_Asse: 0, Apr_Imps: 111100 }),
+  ]);
+  const exempt = library.parcels.find((parcel) => parcel.parcelno === '1');
+  assert.equal(exempt.total_value, 135400);
+  assert.equal(exempt.land_value, 80000);
+  assert.equal(exempt.improvement_value, 55400);
+  assert.equal(library.parcels.find((parcel) => parcel.parcelno === '2').total_value, 111100);
+  assert.equal(library.ownerReport().shown.find((owner) => owner.name === 'Ada Lovelace').value, 135400);
+
+  const fromParts = createLibrary([{
+    geometry: null,
+    properties: {
+      PARCELNO: '3',
+      Owner_Name: 'Nikola Tesla',
+      Land_Acres: 1,
+      Apr_Land_V: 80000,
+      Apr_Imps: 120000,
+    },
+  }]);
+  assert.equal(fromParts.parcels[0].total_value, 200000);
+
+  const unknown = createLibrary([{
+    geometry: null,
+    properties: { PARCELNO: '4', Owner_Name: 'Nikola Tesla', Land_Acres: 1 },
+  }]);
+  assert.equal(unknown.parcels[0].total_value, null);
+  assert.equal(unknown.ownerReport().shown[0].value, null);
+});
+
 function feature(parcelno, owner, acres, value, zoning, geometry, location, extra = {}) {
   return {
     geometry,

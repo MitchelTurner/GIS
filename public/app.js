@@ -122,6 +122,7 @@ function renderOwners() {
   summary.className = 'fine';
   const assessed = report.value ? ` · ${money(report.value)} assessed` : '';
   summary.textContent = `${report.parcels.toLocaleString()} parcels · ${report.acres.toFixed(1)} acres · ${report.owners.toLocaleString()} owners${assessed}`;
+  const missingValue = !library.parcels.some((parcel) => Number(parcel.total_value) > 0);
   const table = document.createElement('table');
   const head = document.createElement('tr');
   for (const label of ['Owner', 'Land', 'Assessed']) {
@@ -157,7 +158,15 @@ function renderOwners() {
     row.addEventListener('click', () => showOwner(owner.ownerKey));
     table.append(row);
   }
-  ownersNode.replaceChildren(summary, table);
+  const nodes = [summary, table];
+  if (missingValue) {
+    const note = document.createElement('p');
+    note.className = 'fine';
+    note.id = 'value-note';
+    note.textContent = 'This file has no assessed values. Download owners and mailing again, then use Replace file.';
+    nodes.unshift(note);
+  }
+  ownersNode.replaceChildren(...nodes);
 }
 
 function renderSearches() {
@@ -390,14 +399,14 @@ async function showParcel(parcelno) {
     [found.subject.location, found.subject.locCity].filter(Boolean).join(', '),
     acres(found.subject.acres),
     found.subject.zoning,
-    found.subject.totalValue != null ? `Assessed ${money(found.subject.totalValue)}${assessedRate ? ` (${assessedRate})` : ''}` : '',
+    found.subject.totalValue > 0 ? `Assessed ${money(found.subject.totalValue)}${assessedRate ? ` (${assessedRate})` : ''}` : '',
     found.subject.salePrice != null ? `Sold ${money(found.subject.salePrice)}${saleRate ? ` (${saleRate})` : ''}${found.subject.saleYear ? ` in ${found.subject.saleYear}` : ''}` : '',
     found.subject.mailingLine,
   ].filter(Boolean).join(' · ');
   detailNode.append(title, copy);
   const extra = [
-    found.subject.landValue != null ? `Land ${money(found.subject.landValue)}` : '',
-    found.subject.improvementValue != null ? `Improvements ${money(found.subject.improvementValue)}` : '',
+    found.subject.landValue > 0 ? `Land ${money(found.subject.landValue)}` : '',
+    found.subject.improvementValue > 0 ? `Improvements ${money(found.subject.improvementValue)}` : '',
     found.subject.yearBuilt ? `Built ${found.subject.yearBuilt}` : '',
   ].filter(Boolean);
   if (extra.length) {
