@@ -6,6 +6,11 @@ import {
   sampleFill,
   pullFeatures,
   fieldReport,
+  contactField,
+  contactColumns,
+  displayProperties,
+  featuresToCsv,
+  orderContactNames,
 } from './lib/arcgis.js';
 
 const nf = new Intl.NumberFormat('en-US');
@@ -155,8 +160,22 @@ function applyCheck(mode) {
     const input = row.querySelector('input');
     if (mode === 'all') input.checked = true;
     else if (mode === 'none') input.checked = false;
+    else if (mode === 'contact') input.checked = row.dataset.contact === 'yes';
     else input.checked = row.dataset.recommended === 'yes';
   }
+}
+
+function layerRank(layer) {
+  const blob = `${layer.name} ${layer.url}`;
+  if (/parcel/i.test(blob) && !/lot/i.test(layer.name)) return 0;
+  if (/lotpoly|lot.?number/i.test(blob)) return 2;
+  return 1;
+}
+
+function layerHint(layer) {
+  if (layerRank(layer) === 0) return 'Owners, town, and mailing address';
+  if (layerRank(layer) === 2) return 'Lot outlines only. Lot numbers repeat, and there is no owner.';
+  return `${friendlyGeometry(layer.geometryType)} · layer ${layer.id}`;
 }
 
 function renderLayers(info) {
@@ -164,14 +183,15 @@ function renderLayers(info) {
   layersSection.hidden = false;
   title.textContent = info.name || 'Map service';
   layerList.replaceChildren();
-  for (const layer of info.layers) {
+  const layers = [...info.layers].sort((a, b) => layerRank(a) - layerRank(b) || a.name.localeCompare(b.name));
+  for (const layer of layers) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'layer';
     const name = document.createElement('strong');
     name.textContent = layer.name;
     const meta = document.createElement('span');
-    meta.textContent = `${friendlyGeometry(layer.geometryType)} · layer ${layer.id}`;
+    meta.textContent = layerHint(layer);
     const text = document.createElement('span');
     text.append(name, meta);
     button.append(text);
@@ -200,18 +220,32 @@ function renderFields(info, fill) {
     ? `Download ${featureCount(info.count)}`
     : 'Download GeoJSON';
   fieldList.replaceChildren();
+  const contactNames = new Set(orderContactNames(info.fields.filter(contactField).map((field) => field.name)));
+  const useContact = contactNames.size > 0;
+  document.querySelector('#use-contact').hidden = !useContact;
+  if (useContact) {
+    layerCount.textContent = `${layerCount.textContent}. Owner, town, and mailing address are selected.`;
+  }
 
-  for (const field of info.fields) {
+  const fields = [...info.fields].sort((a, b) => {
+    const ai = contactNames.has(a.name) ? [...contactNames].indexOf(a.name) : 1000;
+    const bi = contactNames.has(b.name) ? [...contactNames].indexOf(b.name) : 1000;
+    return ai - bi || a.name.localeCompare(b.name);
+  });
+
+  for (const field of fields) {
     const pct = fill && Object.hasOwn(fill.fill, field.name) ? fill.fill[field.name] : undefined;
     const recommended = recommendedField(field, pct);
+    const contact = contactNames.has(field.name);
     const row = document.createElement('label');
     row.className = 'field';
     row.dataset.recommended = recommended ? 'yes' : 'no';
+    row.dataset.contact = contact ? 'yes' : 'no';
     row.dataset.search = `${field.alias} ${field.name}`.toLowerCase();
     const input = document.createElement('input');
     input.type = 'checkbox';
     input.value = field.name;
-    input.checked = recommended;
+    input.checked = useContact ? contact : recommended;
     const alias = document.createElement('span');
     alias.className = 'alias';
     alias.textContent = field.alias;
@@ -251,9 +285,7 @@ function drawMap(collection) {
       fillOpacity: 0.45,
     },
     onEachFeature(feature, leafletLayer) {
-      const rows = Object.entries(feature.properties || {})
-        .filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== '')
-        .slice(0, 10)
+      const rows = displayProperties(feature.properties)
         .map(([key, value]) => `<div><strong>${escapeHtml(key)}</strong> ${escapeHtml(value)}</div>`)
         .join('');
       if (rows) leafletLayer.bindPopup(rows);
@@ -272,7 +304,8 @@ function showResult(result) {
   const name = slug(result.name || layerName);
   resultTitle.textContent = `Saved ${name}.geojson`;
   const dropped = result.dropped ? ` ${nf.format(result.dropped)} had no geometry and were skipped.` : '';
-  resultCopy.textContent = `${featureCount(result.features.length)} downloaded to your computer.${dropped}`;
+  const contactNote = result.contacts ? ' A spreadsheet of owners and mailing addresses was saved beside it.' : '';
+  resultCopy.textContent = `${featureCount(result.features.length)} downloaded to your computer.${dropped}${contactNote}`;
   backResult.hidden = !serviceUrl;
   changeFields.hidden = false;
   closeFileButton.hidden = true;
@@ -412,6 +445,7 @@ filterInput.addEventListener('input', () => {
   }
 });
 
+document.querySelector('#use-contact').addEventListener('click', () => applyCheck('contact'));
 document.querySelector('#use-recommended').addEventListener('click', () => applyCheck('recommended'));
 document.querySelector('#use-all').addEventListener('click', () => applyCheck('all'));
 document.querySelector('#use-none').addEventListener('click', () => applyCheck('none'));
@@ -449,6 +483,12 @@ async function runDownload() {
     });
     const filename = `${slug(result.name || layerName)}.geojson`;
     await saveFile(filename, JSON.stringify(result.collection), 'application/geo+json');
+    const columns = contactColumns(result.features);
+    result.contacts = columns.length > 0;
+    if (result.contacts) {
+      const csvName = `${slug(result.name || layerName)}.contacts.csv`;
+      await saveFile(csvName, featuresToCsv(result.features, columns), 'text/csv');
+    }
     showBanner('');
     showResult(result);
   } catch (err) {
@@ -477,6 +517,10 @@ againButton.addEventListener('click', async () => {
   try {
     const filename = `${slug(saved.name || layerName)}.geojson`;
     await saveFile(filename, JSON.stringify(saved.collection), 'application/geo+json');
+    const columns = contactColumns(saved.features);
+    if (columns.length) {
+      await saveFile(`${slug(saved.name || layerName)}.contacts.csv`, featuresToCsv(saved.features, columns), 'text/csv');
+    }
   } catch (err) {
     showBanner(err.message);
   }

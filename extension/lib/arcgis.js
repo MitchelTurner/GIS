@@ -216,6 +216,66 @@ export function recommendedField(field, pct) {
   return pct >= 90;
 }
 
+const CONTACT_ORDER = [
+  'parcelno', 'parcel_num', 'apn',
+  'owner_name', 'owner', 'ownernme1', 'owner_2', 'ownernme2',
+  'address', 'city', 'state', 'zip', 'zipcode', 'address_full', 'mail_addr',
+  'location', 'loc_city', 'subname',
+];
+
+const CONTACT_EXACT = new Set(CONTACT_ORDER);
+
+export function contactField(field) {
+  if (isSystemField(field)) return false;
+  const name = String(field.name || '').toLowerCase();
+  if (CONTACT_EXACT.has(name)) return true;
+  const blob = `${name} ${String(field.alias || '').toLowerCase()}`;
+  return /owner.?name|^owner$|mail(ing)?_?addr|situs/.test(blob);
+}
+
+export function orderContactNames(names) {
+  const rank = (name) => {
+    const index = CONTACT_ORDER.indexOf(String(name).toLowerCase());
+    return index === -1 ? CONTACT_ORDER.length : index;
+  };
+  return [...names].sort((a, b) => rank(a) - rank(b) || String(a).localeCompare(String(b)));
+}
+
+export function contactColumns(features) {
+  const names = new Set();
+  for (const feature of features) {
+    for (const name of Object.keys(feature.properties || {})) {
+      if (contactField({ name, alias: name, type: 'String' })) names.add(name);
+    }
+  }
+  return orderContactNames([...names]);
+}
+
+export function displayProperties(properties, limit = 12) {
+  const entries = Object.entries(properties || {})
+    .filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== '');
+  const contact = contactColumns([{ properties: Object.fromEntries(entries) }]);
+  const rank = new Map(contact.map((name, index) => [name, index]));
+  entries.sort((a, b) => (rank.get(a[0]) ?? 1000) - (rank.get(b[0]) ?? 1000) || a[0].localeCompare(b[0]));
+  return entries.slice(0, limit);
+}
+
+function csvCell(value) {
+  if (value === null || value === undefined) return '';
+  const text = String(value);
+  if (/[",\r\n]/.test(text)) return `"${text.replaceAll('"', '""')}"`;
+  return text;
+}
+
+export function featuresToCsv(features, columns) {
+  const lines = [columns.map(csvCell).join(',')];
+  for (const feature of features) {
+    const props = feature.properties || {};
+    lines.push(columns.map((key) => csvCell(props[key])).join(','));
+  }
+  return `${lines.join('\n')}\n`;
+}
+
 export async function readEndpoint(url, { token, where = '1=1' } = {}) {
   const meta = await getJson(url, { f: 'json' }, token);
   const base = url.replace(/\/$/, '');

@@ -7,6 +7,10 @@ import {
   cleanFeature,
   recommendedField,
   isSystemField,
+  contactField,
+  contactColumns,
+  featuresToCsv,
+  displayProperties,
   pullFeatures,
   readEndpoint,
 } from '../extension/lib/arcgis.js';
@@ -60,6 +64,30 @@ test('cleanFeature rounds coordinates and drops empty geometry', () => {
   }, 3);
   assert.deepEqual(cleaned.geometry.coordinates, [-131.647, 55.342]);
   assert.equal(cleanFeature({ type: 'Feature', geometry: null, properties: {} }, 6), null);
+});
+
+test('contact fields are the owner, town, and mailing address', () => {
+  const field = (name) => ({ name, alias: name, type: 'String', esriType: 'esriFieldTypeString' });
+  assert.equal(contactField(field('Owner_Name')), true);
+  assert.equal(contactField(field('Address_full')), true);
+  assert.equal(contactField(field('CITY')), true);
+  assert.equal(contactField(field('Owner_1_1')), false);
+  assert.equal(contactField(field('OBJECTID')), false);
+  assert.equal(contactField(field('Apr_Land_V')), false);
+  const columns = contactColumns([{
+    properties: { LotNum: '3', ZIP: '99901', Owner_Name: 'Ada', CITY: 'Ketchikan', Address: '1 Dock St' },
+  }]);
+  assert.deepEqual(columns, ['Owner_Name', 'Address', 'CITY', 'ZIP']);
+  const csv = featuresToCsv([{
+    properties: { Owner_Name: 'Ada "A"', Address_full: '1 Dock St, Ketchikan, AK 99901' },
+  }], ['Owner_Name', 'Address_full']);
+  assert.equal(csv, 'Owner_Name,Address_full\n"Ada ""A""","1 Dock St, Ketchikan, AK 99901"\n');
+  assert.deepEqual(displayProperties({
+    SUBNUM: 'A',
+    Owner_Name: 'Ada',
+    LotNum: '3',
+    CITY: 'Ketchikan',
+  }).map(([key]) => key), ['Owner_Name', 'CITY', 'LotNum', 'SUBNUM']);
 });
 
 test('recommended fields skip ids and sparse columns', () => {

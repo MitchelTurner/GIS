@@ -12,14 +12,30 @@ After installing:
 
 1. Open the [borough GIS viewer](https://www.kgbak.us/432/GIS-Viewer) and pan the map.
 2. Click the Parcel Extract icon. It lists MapServer and FeatureServer addresses the page already requested.
-3. Pick the parcel layer. Recommended fields are the ones filled on at least 90% of a sample, with object id and shape columns left off.
-4. Download the GeoJSON. A map of the file opens in the extension, and a field report is a second download.
+3. Pick **Parcel_Ketchikan**, the layer marked “Owners, town, and mailing address.” Lot outlines only repeat a lot number and have no owner.
+4. Download. You get a GeoJSON map and a `.contacts.csv` spreadsheet with the parcel number, owner, mailing address, city, state, ZIP, and the property location.
 
 To look at a file later, open it on the install page under **View a downloaded file**, or use **Open a saved file** in the extension. A `.geojson` file draws on the map. A field-report `.json` file becomes a table. Either way the file is read in that browser tab and is not uploaded.
 
 The long download runs in an extension tab so the browser does not cancel it. The extension asks permission for the map host you choose. Parcel data is written to the Downloads folder and is not sent to the install site.
 
 Chrome and Edge: unzip, open `chrome://extensions` or `edge://extensions`, turn on Developer mode, and choose **Load unpacked** on the unzipped folder. Firefox can load `manifest.json` as a temporary add-on from `about:debugging`. Those steps are repeated on the install page and in `extension/INSTALL.txt`.
+
+## Owners and mailing addresses
+
+Lot outlines (`KetchikanAK_LotPolys`) repeat `LotNum` because that layer has no owner. The tax parcels are a different layer, about 8,400 polygons, and each one has the owner and the mailing address:
+
+`https://services2.arcgis.com/65jtiGuzdaRB5FxF/arcgis/rest/services/Parcel_Ketchikan/FeatureServer/0`
+
+In the extension, that layer is preselected to owner, town, and mailing fields. From the terminal:
+
+```bash
+node extract-parcels.mjs pull \
+  https://services2.arcgis.com/65jtiGuzdaRB5FxF/arcgis/rest/services/Parcel_Ketchikan/FeatureServer/0 \
+  --contact --out owners.geojson
+```
+
+`owners.contacts.csv` is the spreadsheet. `CITY` is the mailing town. `Location` is the property. Keep this file on your computer. The install site does not store it.
 
 ## Command line
 
@@ -57,6 +73,7 @@ node extract-parcels.mjs pull <url> --fields APN,OWNER_NAME,MAIL_ADDR,ZONING
 | --- | --- | --- |
 | `--out <path>` | `parcels.geojson` | Output GeoJSON path. The field report is written beside it as `<name>.fields.json`. |
 | `--fields a,b,c` | all fields | Attribute allowlist. |
+| `--contact` | off | Owner, town, and mailing fields, and a `.contacts.csv` spreadsheet. |
 | `--where "<sql>"` | `1=1` | Server-side filter. |
 | `--precision <n>` | `6` | Coordinate decimal places. Six places is about 11 cm. |
 | `--batch <n>` | server `maxRecordCount` (capped at 1000) | Features per request. |
@@ -72,6 +89,7 @@ With no arguments, `node extract-parcels.mjs` reads the layer URL and flags from
 | `PARCEL_COMMAND` | `discover` or `pull` (default `pull`) |
 | `PARCEL_OUT` | `--out` |
 | `PARCEL_FIELDS` | `--fields` |
+| `PARCEL_CONTACT` | `--contact` when set to `1` |
 | `PARCEL_WHERE` | `--where` |
 | `PARCEL_PRECISION` | `--precision` |
 | `PARCEL_BATCH` | `--batch` |

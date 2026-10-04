@@ -87,7 +87,12 @@ async function urlsOnThisTab() {
     }
   }
   return [...unique.values()].sort((a, b) => {
-    const score = (url) => (/parcel|tax|lot|cadastr/i.test(url) ? 0 : 1);
+    const score = (url) => {
+      if (/parcel/i.test(url) && !/lotpoly|lot_number/i.test(url)) return 0;
+      if (/tax|cadastr/i.test(url)) return 1;
+      if (/lot/i.test(url)) return 2;
+      return 3;
+    };
     return score(a.url) - score(b.url) || a.url.localeCompare(b.url);
   }).slice(0, 8);
 }

@@ -30,10 +30,17 @@ function escapeHtml(value) {
   })[char]);
 }
 
+const POPUP_FIRST = ['parcelno', 'parcel_num', 'owner_name', 'owner_2', 'address', 'city', 'state', 'zip', 'address_full', 'location', 'loc_city'];
+
 function popupHtml(properties) {
   const rows = Object.entries(properties || {})
-    .filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== '')
-    .slice(0, 12);
+    .filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== '');
+  const rank = (name) => {
+    const index = POPUP_FIRST.indexOf(String(name).toLowerCase());
+    return index === -1 ? POPUP_FIRST.length : index;
+  };
+  rows.sort((a, b) => rank(a[0]) - rank(b[0]) || a[0].localeCompare(b[0]));
+  rows.splice(12);
   if (!rows.length) return 'No attributes';
   return rows.map(([key, value]) => `<div><strong>${escapeHtml(key)}</strong> ${escapeHtml(value)}</div>`).join('');
 }
