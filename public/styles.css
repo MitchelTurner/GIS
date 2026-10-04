@@ -173,7 +173,9 @@ form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 
 
 .search-bar {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
+  min-width: 0;
   margin: 0 0 18px;
   padding: 14px;
   background: var(--surface);
@@ -365,7 +367,9 @@ label.filter select, label.filter input { text-transform: none; letter-spacing: 
 
 .stats, .facts { display: grid; gap: 8px; margin: 0 0 12px; }
 
-.stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+nav .fine { margin: 0; font-size: 12px; }
 
 .facts { grid-template-columns: 1fr 1fr; gap: 10px 16px; }
 
@@ -679,6 +683,8 @@ details p { max-width: 40rem; }
   .chips::-webkit-scrollbar { display: none; }
   label.private { scroll-snap-align: start; }
   .filter-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  label.filter { min-width: 0; }
+  .search-row button { padding-inline: 18px; }
   #zoning, #max-acre, #min-acres { width: 100%; min-width: 0; }
   .filter-actions { grid-column: 1 / -1; margin: 0; }
   .filter-actions button { flex: 1; }
@@ -704,7 +710,7 @@ details p { max-width: 40rem; }
   }
   .searches::-webkit-scrollbar { display: none; }
   .recent { flex: 0 0 min(72vw, 240px); scroll-snap-align: start; }
-  #results table { min-width: 560px; }
+  #results table { min-width: 440px; }
   .lede { font-size: 16px; }
 }
 

@@ -449,7 +449,7 @@ function renderSearches() {
 function resultTable(rows) {
   const table = document.createElement('table');
   const head = document.createElement('tr');
-  for (const label of ['Parcel', 'Owner', 'Where', 'Acres', 'Assessed']) {
+  for (const label of ['Address', 'Owner', 'Acres', 'Assessed']) {
     const cell = document.createElement('th');
     cell.textContent = label;
     if (label === 'Acres' || label === 'Assessed') cell.className = 'num';
@@ -460,16 +460,24 @@ function resultTable(rows) {
     const tr = document.createElement('tr');
     tr.className = 'clickable';
     const cells = [
-      row.parcelno,
+      row.location || `Parcel ${row.parcelno}`,
       row.owner_name || '',
-      [row.location, row.loc_city].filter(Boolean).join(', '),
       acres(row.acres),
       money(row.total_value),
     ];
     cells.forEach((value, index) => {
       const cell = document.createElement('td');
-      if (index >= 3) cell.className = 'num';
-      cell.textContent = value;
+      if (index >= 2) cell.className = 'num';
+      if (index === 0) {
+        const strong = document.createElement('strong');
+        strong.textContent = value;
+        const sub = document.createElement('span');
+        sub.className = 'fine';
+        sub.textContent = [row.loc_city, row.location ? row.parcelno : ''].filter(Boolean).join(' · ');
+        cell.append(strong, sub);
+      } else {
+        cell.textContent = value;
+      }
       if (index === 0 && row.owner_changed_at) cell.append(' ', badge('Owner changed', 'changed'));
       if (index === 0 && row.missing_since) cell.append(' ', badge('Missing', 'missing'));
       tr.append(cell);
@@ -1067,7 +1075,7 @@ async function showOwner(ownerKey) {
   wrap.className = 'sheet-scroll';
   const table = document.createElement('table');
   const head = document.createElement('tr');
-  for (const label of ['Parcel', 'Where', 'Acres', 'Assessed', 'Water']) {
+  for (const label of ['Address', 'Acres', 'Assessed', 'Water']) {
     const cell = document.createElement('th');
     cell.textContent = label;
     if (label === 'Acres' || label === 'Assessed') cell.className = 'num';
@@ -1077,16 +1085,22 @@ async function showOwner(ownerKey) {
   for (const parcel of owner.parcelList) {
     const row = document.createElement('tr');
     row.className = 'clickable';
+    const where = document.createElement('td');
+    const strong = document.createElement('strong');
+    strong.textContent = parcel.location || `Parcel ${parcel.parcelno}`;
+    const sub = document.createElement('span');
+    sub.className = 'fine';
+    sub.textContent = [parcel.locCity, parcel.location ? parcel.parcelno : ''].filter(Boolean).join(' · ');
+    where.append(strong, sub);
+    row.append(where);
     const cells = [
-      parcel.parcelno,
-      [parcel.location, parcel.locCity].filter(Boolean).join(', '),
       acres(parcel.acres),
       money(parcel.totalValue),
       Number(parcel.waterfront) > 0 ? 'Yes' : '',
     ];
     cells.forEach((value, index) => {
       const cell = document.createElement('td');
-      if (index === 2 || index === 3) cell.className = 'num';
+      if (index < 2) cell.className = 'num';
       cell.textContent = value;
       row.append(cell);
     });
