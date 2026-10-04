@@ -115,6 +115,8 @@ With no arguments, `node extract-parcels.mjs` reads the layer URL and flags from
 
 The site serves `/extension.zip` and reads a GeoJSON or CSV you drop on the page. Set `AI_API_KEY` on the server when you want the written comparison. A Claude key (`sk-ant-…`) goes to Anthropic and uses the newest Sonnet the key can reach; any other key goes to OpenAI with `gpt-4o-mini`. `AI_MODEL` picks a specific model, `AI_PROVIDER=anthropic` or `openai` overrides the guess, and `AI_BASE_URL` points at another OpenAI-compatible service. `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` also work; a rejected key falls through to the next one.
 
+With a database, the AI reads every parcel on the server. It searches, groups, and totals parcels, and opens full records, including mailing addresses, value history, and import changes. It can't change anything. **Ask about every parcel** sits under the search bar, and parcel numbers in its answers open that parcel. Each question can take up to eight lookups. Owner names and addresses in those lookups go to the AI provider.
+
 Without a database, the saved parcels stay in that browser. With one, the server keeps them:
 
 1. In Railway, add a PostgreSQL database to the project and reference its `DATABASE_URL` in this service.
