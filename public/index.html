@@ -8,7 +8,7 @@
   <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
   <link rel="icon" href="/icon128.png" type="image/png">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=15">
+  <link rel="stylesheet" href="/styles.css?v=16">
 </head>
 <body>
   <header class="top">
@@ -36,7 +36,13 @@
       </details>
     </section>
     <p id="status" class="fine"></p>
-    <p id="toast" class="toast" role="status" hidden></p>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden>
+      <div class="toast-body">
+        <p id="toast-text"></p>
+        <ul id="toast-list"></ul>
+      </div>
+      <button id="toast-close" class="toast-close" type="button" aria-label="Close">×</button>
+    </div>
     <p id="sync-note" class="sync-note" hidden></p>
 
     <section id="workspace" hidden>
@@ -79,10 +85,6 @@
       <div id="map" hidden></div>
       <p id="map-legend" class="fine" hidden></p>
       <p id="map-note" class="fine" hidden></p>
-      <section id="changes" hidden>
-        <h2>Since the last file</h2>
-        <ul id="change-list"></ul>
-      </section>
       <div class="grid">
         <section class="panel owners-panel">
           <div class="section-head">
@@ -107,6 +109,10 @@
           <div id="explanation"></div>
         </section>
       </div>
+      <details id="changes" class="changes" hidden>
+        <summary>Since the last file <span id="change-count"></span></summary>
+        <ul id="change-list"></ul>
+      </details>
     </section>
   </main>
   <button id="peek" class="peek" type="button" hidden>
@@ -114,7 +120,7 @@
     <span class="peek-go">Details</span>
   </button>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=15"></script>
+  <script type="module" src="/app.js?v=16"></script>
   <script>
     fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
       const bytes = Number(res.headers.get('content-length'));

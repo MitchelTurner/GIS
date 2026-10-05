@@ -169,14 +169,42 @@ function shortDate(value) {
   return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function showToast(text) {
-  toastNode.textContent = text;
-  toastNode.hidden = false;
+function hideToast() {
   clearTimeout(toastTimer);
+  toastNode.classList.remove('is-in');
   toastTimer = setTimeout(() => {
     toastNode.hidden = true;
-  }, 12000);
+  }, 250);
 }
+
+function showToast(text, lines = []) {
+  document.querySelector('#toast-text').textContent = text;
+  const shown = lines.slice(0, 3);
+  const more = lines.length - shown.length;
+  const items = shown.map((line) => {
+    const item = document.createElement('li');
+    item.textContent = line;
+    return item;
+  });
+  if (more > 0) {
+    const item = document.createElement('li');
+    item.className = 'more';
+    item.textContent = `${more} more at the bottom of the page`;
+    items.push(item);
+  }
+  document.querySelector('#toast-list').replaceChildren(...items);
+  clearTimeout(toastTimer);
+  toastNode.hidden = false;
+  requestAnimationFrame(() => toastNode.classList.add('is-in'));
+  toastTimer = setTimeout(hideToast, lines.length ? 9000 : 6000);
+}
+
+document.querySelector('#toast-close').addEventListener('click', hideToast);
+toastNode.addEventListener('pointerenter', () => clearTimeout(toastTimer));
+toastNode.addEventListener('pointerleave', () => {
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, 3000);
+});
 
 const peekNode = document.querySelector('#peek');
 let detailInView = false;
@@ -577,18 +605,22 @@ function goToParcel(parcelno, { scroll = true } = {}) {
   map.flyToBounds([[box.minLat, box.minLon], [box.maxLat, box.maxLon]], { padding: [60, 60], maxZoom: 18, duration: 0.8 });
 }
 
-function renderChanges() {
-  const section = document.querySelector('#changes');
-  const list = document.querySelector('#change-list');
-  const lines = [
+function changeLines() {
+  return [
     ...(changes.gained || []).map((row) => `${row.name} gained ${row.count} ${row.count === 1 ? 'parcel' : 'parcels'}`),
     ...(changes.lost || []).map((row) => `${row.name} lost ${row.count} ${row.count === 1 ? 'parcel' : 'parcels'}`),
   ];
-  list.replaceChildren(...lines.map((text) => {
+}
+
+function renderChanges() {
+  const section = document.querySelector('#changes');
+  const lines = changeLines();
+  document.querySelector('#change-list').replaceChildren(...lines.map((text) => {
     const item = document.createElement('li');
     item.textContent = text;
     return item;
   }));
+  document.querySelector('#change-count').textContent = `${lines.length} owner ${lines.length === 1 ? 'change' : 'changes'}`;
   section.hidden = lines.length === 0;
 }
 
@@ -1334,6 +1366,7 @@ async function useFile(file) {
     const text = await file.text();
     if (token !== importToken) return;
     const records = recordsFromText(text, file.name);
+    let importMessage = '';
     if (!records.length) {
       statusNode.textContent = `${file.name} has no parcels.`;
       if (pendingFileKey === key) pendingFileKey = '';
@@ -1358,9 +1391,10 @@ async function useFile(file) {
       applyEdits();
       serverParcels = saved.length;
       if (summary.importId != null) knownImportId = summary.importId;
-      showToast(summary.message || 'Saved to the server. Every device now sees this file.');
+      importMessage = summary.message || 'Saved to the server. Every device now sees this file.';
     } else {
       applyRecords(records, { asImport: true });
+      importMessage = `Loaded ${library.parcels.length.toLocaleString()} parcels.`;
     }
     await saveKey('parcels', library.parcels);
     await saveKey('changes', changes);
@@ -1379,6 +1413,7 @@ async function useFile(file) {
     showMap();
     renderOwners();
     renderChanges();
+    showToast(importMessage, changeLines());
     await saveBuyBox();
     statusNode.textContent = '';
     fileInput.value = '';
