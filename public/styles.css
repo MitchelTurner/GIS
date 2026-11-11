@@ -468,6 +468,41 @@ label.filter select, label.filter input { text-transform: none; letter-spacing: 
 
 #map-note { margin: 8px 0 0; }
 
+.map-modes {
+  position: absolute;
+  z-index: 800;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgba(9, 13, 12, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.map-modes button {
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+  font: 600 13px/1 var(--sans);
+  cursor: pointer;
+}
+
+.map-modes button:hover { background: rgba(255, 255, 255, 0.06); color: var(--ink); }
+
+.map-modes button.is-on,
+.map-modes button.is-on:hover {
+  background: var(--brand);
+  color: #f4f7f4;
+}
+
 .leaflet-container { font-family: var(--sans); background: #0b100f; }
 
 .leaflet-bar {
@@ -546,6 +581,38 @@ label.filter select, label.filter input { text-transform: none; letter-spacing: 
   overflow: visible;
   scroll-margin-top: 80px;
 }
+
+.stories h2 { margin-bottom: 8px; }
+
+.story-list, .street-list { display: flex; flex-direction: column; gap: 8px; }
+
+.story-row, .street-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 12px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.story-row:hover, .street-row:hover { background: rgba(255, 255, 255, 0.07); }
+
+.story-row small, .street-row small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+}
+
+.story-row .num, .street-row .num { color: var(--brand-2); font-variant-numeric: tabular-nums; }
+
+.street-row.is-current { border-color: rgba(224, 138, 86, 0.7); cursor: default; }
 
 .section-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }
 
@@ -1120,6 +1187,8 @@ details p { max-width: 40rem; }
   label.filter { min-width: 0; }
   .search-row button { padding-inline: 18px; }
   #zoning, #max-acre, #min-acres { width: 100%; min-width: 0; }
+  .map-modes { top: 8px; right: 8px; }
+  .map-modes button { padding-inline: 10px; font-size: 12px; }
   .filter-actions { grid-column: 1 / -1; margin: 0; }
   .filter-actions button { flex: 1; }
   #map {
