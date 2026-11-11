@@ -25,7 +25,7 @@ test('install page serves the extension zip', async () => {
     assert.match(html, /Download the extension/);
     assert.match(html, /Who owns the land/);
     assert.match(html, /Since the last file/);
-    assert.match(html, /app\.js\?v=18/);
+    assert.match(html, /app\.js\?v=19/);
     assert.match(html, /Preview the sample map/);
     assert.equal(page.headers.get('x-content-type-options'), 'nosniff');
     assert.match(page.headers.get('content-security-policy') || '', /default-src 'self'/);

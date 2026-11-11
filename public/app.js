@@ -84,7 +84,10 @@ function showWorkspace(hasParcels) {
   emptyNode.hidden = hasParcels;
   workspaceNode.hidden = !hasParcels;
   replaceNode.hidden = !hasParcels;
+  drop.hidden = hasParcels;
+  if (sampleButton) sampleButton.hidden = hasParcels && serverMode === 'in';
   document.querySelector('#clear').hidden = !hasParcels || serverMode === 'in';
+  if (statusNode.textContent === 'Loading the parcels…') statusNode.textContent = '';
   document.querySelector('#export').hidden = !hasParcels;
   document.querySelector('#labels').hidden = !hasParcels;
   askAllNode.hidden = !hasParcels || serverMode !== 'in' || !aiReady;
@@ -1466,9 +1469,9 @@ async function useFile(file, { preview = false } = {}) {
 }
 
 function showEmptyText() {
-  document.querySelector('#empty-lede').innerHTML = serverMode === 'in'
-    ? 'The server has no parcels yet. Drop the <strong>.geojson</strong> from the extension, or preview the sample map. A saved file then shows up on every device.'
-    : 'Drop the <strong>.geojson</strong> from the extension, or preview the sample map. This browser keeps the file for the next visit.';
+  document.querySelector('#empty-lede').textContent = serverMode === 'in'
+    ? 'The server has no parcels yet. A file added under Update the extract shows up on every device.'
+    : 'Nothing is saved in this browser yet. A file added under Update the extract stays on this device.';
 }
 
 fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
