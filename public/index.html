@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,650&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=19">
+  <link rel="stylesheet" href="/styles.css?v=20">
 </head>
 <body>
   <header class="top">
@@ -113,6 +113,7 @@
             <label class="private"><input id="condos" type="checkbox"> Skip condos</label>
             <label class="private"><input id="below" type="checkbox"> Below neighbors</label>
             <label class="private"><input id="waterfront" type="checkbox"> Waterfront</label>
+            <label class="private"><input id="changed" type="checkbox"> Changed hands</label>
           </div>
           <div class="filter-row">
             <label class="filter">Zoning
@@ -131,11 +132,17 @@
           </div>
         </form>
         <div class="stage">
+          <div class="map-modes" role="group" aria-label="Map" hidden>
+            <button id="mode-parcels" type="button" class="is-on" aria-pressed="true">Parcels</button>
+            <button id="mode-holdings" type="button" aria-pressed="false">Holdings</button>
+            <button id="mode-mail" type="button" aria-pressed="false">Mail</button>
+          </div>
           <div id="map" hidden></div>
           <p id="map-legend" class="fine" hidden></p>
           <p id="map-note" class="fine" hidden></p>
         </div>
         <div class="dock">
+          <section id="stories" class="panel stories" hidden></section>
           <section id="ask-all" class="ask-all" hidden>
             <label class="ask">
               <span>Ask about every parcel</span>
@@ -196,6 +203,6 @@
     <p class="noscript">This studio draws the map in the browser, so JavaScript needs to be on.</p>
   </noscript>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=19"></script>
+  <script type="module" src="/app.js?v=20"></script>
 </body>
 </html>

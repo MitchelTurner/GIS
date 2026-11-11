@@ -54,7 +54,7 @@ const NOT_FOUND_HTML = `<!DOCTYPE html>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Page not found — Ketchikan parcels</title>
-  <link rel="stylesheet" href="/styles.css?v=19">
+  <link rel="stylesheet" href="/styles.css?v=20">
 </head>
 <body class="missing">
   <header class="top">
@@ -123,7 +123,7 @@ function readBody(req, limit = 120000) {
   });
 }
 
-const SHARED_LIB = new Set(['library.js', 'ownership.js', 'records.js', 'parcel-ids.js', 'parcel-import.js']);
+const SHARED_LIB = new Set(['library.js', 'ownership.js', 'records.js', 'parcel-ids.js', 'parcel-import.js', 'territory.js']);
 
 export async function createHandler({ explain = explainComps } = {}) {
   const zip = await zipDirectory(extensionDir, 'ketchikan-parcel-extract');
