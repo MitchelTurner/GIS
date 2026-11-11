@@ -57,6 +57,9 @@ let knownImportId = null;
 let serverParcels = 0;
 let syncing = false;
 let toastTimer = null;
+let mapStyle = 'imagery';
+let tileLayers = [];
+const sampleButton = document.querySelector('#sample');
 const askAllNode = document.querySelector('#ask-all');
 const askAllInput = document.querySelector('#ask-all-input');
 const askAllButton = document.querySelector('#ask-all-button');
@@ -77,6 +80,7 @@ function money(value) {
 }
 
 function showWorkspace(hasParcels) {
+  document.body.classList.toggle('is-live', hasParcels);
   emptyNode.hidden = hasParcels;
   workspaceNode.hidden = !hasParcels;
   replaceNode.hidden = !hasParcels;
@@ -546,10 +550,37 @@ function styleFor(feature) {
   const fill = ownerColorMap.get(feature.properties.ownerKey) || '#8d8478';
   const id = feature.properties.parcelno;
   const dash = feature.properties.missing ? { dashArray: '4 4' } : {};
-  const edge = feature.properties.changed ? '#f2b84b' : '#fffaf3';
-  if (id === selected) return { color: edge, weight: 3, fillColor: fill, fillOpacity: 0.85, ...dash };
-  if (focusIds.has(id)) return { color: edge, weight: 2.5, fillColor: fill, fillOpacity: 0.7, ...dash };
-  return { color: edge, weight: feature.properties.changed ? 2 : 1.2, fillColor: fill, fillOpacity: feature.properties.missing ? 0.25 : 0.55, ...dash };
+  const edge = feature.properties.changed ? '#f2b84b' : '#f6f1e8';
+  const onCanvas = mapStyle === 'canvas';
+  const resting = feature.properties.missing ? 0.28 : (onCanvas ? 0.84 : 0.62);
+  if (id === selected) return { color: '#fffaf3', weight: 3.2, fillColor: fill, fillOpacity: 0.94, ...dash };
+  if (focusIds.has(id)) return { color: edge, weight: 2.6, fillColor: fill, fillOpacity: onCanvas ? 0.9 : 0.78, ...dash };
+  return { color: edge, weight: feature.properties.changed ? 2.2 : 1.4, fillColor: fill, fillOpacity: resting, ...dash };
+}
+
+function setBasemap(kind) {
+  const next = kind === 'canvas' ? 'canvas' : 'imagery';
+  mapStyle = next;
+  mapNode.classList.toggle('is-canvas', next === 'canvas');
+  if (!map) return;
+  if (map._parcelBasemap === next) return;
+  for (const layer of tileLayers) map.removeLayer(layer);
+  tileLayers = [];
+  map._parcelBasemap = next;
+  // The sample plat is fictional, so it sits on a plain field instead of a street map.
+  if (next === 'canvas') return;
+  const specs = [
+    ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 'Tiles © Esri'],
+    ['https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', ''],
+  ];
+  for (const [url, attribution] of specs) {
+    tileLayers.push(L.tileLayer(url, {
+      maxZoom: 19,
+      attribution,
+      opacity: next === 'imagery' && !attribution ? 0.86 : 1,
+    }).addTo(map));
+  }
+  map._parcelBasemap = next;
 }
 
 function refreshStyles() {
@@ -674,7 +705,7 @@ function drawVisible() {
   const legend = document.querySelector('#map-legend');
   if (!mapNode.hidden) {
     legend.hidden = false;
-    legend.textContent = `${visible.length.toLocaleString()} parcels in this view. Each color is one of the largest owners. The buy box filters this map and the owner list.`;
+    legend.textContent = `${visible.length.toLocaleString()} in view · each color is an owner`;
   }
   const note = document.querySelector('#map-note');
   const anyGeometry = indexedFeatures.length > 0;
@@ -703,6 +734,7 @@ function showMap({ fit = true } = {}) {
       parcelLayer = null;
       areaLayer = null;
       draftLayer = null;
+      tileLayers = [];
     }
     return;
   }
@@ -710,11 +742,9 @@ function showMap({ fit = true } = {}) {
   mapNode.hidden = false;
   mapNode.getBoundingClientRect();
   if (!map) {
-    map = L.map(mapNode, { preferCanvas: true });
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
-      attribution: 'Tiles © Esri',
-    }).addTo(map);
+    map = L.map(mapNode, { preferCanvas: true, zoomControl: true });
+    map.attributionControl.setPrefix('<a href="https://leafletjs.com" title="A JavaScript library for interactive maps">Leaflet</a>');
+    L.control.scale({ imperial: true, metric: false, position: 'bottomright' }).addTo(map);
     map.on('moveend', () => {
       clearTimeout(moveTimer);
       moveTimer = setTimeout(drawVisible, 120);
@@ -725,7 +755,7 @@ function showMap({ fit = true } = {}) {
       dragStart = event.latlng;
       if (draftLayer) map.removeLayer(draftLayer);
       draftLayer = L.rectangle(L.latLngBounds(event.latlng, event.latlng), {
-        color: '#b8613a',
+        color: '#e08a56',
         weight: 2,
         dashArray: '4 4',
         fillOpacity: 0.08,
@@ -742,6 +772,7 @@ function showMap({ fit = true } = {}) {
       finishDraw(event.latlng);
     });
   }
+  setBasemap(mapStyle);
   const place = () => {
     map.invalidateSize();
     if (fit) {
@@ -749,7 +780,7 @@ function showMap({ fit = true } = {}) {
       for (const feature of indexedFeatures) {
         if (feature.bbox) bounds.extend([[feature.bbox.minLat, feature.bbox.minLon], [feature.bbox.maxLat, feature.bbox.maxLon]]);
       }
-      if (bounds.isValid()) map.fitBounds(bounds, { padding: [16, 16] });
+      if (bounds.isValid()) map.fitBounds(bounds, { padding: [36, 36] });
     }
     showArea();
     drawVisible();
@@ -772,10 +803,10 @@ function showArea() {
   }
   if (!area) return;
   areaLayer = L.rectangle([[area.south, area.west], [area.north, area.east]], {
-    color: '#b8613a',
+    color: '#e08a56',
     weight: 2,
-    fillColor: '#b8613a',
-    fillOpacity: 0.12,
+    fillColor: '#e08a56',
+    fillOpacity: 0.16,
     interactive: false,
   }).addTo(map);
 }
@@ -1356,7 +1387,7 @@ async function checkServer() {
   return 'off';
 }
 
-async function useFile(file) {
+async function useFile(file, { preview = false } = {}) {
   const key = `${file.name}:${file.size}:${file.lastModified}`;
   if (key === pendingFileKey) return;
   pendingFileKey = key;
@@ -1372,7 +1403,12 @@ async function useFile(file) {
       if (pendingFileKey === key) pendingFileKey = '';
       return;
     }
-    if (serverMode === 'in') {
+    if (preview) {
+      applyRecords(records, { asImport: true });
+      importMessage = 'Sample map. These owners and streets are fictional.';
+      mapStyle = 'canvas';
+    } else if (serverMode === 'in') {
+      mapStyle = 'imagery';
       if (/\.csv$/i.test(file.name)) {
         statusNode.textContent = 'The server saves the .geojson file. Drop that one to keep it for every browser.';
         if (pendingFileKey === key) pendingFileKey = '';
@@ -1395,9 +1431,13 @@ async function useFile(file) {
     } else {
       applyRecords(records, { asImport: true });
       importMessage = `Loaded ${library.parcels.length.toLocaleString()} parcels.`;
+      mapStyle = 'imagery';
     }
-    await saveKey('parcels', library.parcels);
-    await saveKey('changes', changes);
+    if (!(preview && serverMode === 'in')) {
+      await saveKey('parcels', library.parcels);
+      await saveKey('changes', changes);
+      await saveKey('basemap', mapStyle);
+    }
     if (token !== importToken) return;
     selected = null;
     current = null;
@@ -1413,7 +1453,7 @@ async function useFile(file) {
     showMap();
     renderOwners();
     renderChanges();
-    showToast(importMessage, changeLines());
+    if (!preview) showToast(importMessage, changeLines());
     await saveBuyBox();
     statusNode.textContent = '';
     fileInput.value = '';
@@ -1427,11 +1467,35 @@ async function useFile(file) {
 
 function showEmptyText() {
   document.querySelector('#empty-lede').innerHTML = serverMode === 'in'
-    ? 'The server has no parcels yet. Drop the <strong>.geojson</strong> from the extension here, or open this site on the computer that already shows them. The server keeps them, so every device sees the same parcels.'
-    : 'Drop the <strong>.geojson</strong> from the extension. This site has no database yet, so only this browser keeps the file and other devices start empty. Add a PostgreSQL database to the Railway service so every device shares it.';
+    ? 'The server has no parcels yet. Drop the <strong>.geojson</strong> from the extension, or preview the sample map. A saved file then shows up on every device.'
+    : 'Drop the <strong>.geojson</strong> from the extension, or preview the sample map. This browser keeps the file for the next visit.';
 }
 
+fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
+  const bytes = Number(res.headers.get('content-length'));
+  const node = document.querySelector('#size');
+  if (!node || !bytes) return;
+  node.textContent = `Version 1.3.5 · ${(bytes / 1e6).toFixed(1)} MB`;
+}).catch(() => {});
+
 document.querySelector('#drop').addEventListener('click', () => fileInput.click());
+sampleButton?.addEventListener('click', async () => {
+  const label = sampleButton.textContent;
+  sampleButton.disabled = true;
+  sampleButton.textContent = 'Opening the sample…';
+  try {
+    const res = await fetch('/sample.geojson');
+    if (!res.ok) throw new Error('The sample map is not available.');
+    const blob = await res.blob();
+    const file = new File([blob], 'ketchikan-sample.geojson', { type: 'application/geo+json' });
+    await useFile(file, { preview: true });
+  } catch (error) {
+    statusNode.textContent = error.message;
+  } finally {
+    sampleButton.disabled = false;
+    sampleButton.textContent = label;
+  }
+});
 replaceNode.addEventListener('click', () => fileInput.click());
 
 fileInput.addEventListener('change', () => {
@@ -1589,8 +1653,11 @@ document.querySelector('#clear').addEventListener('click', async () => {
     map.remove();
     map = null;
     parcelLayer = null;
+    tileLayers = [];
   }
   focusIds = new Set();
+  mapStyle = 'imagery';
+  await saveKey('basemap', mapStyle);
   showExplain(false);
   showWorkspace(false);
 });
@@ -1697,14 +1764,20 @@ function hasContent(value) {
 function showSyncNote() {
   const note = document.querySelector('#sync-note');
   const synced = serverMode === 'in' && serverParcels > 0;
+  const sample = mapStyle === 'canvas';
   note.hidden = workspaceNode.hidden;
-  note.classList.toggle('is-shared', synced);
+  note.classList.toggle('is-shared', synced && !sample);
+  note.classList.toggle('is-sample', sample);
+  if (sample) {
+    note.textContent = 'Sample map. These owners and streets are fictional. Replace the file with a borough extract when you have one.';
+    return;
+  }
   if (synced) {
-    note.textContent = `Synced. Every device that opens this site sees these ${serverParcels.toLocaleString()} parcels, contacts, notes, and sales.`;
+    note.textContent = `Synced across devices. ${serverParcels.toLocaleString()} parcels, with the same contacts, notes, and sales.`;
   } else if (serverMode === 'in') {
-    note.textContent = 'These parcels have not reached the server yet. Drop the .geojson again on this device and every device will see them.';
+    note.textContent = 'This copy has not reached the server yet. Drop the .geojson again and every device will see it.';
   } else {
-    note.textContent = 'These parcels are only in this browser. This site has no database, so other devices start empty. Add a PostgreSQL database to the Railway service and redeploy.';
+    note.textContent = 'Saved in this browser. Connect a database when every device should share the file.';
   }
 }
 
@@ -1790,6 +1863,7 @@ async function startKey(key) {
   return local;
 }
 
+if ((await loadKey('basemap')) === 'canvas' && serverMode !== 'in') mapStyle = 'canvas';
 const savedParcels = await loadKey('parcels');
 searches = (await startKey('searches')) || [];
 changes = (await startKey('changes')) || { gained: [], lost: [] };
@@ -1818,6 +1892,14 @@ if (remote && !editsShared) {
   if (hasContent(edits)) await pushShared('edits', edits).catch(() => {});
 }
 showSyncNote();
+window.addEventListener('resize', () => {
+  if (!map) return;
+  clearTimeout(moveTimer);
+  moveTimer = setTimeout(() => {
+    map.invalidateSize();
+    drawVisible();
+  }, 150);
+});
 if (serverMode === 'in') {
   setInterval(syncFromServer, 60000);
   document.addEventListener('visibilitychange', () => {

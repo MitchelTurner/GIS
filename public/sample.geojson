@@ -1,0 +1,4053 @@
+{
+ "type": "FeatureCollection",
+ "name": "Ketchikan sample plat",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6528,
+       55.3394
+      ],
+      [
+       -131.651652,
+       55.340378
+      ],
+      [
+       -131.651652,
+       55.341036
+      ],
+      [
+       -131.6528,
+       55.34004
+      ],
+      [
+       -131.6528,
+       55.3394
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90000001",
+    "Parcel_Num": "90000001",
+    "Owner_Name": "Harbor House LLC",
+    "Owner_2": "",
+    "Address": "500 Union St",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98101",
+    "Address_full": "500 Union St, Seattle, WA 98101",
+    "Location": "Water St 120",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Water Street Plat",
+    "Land_Acres": 0.42,
+    "Land_Sq_Ft": 18295,
+    "Total_Appr": 791200,
+    "Total_Asse": 791200,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 269008,
+    "Asd_Land_V": 269008,
+    "Apr_Imps": 522192,
+    "Asd_Imp_Va": 522192,
+    "Water_Fron": 80,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "WC",
+    "Year_Built": 1986,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 791200,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 763500,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 735800,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 708100,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 680400
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.651652,
+       55.340378
+      ],
+      [
+       -131.650551,
+       55.340505
+      ],
+      [
+       -131.650551,
+       55.341174
+      ],
+      [
+       -131.651652,
+       55.341036
+      ],
+      [
+       -131.651652,
+       55.340378
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90001001",
+    "Parcel_Num": "90001001",
+    "Owner_Name": "Harbor House LLC",
+    "Owner_2": "",
+    "Address": "500 Union St",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98101",
+    "Address_full": "500 Union St, Seattle, WA 98101",
+    "Location": "Water St 132",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Water Street Plat",
+    "Land_Acres": 0.62,
+    "Land_Sq_Ft": 27007,
+    "Total_Appr": 929200,
+    "Total_Asse": 929200,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 315928,
+    "Asd_Land_V": 315928,
+    "Apr_Imps": 613272,
+    "Asd_Imp_Va": 613272,
+    "Water_Fron": 87,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "WC",
+    "Year_Built": 1986,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 929200,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 896700,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 864200,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 831600,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 799100
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.650551,
+       55.340505
+      ],
+      [
+       -131.64951,
+       55.340142
+      ],
+      [
+       -131.64951,
+       55.340807
+      ],
+      [
+       -131.650551,
+       55.341174
+      ],
+      [
+       -131.650551,
+       55.340505
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90002001",
+    "Parcel_Num": "90002001",
+    "Owner_Name": "Harbor House LLC",
+    "Owner_2": "",
+    "Address": "500 Union St",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98101",
+    "Address_full": "500 Union St, Seattle, WA 98101",
+    "Location": "Water St 144",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Water Street Plat",
+    "Land_Acres": 0.82,
+    "Land_Sq_Ft": 35719,
+    "Total_Appr": 818800,
+    "Total_Asse": 818800,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 278392,
+    "Asd_Land_V": 278392,
+    "Apr_Imps": 540408,
+    "Asd_Imp_Va": 540408,
+    "Water_Fron": 94,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "WC",
+    "Year_Built": 1986,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 818800,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 790100,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 761500,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 732800,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 704200
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.64951,
+       55.340142
+      ],
+      [
+       -131.648503,
+       55.339766
+      ],
+      [
+       -131.648503,
+       55.340416
+      ],
+      [
+       -131.64951,
+       55.340807
+      ],
+      [
+       -131.64951,
+       55.340142
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90003001",
+    "Parcel_Num": "90003001",
+    "Owner_Name": "Harbor House LLC",
+    "Owner_2": "",
+    "Address": "500 Union St",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98101",
+    "Address_full": "500 Union St, Seattle, WA 98101",
+    "Location": "Water St 156",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Water Street Plat",
+    "Land_Acres": 1.02,
+    "Land_Sq_Ft": 44431,
+    "Total_Appr": 956800,
+    "Total_Asse": 956800,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 325312,
+    "Asd_Land_V": 325312,
+    "Apr_Imps": 631488,
+    "Asd_Imp_Va": 631488,
+    "Water_Fron": 101,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "WC",
+    "Year_Built": 1986,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 956800,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 923300,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 889800,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 856300,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 822800
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.648503,
+       55.339766
+      ],
+      [
+       -131.647481,
+       55.339094
+      ],
+      [
+       -131.647481,
+       55.339724
+      ],
+      [
+       -131.648503,
+       55.340416
+      ],
+      [
+       -131.648503,
+       55.339766
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90004001",
+    "Parcel_Num": "90004001",
+    "Owner_Name": "Alaska Marine Lines",
+    "Owner_2": "",
+    "Address": "1400 W Marginal Way SW",
+    "CITY": "Tacoma",
+    "STATE": "WA",
+    "ZIP": "98421",
+    "Address_full": "1400 W Marginal Way SW, Tacoma, WA 98421",
+    "Location": "Water St 168",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Water Street Plat",
+    "Land_Acres": 0.42,
+    "Land_Sq_Ft": 18295,
+    "Total_Appr": 680800,
+    "Total_Asse": 680800,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 231472,
+    "Asd_Land_V": 231472,
+    "Apr_Imps": 449328,
+    "Asd_Imp_Va": 449328,
+    "Water_Fron": 108,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "WC",
+    "Year_Built": 1974,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 680800,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 657000,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 633100,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 609300,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 585500
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.647481,
+       55.339094
+      ],
+      [
+       -131.646403,
+       55.338237
+      ],
+      [
+       -131.646403,
+       55.338852
+      ],
+      [
+       -131.647481,
+       55.339724
+      ],
+      [
+       -131.647481,
+       55.339094
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90005001",
+    "Parcel_Num": "90005001",
+    "Owner_Name": "Alaska Marine Lines",
+    "Owner_2": "",
+    "Address": "1400 W Marginal Way SW",
+    "CITY": "Tacoma",
+    "STATE": "WA",
+    "ZIP": "98421",
+    "Address_full": "1400 W Marginal Way SW, Tacoma, WA 98421",
+    "Location": "Water St 180",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Water Street Plat",
+    "Land_Acres": 0.62,
+    "Land_Sq_Ft": 27007,
+    "Total_Appr": 791800,
+    "Total_Asse": 791800,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 269212,
+    "Asd_Land_V": 269212,
+    "Apr_Imps": 522588,
+    "Asd_Imp_Va": 522588,
+    "Water_Fron": 115,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "WC",
+    "Year_Built": 1974,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 791800,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 764100,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 736400,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 708700,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 680900
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.646403,
+       55.338237
+      ],
+      [
+       -131.645269,
+       55.338124
+      ],
+      [
+       -131.645269,
+       55.338736
+      ],
+      [
+       -131.646403,
+       55.338852
+      ],
+      [
+       -131.646403,
+       55.338237
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90006001",
+    "Parcel_Num": "90006001",
+    "Owner_Name": "Alaska Marine Lines",
+    "Owner_2": "",
+    "Address": "1400 W Marginal Way SW",
+    "CITY": "Tacoma",
+    "STATE": "WA",
+    "ZIP": "98421",
+    "Address_full": "1400 W Marginal Way SW, Tacoma, WA 98421",
+    "Location": "Water St 192",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Water Street Plat",
+    "Land_Acres": 0.82,
+    "Land_Sq_Ft": 35719,
+    "Total_Appr": 703000,
+    "Total_Asse": 703000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 239020,
+    "Asd_Land_V": 239020,
+    "Apr_Imps": 463980,
+    "Asd_Imp_Va": 463980,
+    "Water_Fron": 122,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "WC",
+    "Year_Built": 1974,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 703000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 678400,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 653800,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 629200,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 604600
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.645269,
+       55.338124
+      ],
+      [
+       -131.644116,
+       55.338956
+      ],
+      [
+       -131.644116,
+       55.339577
+      ],
+      [
+       -131.645269,
+       55.338736
+      ],
+      [
+       -131.645269,
+       55.338124
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90007001",
+    "Parcel_Num": "90007001",
+    "Owner_Name": "Front Street Partners",
+    "Owner_2": "",
+    "Address": "210 SW Oak St",
+    "CITY": "Portland",
+    "STATE": "OR",
+    "ZIP": "97204",
+    "Address_full": "210 SW Oak St, Portland, OR 97204",
+    "Location": "Water St 204",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Water Street Plat",
+    "Land_Acres": 1.02,
+    "Land_Sq_Ft": 44431,
+    "Total_Appr": 671000,
+    "Total_Asse": 671000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 228140,
+    "Asd_Land_V": 228140,
+    "Apr_Imps": 442860,
+    "Asd_Imp_Va": 442860,
+    "Water_Fron": 129,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "WC",
+    "Year_Built": 1998,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 671000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 647500,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 624000,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 600500,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 577100
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.644116,
+       55.338956
+      ],
+      [
+       -131.642992,
+       55.339791
+      ],
+      [
+       -131.642992,
+       55.340432
+      ],
+      [
+       -131.644116,
+       55.339577
+      ],
+      [
+       -131.644116,
+       55.338956
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90008001",
+    "Parcel_Num": "90008001",
+    "Owner_Name": "Front Street Partners",
+    "Owner_2": "",
+    "Address": "210 SW Oak St",
+    "CITY": "Portland",
+    "STATE": "OR",
+    "ZIP": "97204",
+    "Address_full": "210 SW Oak St, Portland, OR 97204",
+    "Location": "Water St 216",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Water Street Plat",
+    "Land_Acres": 0.42,
+    "Land_Sq_Ft": 18295,
+    "Total_Appr": 597800,
+    "Total_Asse": 597800,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 203252,
+    "Asd_Land_V": 203252,
+    "Apr_Imps": 394548,
+    "Asd_Imp_Va": 394548,
+    "Water_Fron": 136,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "WC",
+    "Year_Built": 1998,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 597800,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 576900,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 556000,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 535000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 514100
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.642992,
+       55.339791
+      ],
+      [
+       -131.641928,
+       55.340156
+      ],
+      [
+       -131.641928,
+       55.340815
+      ],
+      [
+       -131.642992,
+       55.340432
+      ],
+      [
+       -131.642992,
+       55.339791
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90009001",
+    "Parcel_Num": "90009001",
+    "Owner_Name": "Front Street Partners",
+    "Owner_2": "",
+    "Address": "210 SW Oak St",
+    "CITY": "Portland",
+    "STATE": "OR",
+    "ZIP": "97204",
+    "Address_full": "210 SW Oak St, Portland, OR 97204",
+    "Location": "Water St 228",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Water Street Plat",
+    "Land_Acres": 0.62,
+    "Land_Sq_Ft": 27007,
+    "Total_Appr": 524600,
+    "Total_Asse": 524600,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 178364,
+    "Asd_Land_V": 178364,
+    "Apr_Imps": 346236,
+    "Asd_Imp_Va": 346236,
+    "Water_Fron": 143,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "WC",
+    "Year_Built": 1998,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 524600,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 506200,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 487900,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 469500,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 451200
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6528,
+       55.34004
+      ],
+      [
+       -131.651652,
+       55.341036
+      ],
+      [
+       -131.651652,
+       55.341695
+      ],
+      [
+       -131.6528,
+       55.34068
+      ],
+      [
+       -131.6528,
+       55.34004
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90100001",
+    "Parcel_Num": "90100001",
+    "Owner_Name": "Harbor House LLC",
+    "Owner_2": "",
+    "Address": "500 Union St",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98101",
+    "Address_full": "500 Union St, Seattle, WA 98101",
+    "Location": "Mill St 121",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.23,
+    "Land_Sq_Ft": 10019,
+    "Total_Appr": 874000,
+    "Total_Asse": 874000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 297160,
+    "Asd_Land_V": 297160,
+    "Apr_Imps": 576840,
+    "Asd_Imp_Va": 576840,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "CG",
+    "Year_Built": 1986,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 874000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 843400,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 812800,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 782200,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 751600
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.651652,
+       55.341036
+      ],
+      [
+       -131.650551,
+       55.341174
+      ],
+      [
+       -131.650551,
+       55.341842
+      ],
+      [
+       -131.651652,
+       55.341695
+      ],
+      [
+       -131.651652,
+       55.341036
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90101001",
+    "Parcel_Num": "90101001",
+    "Owner_Name": "Harbor House LLC",
+    "Owner_2": "",
+    "Address": "500 Union St",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98101",
+    "Address_full": "500 Union St, Seattle, WA 98101",
+    "Location": "Mill St 133",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.3,
+    "Land_Sq_Ft": 13068,
+    "Total_Appr": 1012000,
+    "Total_Asse": 1012000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 344080,
+    "Asd_Land_V": 344080,
+    "Apr_Imps": 667920,
+    "Asd_Imp_Va": 667920,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "CG",
+    "Year_Built": 1986,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 1012000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 976600,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 941200,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 905700,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 870300
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.650551,
+       55.341174
+      ],
+      [
+       -131.64951,
+       55.340807
+      ],
+      [
+       -131.64951,
+       55.341472
+      ],
+      [
+       -131.650551,
+       55.341842
+      ],
+      [
+       -131.650551,
+       55.341174
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90102001",
+    "Parcel_Num": "90102001",
+    "Owner_Name": "Maya Chen",
+    "Owner_2": "",
+    "Address": "18 Creek St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "18 Creek St, Ketchikan, AK 99901",
+    "Location": "Mill St 145",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.37,
+    "Land_Sq_Ft": 16117,
+    "Total_Appr": 279300,
+    "Total_Asse": 279300,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 94962,
+    "Asd_Land_V": 94962,
+    "Apr_Imps": 184338,
+    "Asd_Imp_Va": 184338,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1958,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 279300,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 269500,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 259700,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 250000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 240200
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.64951,
+       55.340807
+      ],
+      [
+       -131.648503,
+       55.340416
+      ],
+      [
+       -131.648503,
+       55.341065
+      ],
+      [
+       -131.64951,
+       55.341472
+      ],
+      [
+       -131.64951,
+       55.340807
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90103001",
+    "Parcel_Num": "90103001",
+    "Owner_Name": "Maya Chen",
+    "Owner_2": "",
+    "Address": "18 Creek St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "18 Creek St, Ketchikan, AK 99901",
+    "Location": "Mill St 157",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.44,
+    "Land_Sq_Ft": 19166,
+    "Total_Appr": 245100,
+    "Total_Asse": 245100,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 83334,
+    "Asd_Land_V": 83334,
+    "Apr_Imps": 161766,
+    "Asd_Imp_Va": 161766,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1958,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 245100,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 236500,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 227900,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 219400,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 210800
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.648503,
+       55.340416
+      ],
+      [
+       -131.647481,
+       55.339724
+      ],
+      [
+       -131.647481,
+       55.340354
+      ],
+      [
+       -131.648503,
+       55.341065
+      ],
+      [
+       -131.648503,
+       55.340416
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90104001",
+    "Parcel_Num": "90104001",
+    "Owner_Name": "Alaska Marine Lines",
+    "Owner_2": "",
+    "Address": "1400 W Marginal Way SW",
+    "CITY": "Tacoma",
+    "STATE": "WA",
+    "ZIP": "98421",
+    "Address_full": "1400 W Marginal Way SW, Tacoma, WA 98421",
+    "Location": "Mill St 169",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.16,
+    "Land_Sq_Ft": 6970,
+    "Total_Appr": 747400,
+    "Total_Asse": 747400,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 254116,
+    "Asd_Land_V": 254116,
+    "Apr_Imps": 493284,
+    "Asd_Imp_Va": 493284,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "CG",
+    "Year_Built": 1974,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 747400,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 721200,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 695100,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 668900,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 642800
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.647481,
+       55.339724
+      ],
+      [
+       -131.646403,
+       55.338852
+      ],
+      [
+       -131.646403,
+       55.339467
+      ],
+      [
+       -131.647481,
+       55.340354
+      ],
+      [
+       -131.647481,
+       55.339724
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90105001",
+    "Parcel_Num": "90105001",
+    "Owner_Name": "James Nelson",
+    "Owner_2": "",
+    "Address": "442 Water St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "442 Water St, Ketchikan, AK 99901",
+    "Location": "Mill St 181",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.23,
+    "Land_Sq_Ft": 10019,
+    "Total_Appr": 213600,
+    "Total_Asse": 213600,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 72624,
+    "Asd_Land_V": 72624,
+    "Apr_Imps": 140976,
+    "Asd_Imp_Va": 140976,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1971,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 213600,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 206100,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 198600,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 191200,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 183700
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.646403,
+       55.338852
+      ],
+      [
+       -131.645269,
+       55.338736
+      ],
+      [
+       -131.645269,
+       55.339348
+      ],
+      [
+       -131.646403,
+       55.339467
+      ],
+      [
+       -131.646403,
+       55.338852
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90106001",
+    "Parcel_Num": "90106001",
+    "Owner_Name": "James Nelson",
+    "Owner_2": "",
+    "Address": "442 Water St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "442 Water St, Ketchikan, AK 99901",
+    "Location": "Mill St 193",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.3,
+    "Land_Sq_Ft": 13068,
+    "Total_Appr": 249600,
+    "Total_Asse": 249600,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 84864,
+    "Asd_Land_V": 84864,
+    "Apr_Imps": 164736,
+    "Asd_Imp_Va": 164736,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1971,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 249600,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 240900,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 232100,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 223400,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 214700
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.645269,
+       55.338736
+      ],
+      [
+       -131.644116,
+       55.339577
+      ],
+      [
+       -131.644116,
+       55.340199
+      ],
+      [
+       -131.645269,
+       55.339348
+      ],
+      [
+       -131.645269,
+       55.338736
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90107001",
+    "Parcel_Num": "90107001",
+    "Owner_Name": "Front Street Partners",
+    "Owner_2": "",
+    "Address": "210 SW Oak St",
+    "CITY": "Portland",
+    "STATE": "OR",
+    "ZIP": "97204",
+    "Address_full": "210 SW Oak St, Portland, OR 97204",
+    "Location": "Mill St 205",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.37,
+    "Land_Sq_Ft": 16117,
+    "Total_Appr": 561200,
+    "Total_Asse": 561200,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 190808,
+    "Asd_Land_V": 190808,
+    "Apr_Imps": 370392,
+    "Asd_Imp_Va": 370392,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "CG",
+    "Year_Built": 1998,
+    "PropUse": "COMM",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 561200,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 541600,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 521900,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 502300,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 482600
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.644116,
+       55.339577
+      ],
+      [
+       -131.642992,
+       55.340432
+      ],
+      [
+       -131.642992,
+       55.341072
+      ],
+      [
+       -131.644116,
+       55.340199
+      ],
+      [
+       -131.644116,
+       55.339577
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90108001",
+    "Parcel_Num": "90108001",
+    "Owner_Name": "Kei Okuno",
+    "Owner_2": "",
+    "Address": "15 Cedar Ave",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "15 Cedar Ave, Ketchikan, AK 99901",
+    "Location": "Mill St 217",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.44,
+    "Land_Sq_Ft": 19166,
+    "Total_Appr": 272900,
+    "Total_Asse": 272900,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 92786,
+    "Asd_Land_V": 92786,
+    "Apr_Imps": 180114,
+    "Asd_Imp_Va": 180114,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1966,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 272900,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 263300,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 253800,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 244200,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 234700
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.642992,
+       55.340432
+      ],
+      [
+       -131.641928,
+       55.340815
+      ],
+      [
+       -131.641928,
+       55.341474
+      ],
+      [
+       -131.642992,
+       55.341072
+      ],
+      [
+       -131.642992,
+       55.340432
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90109001",
+    "Parcel_Num": "90109001",
+    "Owner_Name": "Kei Okuno",
+    "Owner_2": "",
+    "Address": "15 Cedar Ave",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "15 Cedar Ave, Ketchikan, AK 99901",
+    "Location": "Mill St 229",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.16,
+    "Land_Sq_Ft": 6970,
+    "Total_Appr": 242300,
+    "Total_Asse": 242300,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 82382,
+    "Asd_Land_V": 82382,
+    "Apr_Imps": 159918,
+    "Asd_Imp_Va": 159918,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1966,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 242300,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 233800,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 225300,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 216900,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 208400
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.641928,
+       55.340815
+      ],
+      [
+       -131.640913,
+       55.341074
+      ],
+      [
+       -131.640913,
+       55.341743
+      ],
+      [
+       -131.641928,
+       55.341474
+      ],
+      [
+       -131.641928,
+       55.340815
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90110001",
+    "Parcel_Num": "90110001",
+    "Owner_Name": "State of Alaska",
+    "Owner_2": "",
+    "Address": "550 W 7th Ave",
+    "CITY": "Juneau",
+    "STATE": "AK",
+    "ZIP": "99801",
+    "Address_full": "550 W 7th Ave, Juneau, AK 99801",
+    "Location": "Mill St 241",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.23,
+    "Land_Sq_Ft": 10019,
+    "Total_Appr": 165000,
+    "Total_Asse": 0,
+    "Total_Exem": 165000,
+    "Exempt_1": "STATE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 165000,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 0,
+    "PropUse": "VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 165000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 159200,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 153500,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 147700,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 141900
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6528,
+       55.34068
+      ],
+      [
+       -131.651652,
+       55.341695
+      ],
+      [
+       -131.651652,
+       55.342353
+      ],
+      [
+       -131.6528,
+       55.34132
+      ],
+      [
+       -131.6528,
+       55.34068
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90200001",
+    "Parcel_Num": "90200001",
+    "Owner_Name": "Maya Chen",
+    "Owner_2": "",
+    "Address": "18 Creek St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "18 Creek St, Ketchikan, AK 99901",
+    "Location": "Creek St 122",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.3,
+    "Land_Sq_Ft": 13068,
+    "Total_Appr": 296400,
+    "Total_Asse": 296400,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 100776,
+    "Asd_Land_V": 100776,
+    "Apr_Imps": 195624,
+    "Asd_Imp_Va": 195624,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1958,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 296400,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 286000,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 275700,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 265300,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 254900
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.651652,
+       55.341695
+      ],
+      [
+       -131.650551,
+       55.341842
+      ],
+      [
+       -131.650551,
+       55.342511
+      ],
+      [
+       -131.651652,
+       55.342353
+      ],
+      [
+       -131.651652,
+       55.341695
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90201001",
+    "Parcel_Num": "90201001",
+    "Owner_Name": "Maya Chen",
+    "Owner_2": "",
+    "Address": "18 Creek St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "18 Creek St, Ketchikan, AK 99901",
+    "Location": "Creek St 134",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.37,
+    "Land_Sq_Ft": 16117,
+    "Total_Appr": 262200,
+    "Total_Asse": 262200,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 89148,
+    "Asd_Land_V": 89148,
+    "Apr_Imps": 173052,
+    "Asd_Imp_Va": 173052,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1958,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 262200,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 253000,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 243800,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 234700,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 225500
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.650551,
+       55.341842
+      ],
+      [
+       -131.64951,
+       55.341472
+      ],
+      [
+       -131.64951,
+       55.342137
+      ],
+      [
+       -131.650551,
+       55.342511
+      ],
+      [
+       -131.650551,
+       55.341842
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90202001",
+    "Parcel_Num": "90202001",
+    "Owner_Name": "Maya Chen",
+    "Owner_2": "Wei Chen",
+    "Address": "18 Creek St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "18 Creek St, Ketchikan, AK 99901",
+    "Location": "Creek St 146",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.44,
+    "Land_Sq_Ft": 19166,
+    "Total_Appr": 305000,
+    "Total_Asse": 305000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 103700,
+    "Asd_Land_V": 103700,
+    "Apr_Imps": 201300,
+    "Asd_Imp_Va": 201300,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1958,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 305000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 294300,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 283700,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 273000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 262300
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.64951,
+       55.341472
+      ],
+      [
+       -131.648503,
+       55.341065
+      ],
+      [
+       -131.648503,
+       55.341715
+      ],
+      [
+       -131.64951,
+       55.342137
+      ],
+      [
+       -131.64951,
+       55.341472
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90203001",
+    "Parcel_Num": "90203001",
+    "Owner_Name": "James Nelson",
+    "Owner_2": "",
+    "Address": "442 Water St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "442 Water St, Ketchikan, AK 99901",
+    "Location": "Creek St 158",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.16,
+    "Land_Sq_Ft": 6970,
+    "Total_Appr": 228000,
+    "Total_Asse": 228000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 77520,
+    "Asd_Land_V": 77520,
+    "Apr_Imps": 150480,
+    "Asd_Imp_Va": 150480,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1971,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 228000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 220000,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 212000,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 204100,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 196100
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.648503,
+       55.341065
+      ],
+      [
+       -131.647481,
+       55.340354
+      ],
+      [
+       -131.647481,
+       55.340984
+      ],
+      [
+       -131.648503,
+       55.341715
+      ],
+      [
+       -131.648503,
+       55.341065
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90204001",
+    "Parcel_Num": "90204001",
+    "Owner_Name": "James Nelson",
+    "Owner_2": "",
+    "Address": "442 Water St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "442 Water St, Ketchikan, AK 99901",
+    "Location": "Creek St 170",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.23,
+    "Land_Sq_Ft": 10019,
+    "Total_Appr": 264000,
+    "Total_Asse": 264000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 89760,
+    "Asd_Land_V": 89760,
+    "Apr_Imps": 174240,
+    "Asd_Imp_Va": 174240,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1971,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 264000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 254800,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 245500,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 236300,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 227000
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.647481,
+       55.340354
+      ],
+      [
+       -131.646403,
+       55.339467
+      ],
+      [
+       -131.646403,
+       55.340081
+      ],
+      [
+       -131.647481,
+       55.340984
+      ],
+      [
+       -131.647481,
+       55.340354
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90205001",
+    "Parcel_Num": "90205001",
+    "Owner_Name": "James Nelson",
+    "Owner_2": "",
+    "Address": "442 Water St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "442 Water St, Ketchikan, AK 99901",
+    "Location": "Creek St 182",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.3,
+    "Land_Sq_Ft": 13068,
+    "Total_Appr": 235200,
+    "Total_Asse": 235200,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 79968,
+    "Asd_Land_V": 79968,
+    "Apr_Imps": 155232,
+    "Asd_Imp_Va": 155232,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1971,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 235200,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 227000,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 218700,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 210500,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 202300
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.646403,
+       55.339467
+      ],
+      [
+       -131.645269,
+       55.339348
+      ],
+      [
+       -131.645269,
+       55.339959
+      ],
+      [
+       -131.646403,
+       55.340081
+      ],
+      [
+       -131.646403,
+       55.339467
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90206001",
+    "Parcel_Num": "90206001",
+    "Owner_Name": "Rosa Diaz",
+    "Owner_2": "",
+    "Address": "88 Mill St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "88 Mill St, Ketchikan, AK 99901",
+    "Location": "Creek St 194",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.37,
+    "Land_Sq_Ft": 16117,
+    "Total_Appr": 309600,
+    "Total_Asse": 309600,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 105264,
+    "Asd_Land_V": 105264,
+    "Apr_Imps": 204336,
+    "Asd_Imp_Va": 204336,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 2004,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 309600,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 298800,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 287900,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 277100,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 266300
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.645269,
+       55.339348
+      ],
+      [
+       -131.644116,
+       55.340199
+      ],
+      [
+       -131.644116,
+       55.340821
+      ],
+      [
+       -131.645269,
+       55.339959
+      ],
+      [
+       -131.645269,
+       55.339348
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90207001",
+    "Parcel_Num": "90207001",
+    "Owner_Name": "Rosa Diaz",
+    "Owner_2": "",
+    "Address": "88 Mill St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "88 Mill St, Ketchikan, AK 99901",
+    "Location": "Creek St 206",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.44,
+    "Land_Sq_Ft": 19166,
+    "Total_Appr": 363600,
+    "Total_Asse": 363600,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 123624,
+    "Asd_Land_V": 123624,
+    "Apr_Imps": 239976,
+    "Asd_Imp_Va": 239976,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 2004,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 363600,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 350900,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 338100,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 325400,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 312700
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.644116,
+       55.340199
+      ],
+      [
+       -131.642992,
+       55.341072
+      ],
+      [
+       -131.642992,
+       55.341713
+      ],
+      [
+       -131.644116,
+       55.340821
+      ],
+      [
+       -131.644116,
+       55.340199
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90208001",
+    "Parcel_Num": "90208001",
+    "Owner_Name": "Kei Okuno",
+    "Owner_2": "",
+    "Address": "15 Cedar Ave",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "15 Cedar Ave, Ketchikan, AK 99901",
+    "Location": "Creek St 218",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.16,
+    "Land_Sq_Ft": 6970,
+    "Total_Appr": 227000,
+    "Total_Asse": 227000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 77180,
+    "Asd_Land_V": 77180,
+    "Apr_Imps": 149820,
+    "Asd_Imp_Va": 149820,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1966,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 227000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 219100,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 211100,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 203200,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 195200
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.642992,
+       55.341072
+      ],
+      [
+       -131.641928,
+       55.341474
+      ],
+      [
+       -131.641928,
+       55.342133
+      ],
+      [
+       -131.642992,
+       55.341713
+      ],
+      [
+       -131.642992,
+       55.341072
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90209001",
+    "Parcel_Num": "90209001",
+    "Owner_Name": "Petersen Family Trust",
+    "Owner_2": "",
+    "Address": "900 W 5th Ave",
+    "CITY": "Anchorage",
+    "STATE": "AK",
+    "ZIP": "99501",
+    "Address_full": "900 W 5th Ave, Anchorage, AK 99501",
+    "Location": "Creek St 230",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.23,
+    "Land_Sq_Ft": 10019,
+    "Total_Appr": 197600,
+    "Total_Asse": 197600,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 67184,
+    "Asd_Land_V": 67184,
+    "Apr_Imps": 130416,
+    "Asd_Imp_Va": 130416,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1948,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 197600,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 190700,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 183800,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 176900,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 169900
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.641928,
+       55.341474
+      ],
+      [
+       -131.640913,
+       55.341743
+      ],
+      [
+       -131.640913,
+       55.342411
+      ],
+      [
+       -131.641928,
+       55.342133
+      ],
+      [
+       -131.641928,
+       55.341474
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90210001",
+    "Parcel_Num": "90210001",
+    "Owner_Name": "Petersen Family Trust",
+    "Owner_2": "",
+    "Address": "900 W 5th Ave",
+    "CITY": "Anchorage",
+    "STATE": "AK",
+    "ZIP": "99501",
+    "Address_full": "900 W 5th Ave, Anchorage, AK 99501",
+    "Location": "Creek St 242",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.3,
+    "Land_Sq_Ft": 13068,
+    "Total_Appr": 174800,
+    "Total_Asse": 174800,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 59432,
+    "Asd_Land_V": 59432,
+    "Apr_Imps": 115368,
+    "Asd_Imp_Va": 115368,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1948,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 174800,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 168700,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 162600,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 156400,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 150300
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.640913,
+       55.341743
+      ],
+      [
+       -131.639903,
+       55.341721
+      ],
+      [
+       -131.639903,
+       55.342386
+      ],
+      [
+       -131.640913,
+       55.342411
+      ],
+      [
+       -131.640913,
+       55.341743
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90211001",
+    "Parcel_Num": "90211001",
+    "Owner_Name": "State of Alaska",
+    "Owner_2": "",
+    "Address": "550 W 7th Ave",
+    "CITY": "Juneau",
+    "STATE": "AK",
+    "ZIP": "99801",
+    "Address_full": "550 W 7th Ave, Juneau, AK 99801",
+    "Location": "Creek St 254",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Newtown Addition",
+    "Land_Acres": 0.37,
+    "Land_Sq_Ft": 16117,
+    "Total_Appr": 160500,
+    "Total_Asse": 0,
+    "Total_Exem": 160500,
+    "Exempt_1": "STATE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 160500,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 0,
+    "PropUse": "VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 160500,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 154900,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 149300,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 143600,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 138000
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6528,
+       55.34132
+      ],
+      [
+       -131.651652,
+       55.342353
+      ],
+      [
+       -131.651652,
+       55.343012
+      ],
+      [
+       -131.6528,
+       55.34196
+      ],
+      [
+       -131.6528,
+       55.34132
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90300001",
+    "Parcel_Num": "90300001",
+    "Owner_Name": "Maya Chen",
+    "Owner_2": "",
+    "Address": "18 Creek St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "18 Creek St, Ketchikan, AK 99901",
+    "Location": "Cedar Ave 123",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 0.37,
+    "Land_Sq_Ft": 16117,
+    "Total_Appr": 245100,
+    "Total_Asse": 245100,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 83334,
+    "Asd_Land_V": 83334,
+    "Apr_Imps": 161766,
+    "Asd_Imp_Va": 161766,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1958,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 245100,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 236500,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 227900,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 219400,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 210800
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.651652,
+       55.342353
+      ],
+      [
+       -131.650551,
+       55.342511
+      ],
+      [
+       -131.650551,
+       55.343179
+      ],
+      [
+       -131.651652,
+       55.343012
+      ],
+      [
+       -131.651652,
+       55.342353
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90301001",
+    "Parcel_Num": "90301001",
+    "Owner_Name": "Ward Cove Timber Inc",
+    "Owner_2": "",
+    "Address": "PO Box 220",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98111",
+    "Address_full": "PO Box 220, Seattle, WA 98111",
+    "Location": "Cedar Ave 135",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 1.75,
+    "Land_Sq_Ft": 76230,
+    "Total_Appr": 72700,
+    "Total_Asse": 72700,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 72700,
+    "Asd_Land_V": 72700,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 0,
+    "PropUse": "VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 72700,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 70200,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 67600,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 65100,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 62500
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.650551,
+       55.342511
+      ],
+      [
+       -131.64951,
+       55.342137
+      ],
+      [
+       -131.64951,
+       55.342802
+      ],
+      [
+       -131.650551,
+       55.343179
+      ],
+      [
+       -131.650551,
+       55.342511
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90302001",
+    "Parcel_Num": "90302001",
+    "Owner_Name": "Ward Cove Timber Inc",
+    "Owner_2": "",
+    "Address": "PO Box 220",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98111",
+    "Address_full": "PO Box 220, Seattle, WA 98111",
+    "Location": "Cedar Ave 147",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 2.15,
+    "Land_Sq_Ft": 93654,
+    "Total_Appr": 64100,
+    "Total_Asse": 64100,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 64100,
+    "Asd_Land_V": 64100,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 0,
+    "PropUse": "VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 64100,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 61900,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 59600,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 57400,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 55100
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.64951,
+       55.342137
+      ],
+      [
+       -131.648503,
+       55.341715
+      ],
+      [
+       -131.648503,
+       55.342365
+      ],
+      [
+       -131.64951,
+       55.342802
+      ],
+      [
+       -131.64951,
+       55.342137
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90303001",
+    "Parcel_Num": "90303001",
+    "Owner_Name": "Ward Cove Timber Inc",
+    "Owner_2": "",
+    "Address": "PO Box 220",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98111",
+    "Address_full": "PO Box 220, Seattle, WA 98111",
+    "Location": "Cedar Ave 159",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 1.35,
+    "Land_Sq_Ft": 58806,
+    "Total_Appr": 74900,
+    "Total_Asse": 74900,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 74900,
+    "Asd_Land_V": 74900,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 0,
+    "PropUse": "VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 74900,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 72300,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 69700,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 67000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 64400
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.648503,
+       55.341715
+      ],
+      [
+       -131.647481,
+       55.340984
+      ],
+      [
+       -131.647481,
+       55.341614
+      ],
+      [
+       -131.648503,
+       55.342365
+      ],
+      [
+       -131.648503,
+       55.341715
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90304001",
+    "Parcel_Num": "90304001",
+    "Owner_Name": "Rosa Diaz",
+    "Owner_2": "",
+    "Address": "88 Mill St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "88 Mill St, Ketchikan, AK 99901",
+    "Location": "Cedar Ave 171",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 0.3,
+    "Land_Sq_Ft": 13068,
+    "Total_Appr": 331200,
+    "Total_Asse": 331200,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 112608,
+    "Asd_Land_V": 112608,
+    "Apr_Imps": 218592,
+    "Asd_Imp_Va": 218592,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 2004,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 331200,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 319600,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 308000,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 296400,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 284800
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.647481,
+       55.340984
+      ],
+      [
+       -131.646403,
+       55.340081
+      ],
+      [
+       -131.646403,
+       55.340696
+      ],
+      [
+       -131.647481,
+       55.341614
+      ],
+      [
+       -131.647481,
+       55.340984
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90305001",
+    "Parcel_Num": "90305001",
+    "Owner_Name": "Rosa Diaz",
+    "Owner_2": "",
+    "Address": "88 Mill St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "88 Mill St, Ketchikan, AK 99901",
+    "Location": "Cedar Ave 183",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 0.37,
+    "Land_Sq_Ft": 16117,
+    "Total_Appr": 385200,
+    "Total_Asse": 385200,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 130968,
+    "Asd_Land_V": 130968,
+    "Apr_Imps": 254232,
+    "Asd_Imp_Va": 254232,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 2004,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 385200,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 371700,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 358200,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 344800,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 331300
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.646403,
+       55.340081
+      ],
+      [
+       -131.645269,
+       55.339959
+      ],
+      [
+       -131.645269,
+       55.340571
+      ],
+      [
+       -131.646403,
+       55.340696
+      ],
+      [
+       -131.646403,
+       55.340081
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90306001",
+    "Parcel_Num": "90306001",
+    "Owner_Name": "Rosa Diaz",
+    "Owner_2": "",
+    "Address": "88 Mill St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "88 Mill St, Ketchikan, AK 99901",
+    "Location": "Cedar Ave 195",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 0.44,
+    "Land_Sq_Ft": 19166,
+    "Total_Appr": 342000,
+    "Total_Asse": 342000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 116280,
+    "Asd_Land_V": 116280,
+    "Apr_Imps": 225720,
+    "Asd_Imp_Va": 225720,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 2004,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 342000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 330000,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 318100,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 306100,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 294100
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.645269,
+       55.339959
+      ],
+      [
+       -131.644116,
+       55.340821
+      ],
+      [
+       -131.644116,
+       55.341443
+      ],
+      [
+       -131.645269,
+       55.340571
+      ],
+      [
+       -131.645269,
+       55.339959
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90307001",
+    "Parcel_Num": "90307001",
+    "Owner_Name": "Petersen Family Trust",
+    "Owner_2": "",
+    "Address": "900 W 5th Ave",
+    "CITY": "Anchorage",
+    "STATE": "AK",
+    "ZIP": "99501",
+    "Address_full": "900 W 5th Ave, Anchorage, AK 99501",
+    "Location": "Cedar Ave 207",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 0.16,
+    "Land_Sq_Ft": 6970,
+    "Total_Appr": 209000,
+    "Total_Asse": 209000,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 71060,
+    "Asd_Land_V": 71060,
+    "Apr_Imps": 137940,
+    "Asd_Imp_Va": 137940,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1948,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 209000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 201700,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 194400,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 187100,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 179700
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.644116,
+       55.340821
+      ],
+      [
+       -131.642992,
+       55.341713
+      ],
+      [
+       -131.642992,
+       55.342353
+      ],
+      [
+       -131.644116,
+       55.341443
+      ],
+      [
+       -131.644116,
+       55.340821
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90308001",
+    "Parcel_Num": "90308001",
+    "Owner_Name": "Petersen Family Trust",
+    "Owner_2": "",
+    "Address": "900 W 5th Ave",
+    "CITY": "Anchorage",
+    "STATE": "AK",
+    "ZIP": "99501",
+    "Address_full": "900 W 5th Ave, Anchorage, AK 99501",
+    "Location": "Cedar Ave 219",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 0.23,
+    "Land_Sq_Ft": 10019,
+    "Total_Appr": 186200,
+    "Total_Asse": 186200,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 63308,
+    "Asd_Land_V": 63308,
+    "Apr_Imps": 122892,
+    "Asd_Imp_Va": 122892,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 1948,
+    "PropUse": "RES SFR",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 186200,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 179700,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 173200,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 166600,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 160100
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.642992,
+       55.341713
+      ],
+      [
+       -131.641928,
+       55.342133
+      ],
+      [
+       -131.641928,
+       55.342792
+      ],
+      [
+       -131.642992,
+       55.342353
+      ],
+      [
+       -131.642992,
+       55.341713
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90309001",
+    "Parcel_Num": "90309001",
+    "Owner_Name": "Baranof Rentals LLC",
+    "Owner_2": "",
+    "Address": "3250 Denali Ave",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "3250 Denali Ave, Ketchikan, AK 99901",
+    "Location": "Denali Ave 3250 Condo 1",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 0.02,
+    "Land_Sq_Ft": 871,
+    "Total_Appr": 227900,
+    "Total_Asse": 227900,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 77486,
+    "Asd_Land_V": 77486,
+    "Apr_Imps": 150414,
+    "Asd_Imp_Va": 150414,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RH",
+    "Year_Built": 1994,
+    "PropUse": "CONDO",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 227900,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 219900,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 211900,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 204000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 196000
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.641928,
+       55.342133
+      ],
+      [
+       -131.640913,
+       55.342411
+      ],
+      [
+       -131.640913,
+       55.34308
+      ],
+      [
+       -131.641928,
+       55.342792
+      ],
+      [
+       -131.641928,
+       55.342133
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90310001",
+    "Parcel_Num": "90310001",
+    "Owner_Name": "Baranof Rentals LLC",
+    "Owner_2": "",
+    "Address": "3250 Denali Ave",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "3250 Denali Ave, Ketchikan, AK 99901",
+    "Location": "Denali Ave 3250 Condo 2",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 0.02,
+    "Land_Sq_Ft": 871,
+    "Total_Appr": 267700,
+    "Total_Asse": 267700,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 91018,
+    "Asd_Land_V": 91018,
+    "Apr_Imps": 176682,
+    "Asd_Imp_Va": 176682,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RH",
+    "Year_Built": 1994,
+    "PropUse": "CONDO",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 267700,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 258300,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 249000,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 239600,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 230200
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.640913,
+       55.342411
+      ],
+      [
+       -131.639903,
+       55.342386
+      ],
+      [
+       -131.639903,
+       55.34305
+      ],
+      [
+       -131.640913,
+       55.34308
+      ],
+      [
+       -131.640913,
+       55.342411
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90311001",
+    "Parcel_Num": "90311001",
+    "Owner_Name": "Baranof Rentals LLC",
+    "Owner_2": "",
+    "Address": "3250 Denali Ave",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "3250 Denali Ave, Ketchikan, AK 99901",
+    "Location": "Denali Ave 3250 Condo 3",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Cedar Bench",
+    "Land_Acres": 0.02,
+    "Land_Sq_Ft": 871,
+    "Total_Appr": 235900,
+    "Total_Asse": 235900,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 80206,
+    "Asd_Land_V": 80206,
+    "Apr_Imps": 155694,
+    "Asd_Imp_Va": 155694,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RH",
+    "Year_Built": 1994,
+    "PropUse": "CONDO",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 235900,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 227600,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 219400,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 211100,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 202900
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.6528,
+       55.34196
+      ],
+      [
+       -131.651652,
+       55.343012
+      ],
+      [
+       -131.651652,
+       55.34367
+      ],
+      [
+       -131.6528,
+       55.3426
+      ],
+      [
+       -131.6528,
+       55.34196
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90400001",
+    "Parcel_Num": "90400001",
+    "Owner_Name": "Ward Cove Timber Inc",
+    "Owner_2": "",
+    "Address": "PO Box 220",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98111",
+    "Address_full": "PO Box 220, Seattle, WA 98111",
+    "Location": "Hill Rd 124",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 1.35,
+    "Land_Sq_Ft": 58806,
+    "Total_Appr": 68400,
+    "Total_Asse": 68400,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 68400,
+    "Asd_Land_V": 68400,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 0,
+    "PropUse": "VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 68400,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 66000,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 63600,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 61200,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 58800
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.651652,
+       55.343012
+      ],
+      [
+       -131.650551,
+       55.343179
+      ],
+      [
+       -131.650551,
+       55.343847
+      ],
+      [
+       -131.651652,
+       55.34367
+      ],
+      [
+       -131.651652,
+       55.343012
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90401001",
+    "Parcel_Num": "90401001",
+    "Owner_Name": "Ward Cove Timber Inc",
+    "Owner_2": "",
+    "Address": "PO Box 220",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98111",
+    "Address_full": "PO Box 220, Seattle, WA 98111",
+    "Location": "Hill Rd 136",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 1.75,
+    "Land_Sq_Ft": 76230,
+    "Total_Appr": 79200,
+    "Total_Asse": 79200,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 79200,
+    "Asd_Land_V": 79200,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 0,
+    "PropUse": "VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 79200,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 76400,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 73700,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 70900,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 68100
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.650551,
+       55.343179
+      ],
+      [
+       -131.64951,
+       55.342802
+      ],
+      [
+       -131.64951,
+       55.343467
+      ],
+      [
+       -131.650551,
+       55.343847
+      ],
+      [
+       -131.650551,
+       55.343179
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90402001",
+    "Parcel_Num": "90402001",
+    "Owner_Name": "Ward Cove Timber Inc",
+    "Owner_2": "",
+    "Address": "PO Box 220",
+    "CITY": "Seattle",
+    "STATE": "WA",
+    "ZIP": "98111",
+    "Address_full": "PO Box 220, Seattle, WA 98111",
+    "Location": "Hill Rd 148",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 2.15,
+    "Land_Sq_Ft": 93654,
+    "Total_Appr": 70600,
+    "Total_Asse": 70600,
+    "Total_Exem": 0,
+    "Exempt_1": "NONE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 70600,
+    "Asd_Land_V": 70600,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "RL",
+    "Year_Built": 0,
+    "PropUse": "VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 70600,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 68100,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 65700,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 63200,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 60700
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.64951,
+       55.342802
+      ],
+      [
+       -131.648503,
+       55.342365
+      ],
+      [
+       -131.648503,
+       55.343014
+      ],
+      [
+       -131.64951,
+       55.343467
+      ],
+      [
+       -131.64951,
+       55.342802
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90403001",
+    "Parcel_Num": "90403001",
+    "Owner_Name": "City of Ketchikan",
+    "Owner_2": "",
+    "Address": "334 Front St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "334 Front St, Ketchikan, AK 99901",
+    "Location": "Hill Rd 160",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 0.3,
+    "Land_Sq_Ft": 13068,
+    "Total_Appr": 352600,
+    "Total_Asse": 0,
+    "Total_Exem": 352600,
+    "Exempt_1": "CTKET",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 119884,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 232716,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 1962,
+    "PropUse": "PUBLIC",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 352600,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 340300,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 327900,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 315600,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 303200
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.648503,
+       55.342365
+      ],
+      [
+       -131.647481,
+       55.341614
+      ],
+      [
+       -131.647481,
+       55.342244
+      ],
+      [
+       -131.648503,
+       55.343014
+      ],
+      [
+       -131.648503,
+       55.342365
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90404001",
+    "Parcel_Num": "90404001",
+    "Owner_Name": "City of Ketchikan",
+    "Owner_2": "",
+    "Address": "334 Front St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "334 Front St, Ketchikan, AK 99901",
+    "Location": "Hill Rd 172",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 0.37,
+    "Land_Sq_Ft": 16117,
+    "Total_Appr": 414100,
+    "Total_Asse": 0,
+    "Total_Exem": 414100,
+    "Exempt_1": "CTKET",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 140794,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 273306,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 1962,
+    "PropUse": "PUBLIC",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 414100,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 399600,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 385100,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 370600,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 356100
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.647481,
+       55.341614
+      ],
+      [
+       -131.646403,
+       55.340696
+      ],
+      [
+       -131.646403,
+       55.341311
+      ],
+      [
+       -131.647481,
+       55.342244
+      ],
+      [
+       -131.647481,
+       55.341614
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90405001",
+    "Parcel_Num": "90405001",
+    "Owner_Name": "City of Ketchikan",
+    "Owner_2": "",
+    "Address": "334 Front St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "334 Front St, Ketchikan, AK 99901",
+    "Location": "Hill Rd 184",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 0.44,
+    "Land_Sq_Ft": 19166,
+    "Total_Appr": 364900,
+    "Total_Asse": 0,
+    "Total_Exem": 364900,
+    "Exempt_1": "CTKET",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 124066,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 240834,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 1962,
+    "PropUse": "PUBLIC",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 364900,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 352100,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 339400,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 326600,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 313800
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.646403,
+       55.340696
+      ],
+      [
+       -131.645269,
+       55.340571
+      ],
+      [
+       -131.645269,
+       55.341183
+      ],
+      [
+       -131.646403,
+       55.341311
+      ],
+      [
+       -131.646403,
+       55.340696
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90406001",
+    "Parcel_Num": "90406001",
+    "Owner_Name": "Ketchikan Gateway Borough",
+    "Owner_2": "",
+    "Address": "1900 First Ave",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "1900 First Ave, Ketchikan, AK 99901",
+    "Location": "Hill Rd 196",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 0.16,
+    "Land_Sq_Ft": 6970,
+    "Total_Appr": 343200,
+    "Total_Asse": 0,
+    "Total_Exem": 343200,
+    "Exempt_1": "BORO",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 116688,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 226512,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 1980,
+    "PropUse": "PUBLIC",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 343200,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 331200,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 319200,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 307200,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 295200
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.645269,
+       55.340571
+      ],
+      [
+       -131.644116,
+       55.341443
+      ],
+      [
+       -131.644116,
+       55.342065
+      ],
+      [
+       -131.645269,
+       55.341183
+      ],
+      [
+       -131.645269,
+       55.340571
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90407001",
+    "Parcel_Num": "90407001",
+    "Owner_Name": "Ketchikan Gateway Borough",
+    "Owner_2": "",
+    "Address": "1900 First Ave",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "1900 First Ave, Ketchikan, AK 99901",
+    "Location": "Hill Rd 208",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 0.23,
+    "Land_Sq_Ft": 10019,
+    "Total_Appr": 303600,
+    "Total_Asse": 0,
+    "Total_Exem": 303600,
+    "Exempt_1": "BORO",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 103224,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 200376,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 1980,
+    "PropUse": "PUBLIC",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 303600,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 293000,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 282300,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 271700,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 261100
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.644116,
+       55.341443
+      ],
+      [
+       -131.642992,
+       55.342353
+      ],
+      [
+       -131.642992,
+       55.342994
+      ],
+      [
+       -131.644116,
+       55.342065
+      ],
+      [
+       -131.644116,
+       55.341443
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90408001",
+    "Parcel_Num": "90408001",
+    "Owner_Name": "Ketchikan Gateway Borough",
+    "Owner_2": "",
+    "Address": "1900 First Ave",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "1900 First Ave, Ketchikan, AK 99901",
+    "Location": "Hill Rd 220",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 0.3,
+    "Land_Sq_Ft": 13068,
+    "Total_Appr": 353100,
+    "Total_Asse": 0,
+    "Total_Exem": 353100,
+    "Exempt_1": "BORO",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 120054,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 233046,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 1980,
+    "PropUse": "PUBLIC",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 353100,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 340700,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 328400,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 316000,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 303700
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.642992,
+       55.342353
+      ],
+      [
+       -131.641928,
+       55.342792
+      ],
+      [
+       -131.641928,
+       55.343451
+      ],
+      [
+       -131.642992,
+       55.342994
+      ],
+      [
+       -131.642992,
+       55.342353
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90409001",
+    "Parcel_Num": "90409001",
+    "Owner_Name": "City of Ketchikan",
+    "Owner_2": "",
+    "Address": "334 Front St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "334 Front St, Ketchikan, AK 99901",
+    "Location": "Hill Rd 232",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 0.37,
+    "Land_Sq_Ft": 16117,
+    "Total_Appr": 389500,
+    "Total_Asse": 0,
+    "Total_Exem": 389500,
+    "Exempt_1": "CTKET",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 132430,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 257070,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 1962,
+    "PropUse": "PUBLIC",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 389500,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 375900,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 362200,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 348600,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 335000
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.641928,
+       55.342792
+      ],
+      [
+       -131.640913,
+       55.34308
+      ],
+      [
+       -131.640913,
+       55.343748
+      ],
+      [
+       -131.641928,
+       55.343451
+      ],
+      [
+       -131.641928,
+       55.342792
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90410001",
+    "Parcel_Num": "90410001",
+    "Owner_Name": "City of Ketchikan",
+    "Owner_2": "",
+    "Address": "334 Front St",
+    "CITY": "Ketchikan",
+    "STATE": "AK",
+    "ZIP": "99901",
+    "Address_full": "334 Front St, Ketchikan, AK 99901",
+    "Location": "Hill Rd 244",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 0.44,
+    "Land_Sq_Ft": 19166,
+    "Total_Appr": 451000,
+    "Total_Asse": 0,
+    "Total_Exem": 451000,
+    "Exempt_1": "CTKET",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 153340,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 297660,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 1962,
+    "PropUse": "PUBLIC",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 451000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 435200,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 419400,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 403600,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 387900
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -131.640913,
+       55.34308
+      ],
+      [
+       -131.639903,
+       55.34305
+      ],
+      [
+       -131.639903,
+       55.343715
+      ],
+      [
+       -131.640913,
+       55.343748
+      ],
+      [
+       -131.640913,
+       55.34308
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "PARCELNO": "90411001",
+    "Parcel_Num": "90411001",
+    "Owner_Name": "State of Alaska",
+    "Owner_2": "",
+    "Address": "550 W 7th Ave",
+    "CITY": "Juneau",
+    "STATE": "AK",
+    "ZIP": "99801",
+    "Address_full": "550 W 7th Ave, Juneau, AK 99801",
+    "Location": "Hill Rd 256",
+    "LOC_CITY": "KETCHIKAN",
+    "SUBNAME": "Hillside Acreage",
+    "Land_Acres": 0.16,
+    "Land_Sq_Ft": 6970,
+    "Total_Appr": 147000,
+    "Total_Asse": 0,
+    "Total_Exem": 147000,
+    "Exempt_1": "STATE",
+    "Exempt_2": "NONE",
+    "Exempt_3": "NONE",
+    "Apr_Land_V": 147000,
+    "Asd_Land_V": 0,
+    "Apr_Imps": 0,
+    "Asd_Imp_Va": 0,
+    "Water_Fron": 0,
+    "D_Ref_Date": "14-JUN-16",
+    "Zoning_Typ": "P",
+    "Year_Built": 0,
+    "PropUse": "VACANT",
+    "Asse_Year1": 2026,
+    "Total_Apr1": 147000,
+    "Asse_Year2": 2025,
+    "Total_Apr2": 141900,
+    "Asse_Year3": 2024,
+    "Total_Apr3": 136700,
+    "Asse_Year4": 2023,
+    "Total_Apr4": 131600,
+    "Asse_Year5": 2022,
+    "Total_Apr5": 126400
+   }
+  }
+ ]
+}

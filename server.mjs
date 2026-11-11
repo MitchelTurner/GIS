@@ -22,7 +22,52 @@ const TYPES = {
   '.svg': 'image/svg+xml',
   '.txt': 'text/plain; charset=utf-8',
   '.ico': 'image/x-icon',
+  '.json': 'application/json; charset=utf-8',
+  '.geojson': 'application/geo+json; charset=utf-8',
 };
+
+const SECURITY = {
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+};
+
+// Leaflet writes element styles, and the map tiles and the typeface come from
+// those hosts. Scripts stay on this origin.
+const CSP = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'self'",
+  "form-action 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com data:",
+  "img-src 'self' data: blob: https://server.arcgisonline.com https://services.arcgisonline.com",
+  "connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com",
+].join('; ');
+
+const NOT_FOUND_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found — Ketchikan parcels</title>
+  <link rel="stylesheet" href="/styles.css?v=18">
+</head>
+<body class="missing">
+  <header class="top">
+    <a class="brand" href="/"><span class="brand-text"><strong>Parcels</strong><small>Ketchikan</small></span></a>
+  </header>
+  <main class="missing-main">
+    <p class="kicker">404</p>
+    <h1>That page is not on this map.</h1>
+    <p class="lede">The parcel studio is still at the front door.</p>
+    <a class="missing-link" href="/">Back to parcels</a>
+  </main>
+</body>
+</html>`;
 
 function leafletFile(urlPath) {
   const prefix = '/vendor/leaflet/';
@@ -42,9 +87,22 @@ function safePublicPath(urlPath) {
 }
 
 function send(res, status, body, headers, method) {
-  res.writeHead(status, headers);
+  const type = headers['Content-Type'] || '';
+  const extra = { ...SECURITY };
+  if (type.startsWith('text/html') && !headers['Content-Security-Policy']) {
+    extra['Content-Security-Policy'] = CSP;
+  }
+  res.writeHead(status, { ...extra, ...headers });
   if (method === 'HEAD') res.end();
   else res.end(body);
+}
+
+function notFound(req, res, method) {
+  const html = String(req.headers.accept || '').includes('text/html');
+  send(res, 404, html ? NOT_FOUND_HTML : 'Not found\n', {
+    'Content-Type': html ? 'text/html; charset=utf-8' : 'text/plain; charset=utf-8',
+    'Cache-Control': 'no-store',
+  }, method);
 }
 
 function readBody(req, limit = 120000) {
@@ -90,6 +148,13 @@ export async function createHandler({ explain = explainComps } = {}) {
         send(res, 405, 'Method not allowed\n', { 'Content-Type': 'text/plain; charset=utf-8' }, method);
         return;
       }
+      if ((method === 'GET' || method === 'HEAD') && url.pathname === '/api/server') {
+        send(res, 200, JSON.stringify({ database: false }), {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-store',
+        }, method);
+        return;
+      }
       if (method === 'GET' && url.pathname === '/api/ai') {
         send(res, 200, JSON.stringify(aiStatus()), {
           'Content-Type': 'application/json; charset=utf-8',
@@ -115,7 +180,7 @@ export async function createHandler({ explain = explainComps } = {}) {
       if (url.pathname.startsWith('/lib/')) {
         const name = url.pathname.slice('/lib/'.length);
         if (!SHARED_LIB.has(name)) {
-          send(res, 404, 'Not found\n', { 'Content-Type': 'text/plain; charset=utf-8' }, method);
+          notFound(req, res, method);
           return;
         }
         const body = await readFile(path.join(root, 'lib', name));
@@ -141,7 +206,7 @@ export async function createHandler({ explain = explainComps } = {}) {
 
       const filePath = safePublicPath(url.pathname);
       if (!filePath) {
-        send(res, 404, 'Not found\n', { 'Content-Type': 'text/plain; charset=utf-8' }, method);
+        notFound(req, res, method);
         return;
       }
       const body = await readFile(filePath);
@@ -153,7 +218,7 @@ export async function createHandler({ explain = explainComps } = {}) {
       }, method);
     } catch (err) {
       if (err && err.code === 'ENOENT') {
-        send(res, 404, 'Not found\n', { 'Content-Type': 'text/plain; charset=utf-8' }, req.method);
+        notFound(req, res, req.method);
         return;
       }
       const status = err?.status || (err instanceof SyntaxError ? 400 : 500);

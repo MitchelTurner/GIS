@@ -3,18 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f6f7f5">
-  <title>Ketchikan parcels</title>
-  <meta name="description" content="See who owns Ketchikan parcels, and compare a parcel with similar ones.">
+  <meta name="theme-color" content="#090d0c">
+  <title>Ketchikan parcels — who owns the land</title>
+  <meta name="description" content="A parcel studio for the Ketchikan Gateway Borough. See who owns the land, compare a parcel with its neighbors, and keep the mailing list.">
+  <meta property="og:title" content="Ketchikan parcels — who owns the land">
+  <meta property="og:description" content="Ownership, comps, and a mailing list on one map of the Ketchikan Gateway Borough.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
   <link rel="icon" href="/icon128.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,650&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=16">
+  <link rel="stylesheet" href="/styles.css?v=18">
 </head>
 <body>
   <header class="top">
     <a class="brand" href="/">
-      <img src="/icon128.png" width="32" height="32" alt="">
-      <span>Parcels</span>
+      <img src="/icon128.png" width="36" height="36" alt="">
+      <span class="brand-text"><strong>Parcels</strong><small>Ketchikan</small></span>
     </a>
     <nav>
       <a class="text-link" href="/extension.zip">Download the extension</a>
@@ -27,13 +34,76 @@
 
   <main>
     <section id="empty">
-      <h1>Who owns the land</h1>
-      <p id="empty-lede" class="lede">Drop the <strong>.geojson</strong> from the extension. The map draws every parcel, and this browser keeps the file for the next search. The spreadsheet has the same owners and no outlines.</p>
-      <button id="drop" class="drop" type="button">Drop the .geojson here, or choose a file</button>
-      <details>
-        <summary>How to get the file</summary>
-        <p>Unzip the extension. In Chrome or Edge, open the extensions page, turn on Developer mode, and choose Load unpacked. On the borough map, click <strong>Owners and mailing</strong>. Drop the GeoJSON here.</p>
-      </details>
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Ketchikan parcel studio</p>
+          <h1>Who owns the land</h1>
+          <p id="empty-lede" class="lede">Drop the <strong>.geojson</strong> from the extension. The map draws every parcel, and this browser keeps the file for the next search. The spreadsheet has the same owners and no outlines.</p>
+          <div class="hero-actions">
+            <button id="sample" type="button">Preview the sample map</button>
+            <button id="drop" class="drop" type="button">Drop the .geojson here, or choose a file</button>
+          </div>
+          <details>
+            <summary>How to get the file</summary>
+            <p>Unzip the extension. In Chrome or Edge, open the extensions page, turn on Developer mode, and choose Load unpacked. On the borough map, click <strong>Owners and mailing</strong>. Drop the GeoJSON here.</p>
+          </details>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 560 640" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#1a2824"/>
+                <stop offset="1" stop-color="#0c1211"/>
+              </linearGradient>
+              <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#143833"/>
+                <stop offset="1" stop-color="#0a1716"/>
+              </linearGradient>
+            </defs>
+            <rect width="560" height="640" rx="32" fill="url(#frame)"/>
+            <rect x="18" y="18" width="524" height="604" rx="24" fill="#0d1413"/>
+            <path d="M18 430 C 90 392 150 468 230 430 C 310 392 370 470 450 438 C 490 424 520 450 542 456 L 542 622 L 18 622 Z" fill="url(#sea)"/>
+            <g fill-opacity="0.92" stroke="#f6f1e8" stroke-width="1.6" stroke-linejoin="round">
+              <path d="M48 168 L168 150 L176 262 L46 278 Z" fill="#e08a56"/>
+              <path d="M168 150 L292 162 L300 270 L176 262 Z" fill="#3dbea0"/>
+              <path d="M292 162 L430 146 L446 258 L300 270 Z" fill="#7aa2ff"/>
+              <path d="M46 278 L176 262 L186 372 L40 386 Z" fill="#e08a56"/>
+              <path d="M176 262 L300 270 L312 384 L186 372 Z" fill="#e7c36a"/>
+              <path d="M300 270 L446 258 L458 376 L312 384 Z" fill="#e36b8a"/>
+              <path d="M40 386 L186 372 L196 470 L34 456 Z" fill="#c084fc"/>
+              <path d="M186 372 L312 384 L324 478 L196 470 Z" fill="#7dce6a"/>
+              <path d="M312 384 L458 376 L470 468 L324 478 Z" fill="#5ec8e6"/>
+            </g>
+            <g transform="translate(36 40)">
+              <rect width="248" height="96" rx="18" fill="rgba(9,13,12,0.78)" stroke="rgba(255,255,255,0.1)"/>
+              <circle cx="28" cy="36" r="6" fill="#e08a56"/>
+              <text x="46" y="32" fill="#f7f4ee" font-family="Fraunces, Georgia, serif" font-size="20">Harbor House</text>
+              <text x="46" y="56" fill="#a9bbb4" font-family="Outfit, sans-serif" font-size="13">6 parcels · 18.4% of the acres</text>
+              <text x="28" y="80" fill="#8ee0cb" font-family="Outfit, sans-serif" font-size="12" font-weight="600">$980,000 assessed</text>
+            </g>
+            <g transform="translate(292 520)" font-family="Outfit, sans-serif" font-size="12" fill="#d5e4de">
+              <circle cx="8" cy="8" r="5" fill="#e08a56"/>
+              <text x="22" y="12">Largest owners</text>
+              <circle cx="128" cy="8" r="5" fill="#3dbea0"/>
+              <text x="142" y="12">In view</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <ul class="capabilities">
+        <li>
+          <strong>See the share</strong>
+          <span>The largest owners take a color. Acres, assessed value, and the share of the file sit in one list.</span>
+        </li>
+        <li>
+          <strong>Compare a parcel</strong>
+          <span>Comps are ranked by size, value, zoning, subdivision, and distance. A sale price stays with the parcel.</span>
+        </li>
+        <li>
+          <strong>Keep the outreach</strong>
+          <span>Mark who to call, write a note, and export one mailing address for every owner you flagged.</span>
+        </li>
+      </ul>
     </section>
     <p id="status" class="fine"></p>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden>
@@ -46,68 +116,72 @@
     <p id="sync-note" class="sync-note" hidden></p>
 
     <section id="workspace" hidden>
-      <form id="search-form" class="search-bar">
-        <div class="search-row">
-          <input id="q" type="search" enterkeyhint="search" placeholder="Owner, town, parcel, or street" aria-label="Search parcels">
-          <button type="submit">Search</button>
-        </div>
-        <div class="chips" role="group" aria-label="Buy box">
-          <label class="private"><input id="private" type="checkbox"> Private owners</label>
-          <label class="private"><input id="absentee" type="checkbox"> Mail elsewhere</label>
-          <label class="private"><input id="condos" type="checkbox"> Skip condos</label>
-          <label class="private"><input id="below" type="checkbox"> Below neighbors</label>
-          <label class="private"><input id="waterfront" type="checkbox"> Waterfront</label>
-        </div>
-        <div class="filter-row">
-          <label class="filter">Zoning
-            <select id="zoning" aria-label="Zoning"><option value="">All zoning</option></select>
-          </label>
-          <label class="filter">Min acres
-            <input id="min-acres" inputmode="decimal" placeholder="Any" aria-label="Minimum acres">
-          </label>
-          <label class="filter">Max $/acre
-            <input id="max-acre" inputmode="decimal" placeholder="Any" aria-label="Maximum dollars per acre">
-          </label>
-          <div class="filter-actions">
-            <button id="draw" class="ghost" type="button">Draw an area</button>
-            <button id="labels" class="ghost" type="button" hidden>Export labels</button>
+      <div class="studio">
+        <form id="search-form" class="search-bar">
+          <div class="search-row">
+            <input id="q" type="search" enterkeyhint="search" placeholder="Owner, town, parcel, or street" aria-label="Search parcels">
+            <button type="submit">Search</button>
           </div>
-        </div>
-      </form>
-      <section id="ask-all" class="ask-all" hidden>
-        <label class="ask">
-          <span>Ask about every parcel</span>
-          <input id="ask-all-input" type="text" maxlength="400" placeholder="Which private owners hold the most waterfront acres?" aria-label="Question about every parcel">
-        </label>
-        <button id="ask-all-button" class="ghost" type="button">Ask the AI</button>
-        <div id="ask-all-answer" class="answer"></div>
-      </section>
-      <div id="map" hidden></div>
-      <p id="map-legend" class="fine" hidden></p>
-      <p id="map-note" class="fine" hidden></p>
-      <div class="grid">
-        <section class="panel owners-panel">
-          <div class="section-head">
-            <h2>Largest owners</h2>
-            <button id="export" class="ghost" type="button" hidden>Export contacts</button>
+          <div class="chips" role="group" aria-label="Buy box">
+            <label class="private"><input id="private" type="checkbox"> Private owners</label>
+            <label class="private"><input id="absentee" type="checkbox"> Mail elsewhere</label>
+            <label class="private"><input id="condos" type="checkbox"> Skip condos</label>
+            <label class="private"><input id="below" type="checkbox"> Below neighbors</label>
+            <label class="private"><input id="waterfront" type="checkbox"> Waterfront</label>
           </div>
-          <div id="owners"></div>
-          <h2 id="results-title" class="next" hidden>Search</h2>
-          <div id="results" class="fine"></div>
-          <h2 id="recent-title" class="next" hidden>Recent</h2>
-          <div id="searches" class="searches"></div>
-        </section>
-        <section id="detail-panel" class="panel detail-panel">
-          <h2 id="detail-title">Parcel</h2>
-          <div id="detail" class="fine">Click a parcel on the map, or an owner in the list.</div>
-          <div id="comps"></div>
-          <label id="ask-wrap" class="ask" hidden>
-            <span>Ask the comparison</span>
-            <input id="ask" type="text" maxlength="400" placeholder="Is the taxable amount the one to use?" aria-label="Question for the comparison">
-          </label>
-          <button id="explain" class="ghost" type="button" hidden>Compare with AI</button>
-          <div id="explanation"></div>
-        </section>
+          <div class="filter-row">
+            <label class="filter">Zoning
+              <select id="zoning" aria-label="Zoning"><option value="">All zoning</option></select>
+            </label>
+            <label class="filter">Min acres
+              <input id="min-acres" inputmode="decimal" placeholder="Any" aria-label="Minimum acres">
+            </label>
+            <label class="filter">Max $/acre
+              <input id="max-acre" inputmode="decimal" placeholder="Any" aria-label="Maximum dollars per acre">
+            </label>
+            <div class="filter-actions">
+              <button id="draw" class="ghost" type="button">Draw an area</button>
+              <button id="labels" class="ghost" type="button" hidden>Export labels</button>
+            </div>
+          </div>
+        </form>
+        <div class="stage">
+          <div id="map" hidden></div>
+          <p id="map-legend" class="fine" hidden></p>
+          <p id="map-note" class="fine" hidden></p>
+        </div>
+        <div class="dock">
+          <section id="ask-all" class="ask-all" hidden>
+            <label class="ask">
+              <span>Ask about every parcel</span>
+              <input id="ask-all-input" type="text" maxlength="400" placeholder="Which private owners hold the most waterfront acres?" aria-label="Question about every parcel">
+            </label>
+            <button id="ask-all-button" class="ghost" type="button">Ask the AI</button>
+            <div id="ask-all-answer" class="answer"></div>
+          </section>
+          <section class="panel owners-panel">
+            <div class="section-head">
+              <h2>Largest owners</h2>
+              <button id="export" class="ghost" type="button" hidden>Export contacts</button>
+            </div>
+            <div id="owners"></div>
+            <h2 id="results-title" class="next" hidden>Search</h2>
+            <div id="results" class="fine"></div>
+            <h2 id="recent-title" class="next" hidden>Recent</h2>
+            <div id="searches" class="searches"></div>
+          </section>
+          <section id="detail-panel" class="panel detail-panel">
+            <h2 id="detail-title">Parcel</h2>
+            <div id="detail" class="fine">Click a parcel on the map, or an owner in the list.</div>
+            <div id="comps"></div>
+            <label id="ask-wrap" class="ask" hidden>
+              <span>Ask the comparison</span>
+              <input id="ask" type="text" maxlength="400" placeholder="Is the taxable amount the one to use?" aria-label="Question for the comparison">
+            </label>
+            <button id="explain" class="ghost" type="button" hidden>Compare with AI</button>
+            <div id="explanation"></div>
+          </section>
+        </div>
       </div>
       <details id="changes" class="changes" hidden>
         <summary>Since the last file <span id="change-count"></span></summary>
@@ -119,14 +193,10 @@
     <span class="peek-text"><strong id="peek-title"></strong><small id="peek-sub"></small></span>
     <span class="peek-go">Details</span>
   </button>
+  <noscript>
+    <p class="noscript">This studio draws the map in the browser, so JavaScript needs to be on.</p>
+  </noscript>
   <script src="/vendor/leaflet/leaflet.js"></script>
-  <script type="module" src="/app.js?v=16"></script>
-  <script>
-    fetch('/extension.zip', { method: 'HEAD' }).then((res) => {
-      const bytes = Number(res.headers.get('content-length'));
-      if (!bytes) return;
-      document.getElementById('size').textContent = `Version 1.3.5 · ${(bytes / 1e6).toFixed(1)} MB`;
-    }).catch(() => {});
-  </script>
+  <script type="module" src="/app.js?v=18"></script>
 </body>
 </html>
